@@ -2,3 +2,5 @@
 src/test
 *.log
 process-record.md
+rock-platform/rock/cmd/rock
+rock-platform/rock/cmd/*.exe

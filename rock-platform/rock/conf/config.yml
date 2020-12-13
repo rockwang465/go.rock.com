@@ -2,6 +2,11 @@ server:
   addr: 0.0.0.0
   port: 8080  # default 8000
 #  configPath: /etc/rock/config.yaml
+#  https:
+#    addr: 0.0.0.0
+#    port: 8443
+#    tls-cert-file: /opt/cert/rock.go.com.crt
+#    tls-private-key-file:  /opt/cert/rock.go.com.key
   adminAuth:
     username: admin
     password: Zs/Pftkh+esjvR5SVjOYqPxaPXiDk91APmuEtuDgE9Y=

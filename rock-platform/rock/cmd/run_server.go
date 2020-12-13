@@ -1,14 +1,18 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/spf13/cobra"
 	"net/http"
+	"os"
+	"os/signal"
 	"path"
 	"rock-platform/rock/server"
 	"rock-platform/rock/server/conf"
 	"rock-platform/rock/server/utils"
 	"strings"
+	"time"
 )
 
 func runServer(cmd *cobra.Command, args []string) {
@@ -48,10 +52,14 @@ func runServer(cmd *cobra.Command, args []string) {
 	httpAddr := config.Viper.GetString("server.addr")
 	httpPort := config.Viper.GetInt64("server.port")
 
+	if httpPort == 0 {
+		httpPort = 8000 // define a default port
+	}
+
 	httpServer := &http.Server{}
 	// 为空serveHttp为false，不为空serveHttp为true
-	serverHttp := httpAddr != "" && httpPort != 0
-	if serverHttp {
+	serveHttp := httpAddr != "" && httpPort != 0
+	if serveHttp {
 		listen := fmt.Sprintf("%s:%d", httpAddr, httpPort)
 		httpServer.Addr = listen
 		httpServer.Handler = sv.RouterEngine
@@ -67,12 +75,59 @@ func runServer(cmd *cobra.Command, args []string) {
 		sv.Logger.Infoln("[Rock Platform] Server skip http listen set up")
 	}
 
-	sv.Logger.Infoln("Welcome use Rock Platform")
+	// https server configuration
+	httpsAddr := config.Viper.GetString("server.https.addr")
+	httpsPort := config.Viper.GetInt64("server.https.port")
+	tlsCertFile := config.Viper.GetString("server.https.tls-cert-file")
+	tlsPrivateKeyFile := config.Viper.GetString("server.https.tls-private-key-file")
 
-	// Just test viper
-	serverPort := config.Viper.GetInt64("server.port")
-	if serverPort == 0 {
-		serverPort = 8000 // set default port
+	httpsServer := &http.Server{}
+	serveHttps := tlsCertFile != "" && tlsPrivateKeyFile != ""
+	if serveHttps {
+		listen := fmt.Sprintf("%s:%d", httpsAddr, httpsPort)
+		httpsServer.Addr = listen
+		httpsServer.Handler = sv.RouterEngine
+		sv.Logger.Infoln("[Rock Platform] Set https listen addr to:", listen)
+
+		// server.ListenAndServer()
+		go func() {
+			if err := httpsServer.ListenAndServeTLS(tlsCertFile, tlsPrivateKeyFile); err != nil && err != http.ErrServerClosed {
+				sv.Logger.Fatalf("[Rock Platform] listen https address error, and process exit, %s", err)
+			}
+		}()
+	} else {
+		sv.Logger.Infoln("[Rock Platform] Server skip https listen set up")
 	}
-	sv.Logger.Infoln("Rock platform server port is :", serverPort)
+
+	if !serveHttp && !serveHttps {
+		sv.Logger.Fatalln("[Rock Platform] You must set up at least one of http or https")
+		return
+	}
+
+	// Wait for interrupt signal to gracefully shutdown the server with
+	// a timeout of 5 seconds.
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if serveHttp { // 停止服务提示
+		sv.Logger.Println("[Rock Platform] Shutting down HTTP Server ...")
+		if err := httpServer.Shutdown(ctx); err != nil {
+			sv.Logger.Fatal("[Rock Platform] Http server Shutdown:", err)
+			return
+		}
+	}
+
+	if serveHttps {
+		sv.Logger.Println("[Rock Platform] Shutting down HTTPS Server ...")
+		if err := httpsServer.Shutdown(ctx); err != nil {
+			sv.Logger.Fatal("[Rock Platform] Https server Shutdown:", err)
+			return
+		}
+	}
+
+	sv.Logger.Println("[Rock Platform] Server exited successfully")
+	return
 }

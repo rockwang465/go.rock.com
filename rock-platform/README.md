@@ -27,14 +27,3 @@ docker run --name mysql-test -p 3333:3306 -e MYSQL\_ROOT\_PASSWORD=rock1314 -d m
 mysql -uroot -P3333 -h0.0.0.0 -prock1314
 mysql> create database demo2;
 ```
-
-## 当前进展及测试情况
-```
-A.log模块基础已经好了 -- ok
-B.测试-f传参其他路径的文件是否有效，拿viper取值测试即可，两个路径的value不同 -- 没有通过
-C.router模块配置
-D.DB模块配置
-E.将所有的实例化的函数中加个判断，如果是nil再实例化，否则直接返回--解决程序重复实例化，浪费资源问题
-F.加swagger
-
-```

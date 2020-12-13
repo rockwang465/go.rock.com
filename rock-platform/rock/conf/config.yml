@@ -1,0 +1,21 @@
+server:
+  addr: 0.0.0.0
+  port: 8080  # default 8000
+#  configPath: /etc/rock/config.yaml
+  adminAuth:
+    username: admin
+    password: Zs/Pftkh+esjvR5SVjOYqPxaPXiDk91APmuEtuDgE9Y=
+  tokenExpire: 300  # default 300
+  kubeConfig: /etc/kubernetes/admin.conf
+log:
+  dir: /var/log/rock
+  level: Debug  # default Info
+db:
+  driver: mysql
+  name: rock  # database name
+  port: 3306
+  host: 10.151.3.86
+  user: root
+  password: rock1314
+tiller:
+  port: 30134

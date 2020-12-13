@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/spf13/cobra"
-	"rock-platform/rock/server/conf"
-	"rock-platform/rock/server/log"
+	"go.rock.com/rock-platform/rock/server/conf"
+	"go.rock.com/rock-platform/rock/server/log"
 )
 
 func main() {

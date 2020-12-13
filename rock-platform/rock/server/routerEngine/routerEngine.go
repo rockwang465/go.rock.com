@@ -6,8 +6,13 @@ type Routers struct {
 	*gin.Engine
 }
 
+var SingleRouters *Routers
+
 func GetRouterEngine() *Routers {
-	return &Routers{
-		gin.New(),
+	if SingleRouters == nil {
+		SingleRouters = &Routers{
+			gin.New(),
+		}
 	}
+	return SingleRouters
 }

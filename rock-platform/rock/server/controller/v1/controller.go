@@ -1,6 +1,6 @@
 package v1
 
-import "rock-platform/rock/server/log"
+import "go.rock.com/rock-platform/rock/server/log"
 
 type Controller struct {
 	*log.Logger

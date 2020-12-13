@@ -4,11 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lestrrat-go/file-rotatelogs"
 	"github.com/sirupsen/logrus"
+	"go.rock.com/rock-platform/rock/server/conf"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
-	"rock-platform/rock/server/conf"
 	"strings"
 	"time"
 )

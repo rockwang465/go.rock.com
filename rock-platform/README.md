@@ -10,10 +10,15 @@
 ### mysql(gorm)
 + 用于各节点信息的数据存储(用户token、admin.conf)
 
+## 使用前准备
++ 配置`config.yaml`到`/etc/rock`目录下
++ 创建数据库`rock`
+
 ## 使用介绍
-+ `-f` 指定配置文件
-+ `-v` 查看版本号
 + `server` 启动服务
++ `-v` 查看版本号
++ `--config /etc/xxx/config.yaml` 指定配置文件
++ `--log-dir /xxx/log/` 指定日志路径
 
 ## 跨平台编译
 ```
@@ -25,5 +30,5 @@
 ```
 docker run --name mysql-test -p 3333:3306 -e MYSQL\_ROOT\_PASSWORD=rock1314 -d mysql
 mysql -uroot -P3333 -h0.0.0.0 -prock1314
-mysql> create database demo2;
+mysql> create database rock;
 ```

@@ -17,15 +17,20 @@ type Logger struct {
 	*logrus.Logger
 }
 
+var SingleLogger *Logger
+
 func GetLogger() *Logger {
-	logger := &Logger{logrus.New()}
-	formatter := &logrus.TextFormatter{
-		ForceColors:     true,
-		FullTimestamp:   true,
-		TimestampFormat: "2006-01-02 15:04:05",
+	if SingleLogger == nil {
+		SingleLogger = &Logger{logrus.New()}
+		formatter := &logrus.TextFormatter{
+			ForceColors:     true,
+			FullTimestamp:   true,
+			TimestampFormat: "2006-01-02 15:04:05",
+		}
+		SingleLogger.Logger.SetFormatter(formatter)
 	}
-	logger.Logger.SetFormatter(formatter)
-	return logger
+
+	return SingleLogger
 }
 
 func (l *Logger) InitLogger() {

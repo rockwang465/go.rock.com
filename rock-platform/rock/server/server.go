@@ -1,6 +1,7 @@
 package server
 
 import (
+	"go.rock.com/rock-platform/rock/server/database"
 	"go.rock.com/rock-platform/rock/server/log"
 	"go.rock.com/rock-platform/rock/server/routerEngine"
 )
@@ -8,7 +9,7 @@ import (
 type Server struct {
 	Logger       *log.Logger           `json:"logger"`
 	RouterEngine *routerEngine.Routers `json:"router_engine"`
-	//DBEngine
+	DBEngine     *database.DBEngine    `json:"db_engine"`
 }
 
 var SingleServer *Server
@@ -18,7 +19,7 @@ func GetServer() *Server {
 		SingleServer = &Server{
 			Logger:       log.GetLogger(),                // 实例化logrus.Logger对象
 			RouterEngine: routerEngine.GetRouterEngine(), // 实例化一个没有中间件的空白路由(r := gin.New()代替r := gin.Default())
-			// DBEngine: database.GetDBEngine(),          // 实例化gorm数据库
+			DBEngine:     database.GetDBEngine(),         // 实例化gorm数据库
 		}
 	}
 	return SingleServer
@@ -30,5 +31,6 @@ func (s *Server) InitServer() {
 
 	//s.RouterEngine.Use()
 
-	s.InitRouters() // 初始化路由(定义所有的url)
+	s.InitRouters()     // 初始化路由(定义所有的url)
+	s.DBEngine.InitDB() // 同步库表
 }

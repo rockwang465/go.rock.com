@@ -14,11 +14,13 @@ server:
   kubeConfig: /etc/kubernetes/admin.conf
 log:
   dir: /var/log/rock
-  level: Debug  # default Info
+  level: Debug  # default Info , you can choice Debug、Info、Warn、Error
 db:
   driver: mysql
+  charset: utf8mb4
+  loc: Asia/Shanghai
   name: rock  # database name
-  port: 3306
+  port: 3333
   host: 10.151.3.86
   user: root
   password: rock1314

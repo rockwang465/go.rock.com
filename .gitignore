@@ -5,3 +5,4 @@ src/test
 process-record.md
 rock-platform/rock/cmd/rock
 rock-platform/rock/cmd/*.exe
+rock-platform/rock/cmd/build_scp.sh

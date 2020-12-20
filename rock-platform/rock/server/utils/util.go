@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"go.rock.com/rock-platform/rock/server/conf"
 	"golang.org/x/crypto/pbkdf2"
 	"math/rand"
 	"time"
@@ -36,4 +37,11 @@ func EncryptPwd(password, salt string) string {
 	pwd := hex.EncodeToString(dk)
 	return pwd
 
+}
+
+// 获取过期的秒数
+func GetExpireDuration() int {
+	config := conf.GetConfig()
+	duration := config.Viper.GetDuration("server.tokenExpire") // default 10 minutes
+	return int(duration / time.Second)
 }

@@ -22,6 +22,7 @@ func (s *Server) InitRouters() {
 	v1Root := router.Group("/v1")
 	{
 		v1Root.POST("/register", ctlv1.Register)
+		v1Root.POST("/login", ctlv1.Login)
 	}
 
 	// 健康检查接口

@@ -1,6 +1,6 @@
 server:
   addr: 0.0.0.0
-  port: 8080  # default 8000
+  port: 8888  # default 8000
 #  configPath: /etc/rock/config.yaml
 #  https:
 #    addr: 0.0.0.0
@@ -10,7 +10,7 @@ server:
   adminAuth:
     username: admin
     password: Zs/Pftkh+esjvR5SVjOYqPxaPXiDk91APmuEtuDgE9Y=
-  tokenExpire: 300  # default 300
+  tokenExpire: 5m  # default 10 minutes(Warning: 300 is wrong. You have to write 300s or 5m)
   kubeConfig: /etc/kubernetes/admin.conf
 log:
   dir: /var/log/rock

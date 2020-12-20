@@ -1,9 +1,11 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	api "go.rock.com/rock-platform/rock/server/database/api"
 	"go.rock.com/rock-platform/rock/server/database/models"
+	"go.rock.com/rock-platform/rock/server/utils"
 	"net/http"
 )
 
@@ -42,11 +44,12 @@ func (c *Controller) Register(ctx *gin.Context) {
 	}
 
 	if len(user.Password) < 6 {
-		panic("The password length is too short, greater than or equal 6")
+		err := utils.NewRockError(400, 40000002, fmt.Sprintf("The password length is too short, greater than or equal 6")) // generate a error
+		panic(err)
 		return
 	}
 
-	userInfo, err := api.RegistryCreateUser(user.Username, user.Password, user.Email)
+	userInfo, err := api.CreateUser(user.Username, user.Password, user.Email)
 	if err != nil {
 		panic(err)
 	}

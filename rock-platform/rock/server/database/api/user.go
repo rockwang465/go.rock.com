@@ -8,10 +8,8 @@ import (
 	"go.rock.com/rock-platform/rock/server/utils"
 )
 
-func RegistryCreateUser(username, password, email string) (*models.User, error) {
-	fmt.Println("RegistryCreateUser ")
-	fmt.Printf("%s,%s,%s", username, password, email)
-
+func CreateUser(username, password, email string) (*models.User, error) {
+	//fmt.Printf("%s,%s,%s", username, password, email)
 	db := database.GetDBEngine()
 	// get user , if exists return error
 	var user = &models.User{}
@@ -46,4 +44,13 @@ func RegistryCreateUser(username, password, email string) (*models.User, error) 
 		return nil, err
 	}
 	return User, nil
+}
+
+func GetUserByName(username string) (*models.User, error) {
+	db := database.GetDBEngine()
+	var user = new(models.User)
+	if err := db.Where("name = ?", username).First(user).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
 }

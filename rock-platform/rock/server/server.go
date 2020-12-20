@@ -1,8 +1,10 @@
 package server
 
 import (
+	"github.com/gin-gonic/gin"
 	"go.rock.com/rock-platform/rock/server/database"
 	"go.rock.com/rock-platform/rock/server/log"
+	middleware "go.rock.com/rock-platform/rock/server/middleware"
 	"go.rock.com/rock-platform/rock/server/routerEngine"
 )
 
@@ -29,8 +31,15 @@ func GetServer() *Server {
 func (s *Server) InitServer() {
 	s.Logger.InitLogger() // 初始化日志配置(日志级别、日志文件、日志分割、日志格式)
 
-	//s.RouterEngine.Use()
+	s.addMiddleWare(
+		middleware.ErrorHandler(),
+	)
 
 	s.InitRouters()     // 初始化路由(定义所有的url)
 	s.DBEngine.InitDB() // 同步库表
+}
+
+// use middleware
+func (s *Server) addMiddleWare(mds ...gin.HandlerFunc) {
+	s.RouterEngine.Use(mds...)
 }

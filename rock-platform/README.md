@@ -15,18 +15,37 @@
 + 创建数据库`rock`
 
 ## 使用介绍
+### 启动命令
 + `server` 启动服务
 + `-v` 查看版本号
 + `--config /etc/xxx/config.yaml` 指定配置文件
 + `--log-dir /xxx/log/` 指定日志路径
 
-## 跨平台编译
+### 跨平台编译
 ```
 # cd /e/mygopath/src/rock-platform/rock/cmd
 # CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build .
 ```
 
-## `docker run mysql`
+### swager
++ swagger页面
+```
+http://10.151.3.87:8888/swagger/index.html
+```
++ 初始化
+```
+# cd /e/mygopath/src/github.com/swaggo/swag/cmd/swag
+# cd /e/mygopath/src/go.rock.com/rock-platform/rock/cmd
+# /e/mygopath/src/github.com/swaggo/swag/cmd/swag/swag.exe init -g ./cmd/main.go - o ./docs
+2020/12/20 14:51:32 Generate swagger docs....
+2020/12/20 14:51:32 Generate general API Info, search dir:./
+2020/12/20 14:51:33 warning: failed to get package name in dir: ./, error: execute go list command, exit status 1, stdout:, stderr:can't load package: package .: no Go files in E:\mygopath\src\go.rock.com\rock-platform\rock
+2020/12/20 14:51:33 create docs.go at docs\docs.go
+2020/12/20 14:51:33 create swagger.json at docs\swagger.json
+2020/12/20 14:51:33 create swagger.yaml at docs\swagger.yaml
+```
+
+### `docker run mysql`
 ```
 docker run --name mysql-test -p 3333:3306 -e MYSQL\_ROOT\_PASSWORD=rock1314 -d mysql
 mysql -uroot -P3333 -h0.0.0.0 -prock1314

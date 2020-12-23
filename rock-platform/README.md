@@ -47,8 +47,10 @@ http://10.151.3.87:8888/swagger/index.html
 
 ### `docker run mysql`
 ```
-docker run --name mysql-test -p 3333:3306 -e MYSQL\_ROOT\_PASSWORD=rock1314 -d mysql
+docker run --restart=always --name mysql-test -p 3333:3306 -e MYSQL\_ROOT\_PASSWORD=rock1314 -d mysql
 mysql -uroot -P3333 -h0.0.0.0 -prock1314
 mysql> create database rock;
 mysql> ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'rock1314';
+# iptables -I INPUT -p tcp -m tcp --dport 3333 -j ACCEPT
+# iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 ```

@@ -12,7 +12,7 @@ server:
     password: Zs/Pftkh+esjvR5SVjOYqPxaPXiDk91APmuEtuDgE9Y=
   tokenExpire: 5m  # default 10 minutes(Warning: 300 is wrong. You have to write 300s or 5m)
   kubeConfig: /etc/kubernetes/admin.conf
-  login-retry-count: 3  # default 3
+  login-retry-count: 5  # default 3
   login-block-duration: 5m  # default 5m
 log:
   dir: /var/log/rock
@@ -23,7 +23,7 @@ db:
   loc: Asia/Shanghai
   name: rock  # database name
   port: 3333
-  host: 10.151.3.86
+  host: 10.151.3.85
   user: root
   password: rock1314
 tiller:

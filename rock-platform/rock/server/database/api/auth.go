@@ -43,20 +43,20 @@ func CountUserLoginFailedNumber(userId int64) error {
 
 	// if fail login count >= server.login-retry-count, increase block time
 	maxLoginRetryCount := config.Viper.GetInt64("server.login-retry-count")
-	if maxLoginRetryCount == 0 { // 需要测试是否有效
+	if maxLoginRetryCount == 0 {
 		logger.Warning("Not define server.login-retry-count, please check")
 		maxLoginRetryCount = 3
 	}
 	if failLoginCount >= maxLoginRetryCount {
 		loginBlockDuration := config.Viper.GetDuration("server.login-block-duration")
-		if loginBlockDuration == 0 { // 需要测试是否有效
+		if loginBlockDuration == 0 {
 			logger.Warning("Not define server.login-block-duration, please check")
 			loginBlockDuration = time.Minute * 5
 		}
 		userMap["login_block_until"] = time.Now().Add(loginBlockDuration)
 	}
 
-	// 3. update to database
+	// update to database
 	if err := db.Model(&user).Update(userMap).Error; err != nil {
 		return err
 	}

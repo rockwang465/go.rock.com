@@ -93,7 +93,9 @@ func (e *DBEngine) InitDB() {
 	// sync tables
 	logger.Infof("[Rock Platform] Start to sync tables ...")
 	var user = &models.User{} // 或者直接 user := new(models.User),赋值直接用&user
+	var role = &models.Role{} // 或者直接 user := new(models.User),赋值直接用&user
 	e.AutoMigrate(user)       // create user table
+	e.AutoMigrate(role)       // create role table
 
 	logger.Infof("[Rock Platform] Tables sync finished")
 }

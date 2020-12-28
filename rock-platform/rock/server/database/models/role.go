@@ -3,12 +3,12 @@ package models
 import "fmt"
 
 type Role struct {
-	Id          int64         `json:"id" xorm:"pk autoincr unique notnull 'id'"`
-	Name        string        `json:"name" xorm:"unique notnull"`
+	Id          int64         `json:"id" gorm:"unique_index;not null"` // primary_key, AUTO_INCREMENT
+	Name        string        `json:"name" gorm:"unique_index;not null"`
 	Description string        `json:"description"`
-	Users       []*User       `json:"users" xorm:"-"`
-	Permissions []*Permission `json:"permissions" xorm:"-"`
-	//Common      `xorm:"extends"`
+	Users       []*User       `json:"users" gorm:"-"` // - 忽略这个字段,不进行映射
+	Permissions []*Permission `json:"permissions" gorm:"-"`
+	Common
 }
 
 type RolePagination struct {

@@ -37,9 +37,18 @@ func (s *Server) InitServer() {
 
 	s.InitRouters()     // 初始化路由(定义所有的url)
 	s.DBEngine.InitDB() // 同步库表
+	s.initDBData()      // 初始化admin用户、role角色(管理员、开发者)
 }
 
 // use middleware
 func (s *Server) addMiddleWare(mds ...gin.HandlerFunc) {
 	s.RouterEngine.Use(mds...)
+}
+
+func (s *Server) initDBData() {
+	e := database.GetDBEngine()
+	records := GetUsersInitData()
+	existOrInsert(e, records)
+	roles := GetRolesInitData()
+	existOrInsert(e, roles)
 }

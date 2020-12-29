@@ -15,6 +15,9 @@ type User struct {
 	//SecretExpiredAt *time.Time `json:"secret_expired_at"`
 	LoginRetryCount int64      `json:"login_retry_count"`
 	LoginBlockUntil *time.Time `json:"login_block_until"`
-	RoleId          *Role      `json:"role_id"`
+	Role            Role       `json:"role" gorm:"ForeignKey:RoleId;AssociationForeignKey:Id"` // use RoleId to ForeignKey
+	RoleId          int64      `json:"role_id" gorm:"not null"`
+	//Role            Role       `gorm:"ForeignKey:RoleId"` // use RoleId to ForeignKey
+	//RoleId          *Role      `json:"role_id" gorm:"not null;column:role_id"`
 	Common
 }

@@ -25,7 +25,8 @@ func GetUsersInitData() []InitRecord {
 				Email:    "1031653788@qq.com",
 				Salt:     "r8slTCTTHD8qVaYr",
 				Token:    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIzMjA3ZWFkNGUwOTJkZTc3ZTAyMjM5NGIzMjA0ZDc1NSIsImV4cCI6MTYwODg4NjI2MiwiaWF0IjoxNjA4ODg1OTAyLCJpc3MiOiJSb2NrIFdhbmciLCJzdWIiOiJMb2dpbiB0b2tlbiJ9.ex4jRen8b5Te2ihWigzxeboGG17HsNgQPNWVBLwV5bY", // expire time: 2120-12-01
-				RoleId:   &models.Role{Id: 1},
+				//RoleId:   &models.Role{Id: 1},
+				RoleId: 5,
 			},
 		},
 	}

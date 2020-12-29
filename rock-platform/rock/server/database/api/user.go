@@ -50,6 +50,10 @@ func GetUserByName(username string) (*models.User, error) {
 	db := database.GetDBEngine()
 	var user = new(models.User)
 	if err := db.Where("name = ?", username).First(user).Error; err != nil {
+		if err.Error() == "record not found" {
+			err = utils.NewRockError(400, 40000004, fmt.Sprintf("user with name(%v) is not found", username))
+			return nil, err
+		}
 		return nil, err
 	}
 	return user, nil

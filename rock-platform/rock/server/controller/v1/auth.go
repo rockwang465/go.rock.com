@@ -74,6 +74,15 @@ func (c *Controller) Login(ctx *gin.Context) {
 		}
 	}
 
+	// generate admin account token
+	//tokenAdmin, err := middleware.GenerateToken(1, "admin", "3207ead4e092de77e022394b3204d755")
+	//if err != nil {
+	//	panic(err)
+	//}else{
+	//	fmt.Println("admin user token")
+	//	fmt.Println(tokenAdmin)
+	//}
+
 	// generate jwt token
 	token, err := middleware.GenerateToken(user.Id, user.Name, user.Password)
 	if err != nil {

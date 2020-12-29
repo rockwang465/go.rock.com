@@ -28,6 +28,14 @@ func GenerateToken(userId int64, username, password string) (string, error) {
 		userDefineExpire = time.Minute * 10 // Set the default token expire time to 10 minutes
 	}
 
+	// generate admin token is 100 years
+	//var expireTime time.Time
+	//if username == "admin" {
+	//	fmt.Println("admin account")
+	//	expireTime = nowTime.Add(time.Hour * 24 * 365 * 100)  // 2120-12-01
+	//	fmt.Printf("expireTime: %v\n", expireTime)
+	//}
+
 	expireTime := nowTime.Add(time.Minute + userDefineExpire)
 	claim := &Claim{
 		UserId:   userId,

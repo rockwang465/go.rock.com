@@ -17,7 +17,5 @@ type User struct {
 	LoginBlockUntil *time.Time `json:"login_block_until"`
 	Role            Role       `json:"role" gorm:"ForeignKey:RoleId;AssociationForeignKey:Id"` // use RoleId to ForeignKey
 	RoleId          int64      `json:"role_id" gorm:"not null"`
-	//Role            Role       `gorm:"ForeignKey:RoleId"` // use RoleId to ForeignKey
-	//RoleId          *Role      `json:"role_id" gorm:"not null;column:role_id"`
 	Common
 }

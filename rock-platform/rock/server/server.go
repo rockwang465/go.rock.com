@@ -47,8 +47,8 @@ func (s *Server) addMiddleWare(mds ...gin.HandlerFunc) {
 
 func (s *Server) initDBData() {
 	e := database.GetDBEngine()
-	records := GetUsersInitData()
-	existOrInsert(e, records)
 	roles := GetRolesInitData()
 	existOrInsert(e, roles)
+	records := GetUsersInitData()
+	existOrInsert(e, records)
 }

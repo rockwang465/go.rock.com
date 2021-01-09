@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.rock.com/rock-platform/rock/server/database/api"
-	middleware "go.rock.com/rock-platform/rock/server/middleware"
+	"go.rock.com/rock-platform/rock/server/middleware"
 	"go.rock.com/rock-platform/rock/server/utils"
 	"net/http"
 	"time"
@@ -84,7 +84,7 @@ func (c *Controller) Login(ctx *gin.Context) {
 	//}
 
 	// generate jwt token
-	token, err := middleware.GenerateToken(user.Id, user.Name, user.Password)
+	token, err := middleWare.GenerateToken(user.Id, user.Name, user.Password)
 	if err != nil {
 		panic(err)
 		return
@@ -103,12 +103,24 @@ func (c *Controller) Login(ctx *gin.Context) {
 	ctx.SetCookie("token", user.Token, utils.GetExpireDuration(), "/", "", false, true)
 	c.Logger.Infof("User %v login successful", user.Name)
 
-	resp := &UserDetailResp{
-		Id:        user.Id,
-		Username:  user.Name,
-		Email:     user.Email,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-	}
-	ctx.JSON(http.StatusOK, gin.H{"user_info": resp})
+	//resp := &UserDetailResp{
+	//	Id:        user.Id,
+	//	Username:  user.Name,
+	//	Email:     user.Email,
+	//	CreatedAt: user.CreatedAt,
+	//	UpdatedAt: user.UpdatedAt,
+	//}
+
+	// user: {"id":2,"name":"rock1", ..., "role":{"id":0,...}}
+	//resp := &UserDetailResp{}
+	//err = utils.MarshalResponse(user, resp)  // 此处和顺义不太一样
+	//if err != nil {
+	//	panic(err)
+	//	return
+	//}
+	//fmt.Println(resp)
+	//ctx.JSON(http.StatusOK, gin.H{"user_info": resp})
+	c.Logger.Infof("User %v login successful", user.Name)
+	//ctx.JSON(http.StatusOK, *resp)
+	ctx.JSON(http.StatusOK, userInfo)
 }

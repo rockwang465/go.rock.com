@@ -21,9 +21,9 @@ func (s *Server) InitRouters() {
 
 	v1Root := router.Group("/v1")
 	{
-		registryApi := v1Root.Group("/register")
+		registryApi := v1Root.Group("/users")
 		{
-			registryApi.POST("", ctlv1.Register)
+			registryApi.POST("", ctlv1.CreateUser)
 		}
 
 		authApi := v1Root.Group("/auth")

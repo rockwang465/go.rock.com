@@ -30,6 +30,18 @@ mysql> ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'rock1314'
 + `-v` 查看版本号
 + `--config /etc/xxx/config.yaml` 指定配置文件
 + `--log-dir /xxx/log/` 指定日志路径
+```
+# ./rock  server -h
+start rock server
+
+Usage:
+  rock server [flags]
+
+Flags:
+  -c, --config string    The config file's path (default "/etc/rock/config.yml")
+  -h, --help             help for server
+      --log-dir string   The log file's directory (default "/var/log/rock")
+```
 
 ### 2)swagger
 + swagger页面

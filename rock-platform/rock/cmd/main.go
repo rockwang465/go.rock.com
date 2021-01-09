@@ -26,11 +26,13 @@ func main() {
 	}
 
 	// cmdCfg.ConfigPath 用于把value: "/etc/console/config.yml"中的值赋值过去
+	// 传参用法: -c 或 --config = "/etc/rock/config.yml"
 	runServerCmd.Flags().StringVarP(&cmdCfg.ConfigPath, "config", "c", "/etc/rock/config.yml",
 		"The config file's path")
 	// 将subCmd.Flags()命令行参数绑定到viper中，解决万一有用户命令行传参，则可以替换默认读取的值。
 	_ = config.Viper.BindPFlag("config", runServerCmd.Flags().Lookup("config"))
 
+	// 传参用法: --log-dir="/var/log/rock"
 	runServerCmd.Flags().StringVar(&cmdCfg.LogDir, "log-dir", "/var/log/rock",
 		"The log file's directory")
 	_ = config.Viper.BindPFlag("log.dir", runServerCmd.Flags().Lookup("log-dir"))

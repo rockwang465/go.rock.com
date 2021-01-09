@@ -7,6 +7,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fastly/go-utils v0.0.0-20180712184237-d95a45783239 // indirect
 	github.com/gin-gonic/gin v1.6.3
+	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
 	github.com/go-openapi/spec v0.20.0 // indirect
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
 	github.com/go-sql-driver/mysql v1.5.0
@@ -30,4 +31,5 @@ require (
 	golang.org/x/sys v0.0.0-20201218084310-7d0127a74742 // indirect
 	golang.org/x/tools v0.0.0-20201218024724-ae774e9781d2 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 )

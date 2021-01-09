@@ -31,6 +31,11 @@
 - ErrorCode: 50000002
 - 中文名称: 未知数据库错误
 
+---
+- HttpCode: 500
+- ErrorCode: 50000003
+- 中文名称: 未知邮件系统错误
+
 ```
 - HttpCode: 400
 - ErrorCode: 40000001

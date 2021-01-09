@@ -79,6 +79,27 @@ MySQL [console55]> select * from user limit 10;
 | 31 | wangyecheng_vendor           | wangyecheng_vendor@sensetime.com  | 6eae3f390be36b724cd44ba5cefdd3dc | wsnwdhSyrFLHDDDw | 2R6QWcLvRPgawpMGkyJQ | eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZXh0Ijoid2FuZ3llY2hlbmdfdmVuZG9yIiwidHlwZSI6InVzZXIifQ.ByCZiu5Q3AP0NGCjL6bg36WYQvGFiJJWky5gKjiWYoI  | eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMSwidXNlcm5hbWUiOiJ3YW5neWVjaGVuZ192ZW5kb3IiLCJkcm9uZV90b2tlbiI6ImV5SmhiR2NpT2lKSVV6STFOaUlzSW5SNWNDSTZJa3BYVkNKOS5leUowWlhoMElqb2lkMkZ1WjNsbFkyaGxibWRmZG1WdVpHOXlJaXdpZEhsd1pTSTZJblZ6WlhJaWZRLkJ5Q1ppdTVRM0FQME5HQ2pMNmJnMzZXWVF2R0ZpSkpXa3k1Z0tqaVdZb0kiLCJwYXNzd29yZCI6IjZlYWUzZjM5MGJlMzZiNzI0Y2Q0NGJhNWNlZmRkM2RjIiwicm9sZSI6ImFkbWluIiwiaXNzIjoiY29uc29sZSJ9.LtSlPBvGz8QNVJcQa1IleiGpfEvIbOn-2fGgVAjfHp0         |                  | NULL                |        0 | 2019-02-26 11:20:22 | 2020-01-09 14:56:40 | NULL                |      13 |                 0 | NULL                |             NULL | 1       |
 +----+------------------------------+-----------------------------------+----------------------------------+------------------+----------------------+----------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------+---------------------+----------+---------------------+---------------------+---------------------+---------+-------------------+---------------------+------------------+---------+
 31 rows in set (0.00 sec)
+user表所有字段:
+id
+name
+email
+password
+salt
+gitlab_token
+drone_token
+token
+reset_secret
+secret_expired_at
+is_admin
+created_at
+updated_at
+deleted_at
+version
+login_retry_count
+login_block_until
+is_license_admin
+role_id
+
 
 MySQL [console55]> select * from role limit 10;
 +----+--------------------+------------------------------+---------------------+---------------------+------------+---------+

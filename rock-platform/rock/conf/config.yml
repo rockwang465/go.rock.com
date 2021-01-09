@@ -27,4 +27,10 @@ db:
   user: root
   password: rock1314
 tiller:
-  port: 30134
+  port: 31134
+email:
+  user: wangyecheng465@163.com
+  password: OXQBIWAMOOAYOHNV  # 163 authorization code
+  smtp:
+    addr: smtp.163.com
+    port: 465

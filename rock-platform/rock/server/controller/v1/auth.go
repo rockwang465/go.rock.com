@@ -35,7 +35,7 @@ func (c *Controller) Login(ctx *gin.Context) {
 	}
 
 	// check user is exist
-	user, err := api.GetUserByName(userInfo.Username)
+	user, err := api.HasUserByName(userInfo.Username)
 	if err != nil {
 		panic(err)
 		return

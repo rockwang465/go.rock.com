@@ -40,7 +40,6 @@ func (c *Controller) CreateUser(ctx *gin.Context) {
 		panic(err)
 		return
 	}
-	fmt.Println("api.CreateUser:", userReq.Name, userReq.Password, userReq.Email, userReq.RoleId)
 
 	user, err := api.CreateUser(userReq.Name, userReq.Password, userReq.Email, userReq.RoleId)
 	if err != nil {
@@ -60,15 +59,18 @@ func (c *Controller) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err = api.UpdateUserToken()
+	user, err = api.UpdateUserToken(user.Id, token)
+	if err != nil {
+		panic(err)
+		return
+	}
 
-	//resp := &UserDetailResp{}
-	//err = utils.MarshalResponse(user, resp)
-	//if err != nil {
-	//	panic(err)
-	//	return
-	//}
+	resp, err := api.GetUserDetailResp(user.Id)
+	if err != nil {
+		panic(err)
+		return
+	}
+
 	c.Logger.Infof("User %v register successful", user.Name)
-	//ctx.JSON(http.StatusOK, resp)
-	ctx.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, gin.H{"user": user, "resp": resp})
 }

@@ -72,5 +72,5 @@ func (c *Controller) CreateUser(ctx *gin.Context) {
 	}
 
 	c.Logger.Infof("User %v register successful", user.Name)
-	ctx.JSON(http.StatusOK, gin.H{"user": user, "resp": resp})
+	ctx.JSON(http.StatusOK, resp)
 }

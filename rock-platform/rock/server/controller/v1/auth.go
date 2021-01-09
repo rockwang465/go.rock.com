@@ -103,24 +103,12 @@ func (c *Controller) Login(ctx *gin.Context) {
 	ctx.SetCookie("token", user.Token, utils.GetExpireDuration(), "/", "", false, true)
 	c.Logger.Infof("User %v login successful", user.Name)
 
-	//resp := &UserDetailResp{
-	//	Id:        user.Id,
-	//	Username:  user.Name,
-	//	Email:     user.Email,
-	//	CreatedAt: user.CreatedAt,
-	//	UpdatedAt: user.UpdatedAt,
-	//}
+	resp, err := api.GetUserDetailResp(user.Id)
+	if err != nil {
+		panic(err)
+		return
+	}
 
-	// user: {"id":2,"name":"rock1", ..., "role":{"id":0,...}}
-	//resp := &UserDetailResp{}
-	//err = utils.MarshalResponse(user, resp)  // 此处和顺义不太一样
-	//if err != nil {
-	//	panic(err)
-	//	return
-	//}
-	//fmt.Println(resp)
-	//ctx.JSON(http.StatusOK, gin.H{"user_info": resp})
 	c.Logger.Infof("User %v login successful", user.Name)
-	//ctx.JSON(http.StatusOK, *resp)
-	ctx.JSON(http.StatusOK, userInfo)
+	ctx.JSON(http.StatusOK, resp)
 }

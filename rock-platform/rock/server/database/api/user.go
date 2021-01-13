@@ -6,6 +6,7 @@ import (
 	"go.rock.com/rock-platform/rock/server/database"
 	"go.rock.com/rock-platform/rock/server/database/models"
 	"go.rock.com/rock-platform/rock/server/utils"
+	"time"
 )
 
 type UserDetailResp struct {
@@ -24,19 +25,47 @@ type UserDetailResp struct {
 	RoleVersion     int              `json:"role_version" binding:"required" example:"1"`
 }
 
-func CreateUser(username, password, email string, roleId int64) (*models.User, error) {
+type UserFullResp struct {
+	Id              int64            `json:"id" example:"1"`
+	Name            string           `json:"name" example:"admin_user"`
+	Password        string           `json:"password" example:"********"`
+	Email           string           `json:"email" example:"admin_user@sensetime.com"`
+	Salt            string           `json:"salt" example:"salt secret"`
+	Token           string           `json:"token" example:"user token"`
+	CreatedAt       models.LocalTime `json:"created_at" example:"2020-12-20 15:15:22"`
+	UpdatedAt       models.LocalTime `json:"updated_at" example:"2020-12-20 15:15:22"`
+	LoginBlockUntil *time.Time       `json:"login_block_until" example:"2020-12-20 15:15:22"`
+	//LoginRetryCount int64            `json:"login_retry_count" example:"1"`
+	//Version         int64            `json:"version" example:"1"`
+
+	RoleId          int64            `json:"role_id"`
+	RoleName        string           `json:"role_name"`
+	RoleDescription string           `json:"role_description" binding:"required" example:"description for role"`
+	RoleCreatedAt   models.LocalTime `json:"role_created_at" example:"2020-12-20 15:15:22"`
+	RoleUpdatedAt   models.LocalTime `json:"role_updated_at" example:"2020-12-20 15:15:22"`
+	RoleVersion     int              `json:"role_version" binding:"required" example:"1"`
+}
+
+func CreateUser(username, password, email string, roleId int64) (*models.User, *models.Role, error) {
 	db := database.GetDBEngine()
 	// get user , if exists return error
 	var user = &models.User{}
 	db.Where("name = ?", username).First(&user)
 	if user.Id != 0 {
 		err := utils.NewRockError(400, 40000001, fmt.Sprintf("user with name(%v) is alerady exist", username)) // generate a error
-		return nil, err
+		return nil, nil, err
 	}
 
 	// password encrypt
 	salt := utils.GenerateSalt()                   // get salt
 	encryptPwd := utils.EncryptPwd(password, salt) // encrypt
+
+	// verify role_id in role table id
+	role := new(models.Role)
+	if err := db.First(role, roleId).Error; err != nil {
+		return nil, nil, err
+	}
+
 	var User = &models.User{
 		Name:     username,
 		Password: encryptPwd,
@@ -56,15 +85,33 @@ func CreateUser(username, password, email string, roleId int64) (*models.User, e
 				err = utils.NewRockError(400, 40000001, fmt.Sprintf("user with name(%v) is alerady exist", username))
 			}
 		}
-		return nil, err
+		return nil, nil, err
 	}
-	return User, nil
+	return User, role, nil
 }
 
 func GetUserDetailResp(userId int64) (*UserDetailResp, error) {
 	db := database.GetDBEngine()
 	resp := new(UserDetailResp)
-	if err := db.Raw("SELECT a.id as id, a.name as name, a.email as email, a.created_at as created_at, a.updated_at as updated_at, b.id as role_id, b.name as role_name, b.description as role_description, b.created_at as role_created_at, b.updated_at as role_updated_at, b.version as role_version from user a LEFT JOIN role b ON a.role_id = b.id where a.id = ?", userId).Scan(resp).Error; err != nil {
+	if err := db.Raw("SELECT a.id as id, a.name as name, a.email as email, a.created_at as created_at, a.updated_at as updated_at, b.id as role_id, b.name as role_name, b.description as role_description, b.created_at as role_created_at, b.updated_at as role_updated_at, b.version as role_version from user a LEFT JOIN role b ON a.role_id = b.id where a.id = ? ORDER BY id ASC LIMIT 1", userId).Scan(resp).Error; err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func GetUserDetailRespByName(username string) (*UserDetailResp, error) {
+	db := database.GetDBEngine()
+	resp := new(UserDetailResp)
+	if err := db.Raw("SELECT a.id as id, a.name as name, a.email as email, a.created_at as created_at, a.updated_at as updated_at, b.id as role_id, b.name as role_name, b.description as role_description, b.created_at as role_created_at, b.updated_at as role_updated_at, b.version as role_version from user a LEFT JOIN role b ON a.role_id = b.id where a.name = ? ORDER BY id ASC LIMIT 1", username).Scan(resp).Error; err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func GetUserFullRespByName(username string) (*UserFullResp, error) {
+	db := database.GetDBEngine()
+	resp := new(UserFullResp)
+	if err := db.Raw("SELECT a.id as id, a.name as name, a.password as password, a.email as email, a.salt as salt, a.token as token, a.created_at as created_at, a.updated_at as updated_at, a.login_retry_count as login_retry_count, b.id as role_id, b.name as role_name, b.description as role_description, b.created_at as role_created_at, b.updated_at as role_updated_at, b.version as role_version from user a LEFT JOIN role b ON a.role_id = b.id where a.name = ? ORDER BY id ASC LIMIT 1", username).Scan(resp).Error; err != nil {
 		return nil, err
 	}
 	return resp, nil

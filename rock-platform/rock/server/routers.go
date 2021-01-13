@@ -5,6 +5,7 @@ import (
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"go.rock.com/rock-platform/rock/server/controller/v1"
+	middleware "go.rock.com/rock-platform/rock/server/middleware"
 	"net/http"
 )
 
@@ -23,7 +24,9 @@ func (s *Server) InitRouters() {
 	{
 		registryApi := v1Root.Group("/users")
 		{
-			registryApi.POST("", ctlv1.CreateUser)
+			//registryApi.POST("", middleware.IsAdmin, ctlv1.CreateUser)
+			//registryApi.POST("", middleware.Auth, middleware.IsAdmin, ctlv1.CreateUser)
+			registryApi.POST("", middleware.Auth, ctlv1.CreateUser)
 		}
 
 		authApi := v1Root.Group("/auth")

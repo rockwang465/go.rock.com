@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	api "go.rock.com/rock-platform/rock/server/database/api"
-	middleWare "go.rock.com/rock-platform/rock/server/middleware"
 	"go.rock.com/rock-platform/rock/server/utils"
 	"net/http"
 )
@@ -16,7 +15,8 @@ type CreateUserReq struct {
 	Password string `json:"password" binding:"required" example:"********"`
 	Email    string `json:"email" binding:"required" example:"admin_user@sensetime.com"`
 	//RoleId   *RoleIdReq `json:"role_id" binding:"required"`  // 用顺义的这种定义，ctx.ShouldBind报错
-	RoleId int64 `json:"role_id" binding:"required" example:"1"`
+	RoleId int64 `json:"role_id" binding:"required" example:"1"` // role表id=1
+	//RoleId interface{} `json:"role_id" binding:"required" example:"1"` // role表id=1
 }
 
 // @Summary Create user
@@ -41,19 +41,18 @@ func (c *Controller) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err := api.CreateUser(userReq.Name, userReq.Password, userReq.Email, userReq.RoleId)
+	user, role, err := api.CreateUser(userReq.Name, userReq.Password, userReq.Email, userReq.RoleId)
 	if err != nil {
 		panic(err)
 		return
 	}
-
 	if err := utils.SendNewPwdEmail(user.Name, user.Email, userReq.Password); err != nil {
 		panic(err)
 		return
 	}
 	c.Logger.Debugf("Send create User(%s)'s email successfully", user.Name)
 
-	token, err := middleWare.GenerateToken(user.Id, user.Name, user.Password)
+	token, err := utils.GenerateToken(user.Id, user.Name, user.Password, role.Name)
 	if err != nil {
 		panic(err)
 		return

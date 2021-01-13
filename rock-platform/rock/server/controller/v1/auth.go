@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.rock.com/rock-platform/rock/server/database/api"
-	"go.rock.com/rock-platform/rock/server/middleware"
+	"go.rock.com/rock-platform/rock/server/database/models"
 	"go.rock.com/rock-platform/rock/server/utils"
 	"net/http"
 	"time"
@@ -13,7 +13,7 @@ import (
 // 对用户是否有权限操作进行验证的模块
 
 type LoginUserInfo struct {
-	Username string `json:"username" binding:"required" example:"admin_user"`
+	Name     string `json:"name" binding:"required" example:"admin_user"`
 	Password string `json:"password" binding:"required" example:"********"`
 }
 
@@ -35,7 +35,7 @@ func (c *Controller) Login(ctx *gin.Context) {
 	}
 
 	// check user is exist
-	user, err := api.HasUserByName(userInfo.Username)
+	user, err := api.GetUserFullRespByName(userInfo.Name)
 	if err != nil {
 		panic(err)
 		return
@@ -84,31 +84,31 @@ func (c *Controller) Login(ctx *gin.Context) {
 	//}
 
 	// generate jwt token
-	token, err := middleWare.GenerateToken(user.Id, user.Name, user.Password)
+	token, err := utils.GenerateToken(user.Id, user.Name, user.Password, user.RoleName)
 	if err != nil {
 		panic(err)
 		return
 	}
 
 	// update token to mysql
+	var userData *models.User
 	if user.Token != token {
-		user, err = api.UpdateUserToken(user.Id, token)
+		userData, err = api.UpdateUserToken(user.Id, token)
 		if err != nil {
 			panic(err)
 			return
 		}
 	}
 
-	// save cookie
-	ctx.SetCookie("token", user.Token, utils.GetExpireDuration(), "/", "", false, true)
-	c.Logger.Infof("User %v login successful", user.Name)
-
+	// return user info
 	resp, err := api.GetUserDetailResp(user.Id)
 	if err != nil {
 		panic(err)
 		return
 	}
 
+	// save cookie
+	ctx.SetCookie("token", userData.Token, utils.GetExpireDuration(), "/", "", false, true)
 	c.Logger.Infof("User %v login successful", user.Name)
 	ctx.JSON(http.StatusOK, resp)
 }

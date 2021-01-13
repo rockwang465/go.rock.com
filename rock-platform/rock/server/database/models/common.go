@@ -10,3 +10,10 @@ type Common struct {
 	//DeletedAt LocalTime `json:"deleted_at" gorm:"type:timestamp null"`  // error
 	Version int `json:"version" gorm:"not null"`
 }
+
+type ConfCtx struct {
+	UserId   int64  `json:"user_id"`
+	Username string `json:"username"`
+	Role     string `json:"role"`
+	//DroneToken string `json:"drone_token"`
+}

@@ -50,7 +50,7 @@ func ConnectDB() *gorm.DB {
 		dbSource.Charset,
 		dbSource.Loc)
 	db, err := gorm.Open(dbSource.Driver, args)
-	fmt.Printf("%v\n", args)
+	//fmt.Printf("%v\n", args)
 	if err != nil {
 		panic(err)
 	}

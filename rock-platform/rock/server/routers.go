@@ -24,9 +24,7 @@ func (s *Server) InitRouters() {
 	{
 		registryApi := v1Root.Group("/users")
 		{
-			//registryApi.POST("", middleware.IsAdmin, ctlv1.CreateUser)
-			//registryApi.POST("", middleware.Auth, middleware.IsAdmin, ctlv1.CreateUser)
-			registryApi.POST("", middleware.Auth, ctlv1.CreateUser)
+			registryApi.POST("", middleware.IsAdmin, ctlv1.CreateUser)
 		}
 
 		authApi := v1Root.Group("/auth")

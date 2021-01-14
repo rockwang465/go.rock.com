@@ -16,6 +16,11 @@ type Server struct {
 
 var SingleServer *Server
 
+var skipAuthPath = []string{"/v1/auth/login", "/swagger/index.html", "/swagger/swagger-ui.css",
+	"/swagger/swagger-ui-standalone-preset.js", "/swagger/swagger-ui-bundle.js", "/swagger/swagger-ui.css.map",
+	"/swagger/doc.json", "/swagger/swagger-ui-standalone-preset.js.map", "/swagger/swagger-ui-bundle.js.map",
+	"/swagger/favicon-32x32.png", "/swagger/favicon-16x16.png"}
+
 func GetServer() *Server {
 	if SingleServer == nil {
 		SingleServer = &Server{
@@ -32,9 +37,9 @@ func (s *Server) InitServer() {
 	s.Logger.InitLogger() // 初始化日志配置(日志级别、日志文件、日志分割、日志格式)
 
 	s.addMiddleWare(
+		middleware.Auth(skipAuthPath...),
 		middleware.ErrorHandler(),
 	)
-
 	s.InitRouters()     // 初始化路由(定义所有的url)
 	s.DBEngine.InitDB() // 同步库表
 	s.initDBData()      // 初始化admin用户、role角色(管理员、开发者)

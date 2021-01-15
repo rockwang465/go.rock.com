@@ -16,6 +16,11 @@ type Server struct {
 
 var SingleServer *Server
 
+var skipLogPath = []string{"/swagger/index.html", "/swagger/swagger-ui.css",
+	"/swagger/swagger-ui-standalone-preset.js", "/swagger/swagger-ui-bundle.js", "/swagger/swagger-ui.css.map",
+	"/swagger/doc.json", "/swagger/swagger-ui-standalone-preset.js.map", "/swagger/swagger-ui-bundle.js.map",
+	"/swagger/favicon-32x32.png", "/swagger/favicon-16x16.png"}
+
 var skipAuthPath = []string{"/v1/auth/login", "/swagger/index.html", "/swagger/swagger-ui.css",
 	"/swagger/swagger-ui-standalone-preset.js", "/swagger/swagger-ui-bundle.js", "/swagger/swagger-ui.css.map",
 	"/swagger/doc.json", "/swagger/swagger-ui-standalone-preset.js.map", "/swagger/swagger-ui-bundle.js.map",
@@ -37,6 +42,7 @@ func (s *Server) InitServer() {
 	s.Logger.InitLogger() // 初始化日志配置(日志级别、日志文件、日志分割、日志格式)
 
 	s.addMiddleWare(
+		middleware.AccessLog(skipLogPath...),
 		middleware.Auth(skipAuthPath...),
 		middleware.ErrorHandler(),
 	)

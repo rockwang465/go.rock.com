@@ -90,6 +90,32 @@ func CreateUser(username, password, email string, roleId int64) (*models.User, *
 	return User, role, nil
 }
 
+func GetUsers(pageNum, pageSize int64, filedName string) (*models.UserPagination, error) {
+	db := database.GetDBEngine()
+	query := "%" + filedName + "%"
+	Users := make([]*models.User, 0)
+
+	var count int64
+	if err := db.Order("name desc").Offset((pageNum-1)*pageSize).Where("name like ?", query).Find(&Users).Count(&count).Error; err != nil {
+		fmt.Println("err: 1 count")
+		return nil, err
+	}
+
+	if err := db.Order("name desc").Offset((pageNum-1)*pageSize).Where("name like ?", query).Limit(pageSize).Find(&Users).Error; err != nil {
+		return nil, err
+	}
+
+	pages := utils.CalcPages(count, pageSize)
+	var userPagination = &models.UserPagination{
+		PageNum:  pageNum,
+		PageSize: pageSize,
+		Total:    count,
+		Pages:    pages,
+		Items:    Users,
+	}
+	return userPagination, nil
+}
+
 func GetUserDetailResp(userId int64) (*UserDetailResp, error) {
 	db := database.GetDBEngine()
 	resp := new(UserDetailResp)

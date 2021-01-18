@@ -24,7 +24,97 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/v1/register": {
+        "/v1/auth/login": {
+            "post": {
+                "description": "Api to login rock platform with name and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AUTH"
+                ],
+                "summary": "Login rock platform with name and password",
+                "parameters": [
+                    {
+                        "description": "JSON type input body",
+                        "name": "input_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LoginUserInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/api.UserDetailResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users": {
+            "get": {
+                "description": "Api to get all users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "USER"
+                ],
+                "summary": "Get users",
+                "parameters": [
+                    {
+                        "description": "JSON type input body",
+                        "name": "input_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.GetPaginationReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Api to create user",
                 "consumes": [
@@ -44,15 +134,15 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.RegisterUserInfo"
+                            "$ref": "#/definitions/v1.CreateUserReq"
                         }
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.UserDetailResp"
+                            "$ref": "#/definitions/api.UserDetailResp"
                         }
                     },
                     "400": {
@@ -72,43 +162,12 @@ var doc = `{
         }
     },
     "definitions": {
-        "utils.HTTPError": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string",
-                    "example": "error message here"
-                },
-                "error_code": {
-                    "type": "integer",
-                    "example": 50000001
-                }
-            }
-        },
-        "v1.RegisterUserInfo": {
+        "api.UserDetailResp": {
             "type": "object",
             "required": [
-                "email",
-                "password",
-                "username"
+                "role_description",
+                "role_version"
             ],
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "admin_user@sensetime.com"
-                },
-                "password": {
-                    "type": "string",
-                    "example": "********"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "admin_user"
-                }
-            }
-        },
-        "v1.UserDetailResp": {
-            "type": "object",
             "properties": {
                 "created_at": {
                     "type": "string",
@@ -122,13 +181,187 @@ var doc = `{
                     "type": "integer",
                     "example": 1
                 },
-                "updated_at": {
+                "name": {
+                    "type": "string",
+                    "example": "admin_user"
+                },
+                "role_created_at": {
                     "type": "string",
                     "example": "2020-12-20 15:15:22"
                 },
-                "username": {
+                "role_description": {
+                    "type": "string",
+                    "example": "description for role"
+                },
+                "role_id": {
+                    "type": "integer"
+                },
+                "role_name": {
+                    "type": "string"
+                },
+                "role_updated_at": {
+                    "type": "string",
+                    "example": "2020-12-20 15:15:22"
+                },
+                "role_version": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2020-12-20 15:15:22"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "description": "can not use LocalTime",
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "login_block_until": {
+                    "type": "string"
+                },
+                "login_retry_count": {
+                    "description": "ResetSecret     string     ` + "`" + `json:\"reset_secret\"` + "`" + `\nSecretExpiredAt *time.Time ` + "`" + `json:\"secret_expired_at\"` + "`" + `",
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "description": "Role            Role       ` + "`" + `json:\"role\" gorm:\"ForeignKey:RoleId;AssociationForeignKey:Id\"` + "`" + ` // use RoleId to ForeignKey",
+                    "type": "integer"
+                },
+                "salt": {
+                    "type": "string"
+                },
+                "token": {
+                    "description": "GitlabToken     string     ` + "`" + `json:\"gitlab_token\"` + "`" + `\nDroneToken      string     ` + "`" + `json:\"drone_token\"` + "`" + `",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "version": {
+                    "description": "DeletedAt LocalTime ` + "`" + `json:\"deleted_at\" gorm:\"type:timestamp;default:null\"` + "`" + `  // error\nDeletedAt LocalTime ` + "`" + `json:\"deleted_at\" gorm:\"type:timestamp null\"` + "`" + `  // error",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.UserPagination": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.User"
+                    }
+                },
+                "page_num": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "pages": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "utils.HTTPError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "error message here"
+                },
+                "error_code": {
+                    "type": "integer",
+                    "example": 50000001
+                }
+            }
+        },
+        "v1.CreateUserReq": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password",
+                "role_id"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "admin_user@sensetime.com"
+                },
+                "name": {
                     "type": "string",
                     "example": "admin_user"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "********"
+                },
+                "role_id": {
+                    "description": "RoleId   *RoleIdReq ` + "`" + `json:\"role_id\" binding:\"required\"` + "`" + `  // 用顺义的这种定义，ctx.ShouldBind报错",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "v1.GetPaginationReq": {
+            "type": "object",
+            "required": [
+                "page_num",
+                "page_size",
+                "query_field"
+            ],
+            "properties": {
+                "page_num": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "page_size": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "query_field": {
+                    "type": "string",
+                    "example": "rock"
+                }
+            }
+        },
+        "v1.LoginUserInfo": {
+            "type": "object",
+            "required": [
+                "name",
+                "password"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "admin_user"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "********"
                 }
             }
         }

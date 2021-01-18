@@ -15,7 +15,15 @@ type User struct {
 	//SecretExpiredAt *time.Time `json:"secret_expired_at"`
 	LoginRetryCount int64      `json:"login_retry_count"`
 	LoginBlockUntil *time.Time `json:"login_block_until"`
-	Role            Role       `json:"role" gorm:"ForeignKey:RoleId;AssociationForeignKey:Id"` // use RoleId to ForeignKey
-	RoleId          int64      `json:"role_id" gorm:"not null"`
+	//Role            Role       `json:"role" gorm:"ForeignKey:RoleId;AssociationForeignKey:Id"` // use RoleId to ForeignKey
+	RoleId int64 `json:"role_id" gorm:"not null"`
 	Common
+}
+
+type UserPagination struct {
+	PageNum  int64   `json:"page_num"`
+	PageSize int64   `json:"page_size"`
+	Total    int64   `json:"total"`
+	Pages    int64   `json:"pages"`
+	Items    []*User `json:"items"`
 }

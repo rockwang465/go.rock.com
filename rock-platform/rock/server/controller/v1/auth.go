@@ -17,16 +17,16 @@ type LoginUserInfo struct {
 	Password string `json:"password" binding:"required" example:"********"`
 }
 
-// @Summary Login
-// @Description Api to login
-// @Tags USER
+// @Summary Login rock platform with name and password
+// @Description Api to login rock platform with name and password
+// @Tags AUTH
 // @Accept  json
 // @Produce  json
 // @Param input_body body v1.LoginUserInfo true  "JSON type input body"
-// @Success 201 {object} v1.UserDetailResp
+// @Success 201 {object} api.UserDetailResp
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
-// @Router /v1/login [post]
+// @Router /v1/auth/login [post]
 func (c *Controller) Login(ctx *gin.Context) {
 	var userInfo LoginUserInfo
 	if err := ctx.ShouldBind(&userInfo); err != nil {

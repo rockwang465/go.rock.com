@@ -3,7 +3,7 @@ package v1
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	api "go.rock.com/rock-platform/rock/server/database/api"
+	"go.rock.com/rock-platform/rock/server/database/api"
 	"go.rock.com/rock-platform/rock/server/utils"
 	"net/http"
 )
@@ -24,8 +24,8 @@ type CreateUserReq struct {
 // @Tags USER
 // @Accept  json
 // @Produce  json
-// @Param input_body body v1.RegisterUserInfo true  "JSON type input body"
-// @Success 201 {object} v1.UserDetailResp
+// @Param input_body body v1.CreateUserReq true  "JSON type input body"
+// @Success 200 {object} api.UserDetailResp
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/users [post]
@@ -72,4 +72,28 @@ func (c *Controller) CreateUser(ctx *gin.Context) {
 
 	c.Logger.Infof("User %v register successful", user.Name)
 	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Get users
+// @Description Api to get all users
+// @Tags USER
+// @Accept  json
+// @Produce  json
+// @Param input_body body v1.GetPaginationReq true  "JSON type input body"
+// @Success 200 {object} models.UserPagination
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/users [get]
+func (c *Controller) GetUsers(ctx *gin.Context) {
+	var paginationReq GetPaginationReq
+	err := ctx.ShouldBind(&paginationReq)
+	if err != nil {
+		newErr := fmt.Sprintf("context bind failed, %v", err.Error())
+		panic(newErr)
+	}
+	userPg, err := api.GetUsers(paginationReq.PageNum, paginationReq.PageSize, paginationReq.QueryField)
+	if err != nil {
+		panic(err)
+	}
+	ctx.JSON(http.StatusOK, userPg)
 }

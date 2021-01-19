@@ -16,15 +16,14 @@ type CreateUserReq struct {
 	Email    string `json:"email" binding:"required" example:"admin_user@sensetime.com"`
 	//RoleId   *RoleIdReq `json:"role_id" binding:"required"`  // 用顺义的这种定义，ctx.ShouldBind报错
 	RoleId int64 `json:"role_id" binding:"required" example:"1"` // role表id=1
-	//RoleId interface{} `json:"role_id" binding:"required" example:"1"` // role表id=1
 }
 
 // @Summary Create user
 // @Description Api to create user
 // @Tags USER
-// @Accept  json
-// @Produce  json
-// @Param input_body body v1.CreateUserReq true  "JSON type input body"
+// @Accept json
+// @Produce json
+// @Param input_body body v1.CreateUserReq true "JSON type input body"
 // @Success 200 {object} api.UserDetailResp
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
@@ -77,9 +76,11 @@ func (c *Controller) CreateUser(ctx *gin.Context) {
 // @Summary Get users
 // @Description Api to get all users
 // @Tags USER
-// @Accept  json
-// @Produce  json
-// @Param input_body body v1.GetPaginationReq true  "JSON type input body"
+// @Accept json
+// @Produce json
+// @Param PageNum query integer true "Request page number" default(1)
+// @Param PageSize query integer true "Request page size" default(10)
+// @Param QueryField query string false "Fuzzy Query(field: name)"
 // @Success 200 {object} models.UserPagination
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
@@ -96,4 +97,30 @@ func (c *Controller) GetUsers(ctx *gin.Context) {
 		panic(err)
 	}
 	ctx.JSON(http.StatusOK, userPg)
+}
+
+// @Summary Get user with id
+// @Description Api to get user with id
+// @Tags USER
+// @Accept json
+// @Produce json
+// @Param id path integer true "User ID"
+// @Success 200 {object} api.UserDetailResp
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/users/{id} [get]
+func (c *Controller) GetUser(ctx *gin.Context) {
+	var getIdReq IdReq
+	err := ctx.ShouldBindUri(&getIdReq)
+	if err != nil {
+		newErr := fmt.Sprintf("context bind failed, %v", err.Error())
+		panic(newErr)
+	}
+
+	resp, err := api.GetUserDetailResp(getIdReq.Id)
+	if err != nil {
+		panic(err)
+	}
+	ctx.JSON(http.StatusOK, resp)
 }

@@ -86,6 +86,22 @@ const(
 - ErrorCode: 40000005
 - 中文名称: 用户id不存在
 
+- HttpCode: 400
+- ErrorCode: 40000006
+- 中文名称: 序列化失败
+
+---
+
+- HttpCode: 401
+- ErrorCode: 40100001
+- 中文名称: 权限不足
+
+---
+
+- HttpCode: 404
+- ErrorCode: 40400001
+- 中文名称: cookie中没有发现config
+
 ### 500错误类型
 ---
 - HttpCode: 500

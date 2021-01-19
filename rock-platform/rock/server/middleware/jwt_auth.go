@@ -96,31 +96,43 @@ func Auth(skipPath ...string) gin.HandlerFunc {
 	}
 }
 
-// check context, must be admin account
+// check context, must be admin role
 func IsAdmin(ctx *gin.Context) {
-	cfgIf, exists := ctx.Get("custom_config")
-	if !exists {
-		ctx.JSON(http.StatusNotFound, "config info doesn't exist in cookie")
-		ctx.Abort()
-		return
+	config, err := utils.GetConfCtx(ctx)
+	if err != nil {
+		panic(err)
 	}
-
-	config, ok := cfgIf.(models.ConfCtx)
-	if !ok {
-		ctx.JSON(http.StatusBadRequest, "can't unmarshal config info from cookie")
-		ctx.Abort()
-		return
-	}
-
-	logger := log.GetLogger()
 
 	// verify claim by id
 	if config.Role != AdminRole && config.Role != SystemToolsAdminRole {
 		newWarn := fmt.Sprintf("Permission denied, only system_tools_admin or admin role can do this operation")
-		logger.Warning(newWarn)
-		ctx.JSON(http.StatusForbidden, newWarn)
-		ctx.Abort()
+		err := utils.NewRockError(http.StatusUnauthorized, 40100001, newWarn)
+		panic(err)
+	}
+}
+
+// check context, is user self or admin role
+func IsUserSelfOrAdmin(ctx *gin.Context) {
+	config, err := utils.GetConfCtx(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	// check is user self
+	user, err := api.GetUserDetailResp(config.UserId)
+	if err != nil {
+		panic(err)
+	}
+	if user.Id == config.UserId {
 		return
-		//panic(newWarn)
+	}
+
+	// else must be admin role
+	if user.RoleName == AdminRole {
+		return
+	} else {
+		newWarn := fmt.Sprintf("Permission denied, only user self or admin role can do this operation")
+		err := utils.NewRockError(http.StatusUnauthorized, 40100001, newWarn)
+		panic(err)
 	}
 }

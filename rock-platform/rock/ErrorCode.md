@@ -102,6 +102,10 @@ const(
 - ErrorCode: 40400001
 - 中文名称: cookie中没有发现config
 
+- HttpCode: 404
+- ErrorCode: 40400002
+- 中文名称: admin用户禁止删除
+
 ### 500错误类型
 ---
 - HttpCode: 500

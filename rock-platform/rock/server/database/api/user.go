@@ -6,6 +6,7 @@ import (
 	"go.rock.com/rock-platform/rock/server/database"
 	"go.rock.com/rock-platform/rock/server/database/models"
 	"go.rock.com/rock-platform/rock/server/utils"
+	"net/http"
 	"time"
 )
 
@@ -179,6 +180,60 @@ func HasUserByName(username string) (*models.User, error) {
 			err = utils.NewRockError(400, 40000004, fmt.Sprintf("User with name(%v) was not found", username))
 			return nil, err
 		}
+		return nil, err
+	}
+	return user, nil
+}
+
+// delete user by id, if not found return error
+func DeleteUserById(userId int64) (string, error) {
+	db := database.GetDBEngine()
+	var user = new(models.User)
+
+	user, err := HasUserById(userId)
+	if err != nil {
+		return "", err
+	}
+
+	if user.Name == "admin" {
+		err = utils.NewRockError(http.StatusBadRequest, 40400002, fmt.Sprintf("Admin user can't be deleted"))
+		return "", err
+	}
+
+	username := user.Name
+
+	if err := db.Where("id = ?", userId).Delete(user).Error; err != nil {
+		return "", err
+	}
+	return username, nil
+}
+
+// update user password by id, if not found return error
+func UpdateUserPwdById(id int64, oldPwd, newPwd, role string) (*models.User, error) {
+	user, err := HasUserById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(newPwd) < 6 {
+		err := utils.NewRockError(400, 40000002, fmt.Sprintf("The password length is too short, greater than or equal 6")) // generate a error
+		return nil, err
+	}
+
+	encOldPwd := utils.EncryptPwd(oldPwd, user.Salt)
+	if encOldPwd != user.Password {
+		err = utils.NewRockError(http.StatusBadRequest, 40000003, "password incorrect")
+		return nil, err
+	}
+
+	encNewPwd := utils.EncryptPwd(newPwd, user.Salt)
+	token, err := utils.GenerateToken(id, user.Name, encNewPwd, role)
+	if err != nil {
+		return nil, err
+	}
+
+	db := database.GetDBEngine()
+	if err = db.Model(&user).Update(map[string]interface{}{"password": encNewPwd, "token": token}).Error; err != nil {
 		return nil, err
 	}
 	return user, nil

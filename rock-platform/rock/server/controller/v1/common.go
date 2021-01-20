@@ -9,3 +9,8 @@ type GetPaginationReq struct {
 type IdReq struct {
 	Id int64 `json:"id" uri:"id" binding:"required,min=1" example:"1"`
 }
+
+type UpdateUserPwdReq struct {
+	OldPassword string `json:"old_password" binding:"required" example:"********"`
+	NewPassword string `json:"new_password" binding:"required" example:"********"`
+}

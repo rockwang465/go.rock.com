@@ -27,6 +27,8 @@ func (s *Server) InitRouters() {
 			registryApi.POST("", middleware.IsAdmin, ctlv1.CreateUser)
 			registryApi.GET("", middleware.IsAdmin, ctlv1.GetUsers)
 			registryApi.GET("/:id", middleware.IsUserSelfOrAdmin, ctlv1.GetUser)
+			registryApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteUser)
+			registryApi.PUT("/:id/password", middleware.IsUserSelfOrAdmin, ctlv1.UpdateUserPwd)
 		}
 
 		authApi := v1Root.Group("/auth")

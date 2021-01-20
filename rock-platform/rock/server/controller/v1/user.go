@@ -13,7 +13,7 @@ import (
 type CreateUserReq struct {
 	Name     string `json:"name" binding:"required" example:"admin_user"`
 	Password string `json:"password" binding:"required" example:"********"`
-	Email    string `json:"email" binding:"required" example:"admin_user@sensetime.com"`
+	Email    string `json:"email" binding:"required,email" example:"admin_user@sensetime.com"`
 	//RoleId   *RoleIdReq `json:"role_id" binding:"required"`  // 用顺义的这种定义，ctx.ShouldBind报错
 	RoleId int64 `json:"role_id" binding:"required" example:"1"` // role表id=1
 }
@@ -69,7 +69,7 @@ func (c *Controller) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	c.Logger.Infof("User %v register successful", user.Name)
+	c.Logger.Infof("User created with id: %v, name: %v", resp.Id, resp.Name)
 	ctx.JSON(http.StatusOK, resp)
 }
 
@@ -96,6 +96,7 @@ func (c *Controller) GetUsers(ctx *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
+	c.Logger.Infof("Get all users, this pagination user number is: %v", len(userPg.Items))
 	ctx.JSON(http.StatusOK, userPg)
 }
 
@@ -111,16 +112,97 @@ func (c *Controller) GetUsers(ctx *gin.Context) {
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/users/{id} [get]
 func (c *Controller) GetUser(ctx *gin.Context) {
-	var getIdReq IdReq
-	err := ctx.ShouldBindUri(&getIdReq)
+	var uriIdReq IdReq
+	err := ctx.ShouldBindUri(&uriIdReq)
 	if err != nil {
 		newErr := fmt.Sprintf("context bind failed, %v", err.Error())
 		panic(newErr)
 	}
 
-	resp, err := api.GetUserDetailResp(getIdReq.Id)
+	resp, err := api.GetUserDetailResp(uriIdReq.Id)
 	if err != nil {
 		panic(err)
 	}
+	c.Logger.Infof("Get user with id: %v", uriIdReq.Id)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Delete user with id
+// @Description Api to delete user with id
+// @Tags USER
+// @Accept json
+// @Produce json
+// @Param id path integer true "User ID"
+// @Success 200 {object} string
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/users/{id} [delete]
+func (c *Controller) DeleteUser(ctx *gin.Context) {
+	var uriIdReq IdReq
+	err := ctx.ShouldBindUri(&uriIdReq)
+	if err != nil {
+		newErr := fmt.Sprintf("context bind failed, %v", err.Error())
+		panic(newErr)
+	}
+
+	username, err := api.DeleteUserById(uriIdReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Delete user: %v with id: %v", username, uriIdReq.Id)
+	ctx.JSON(http.StatusOK, fmt.Sprintf("Delete user successful"))
+}
+
+// @Summary Update user password with id and old password
+// @Description Api to update user password with id and old password
+// @Tags USER
+// @Accept json
+// @Produce json
+// @Param Id path integer true "User ID"
+// @Param update_body body v1.UpdateUserPwdReq true "JSON body for update user info"
+// @Success 200 {object} api.UserDetailResp
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/users/{id}/password [put]
+func (c *Controller) UpdateUserPwd(ctx *gin.Context) {
+	config, err := utils.GetConfCtx(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	var uriIdReq IdReq
+	err = ctx.ShouldBindUri(&uriIdReq)
+	if err != nil {
+		newErr := fmt.Sprintf("context bind failed, %v", err.Error())
+		panic(newErr)
+	}
+
+	var pwdReq UpdateUserPwdReq
+	err = ctx.ShouldBindJSON(&pwdReq)
+	if err != nil {
+		newErr := fmt.Sprintf("context bind failed, %v", err.Error())
+		panic(newErr)
+	}
+
+	oldPwd := pwdReq.OldPassword
+	newPwd := pwdReq.NewPassword
+	user, err := api.UpdateUserPwdById(uriIdReq.Id, oldPwd, newPwd, config.Role)
+	if err != nil {
+		panic(err)
+	}
+
+	if config.Username == user.Name {
+		ctx.SetCookie("token", user.Token, utils.GetExpireDuration(), "/", "", false, true)
+	}
+
+	resp, err := api.GetUserDetailResp(uriIdReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Update user with id: %v", uriIdReq.Id)
 	ctx.JSON(http.StatusOK, resp)
 }

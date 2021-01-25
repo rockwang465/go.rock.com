@@ -5,6 +5,7 @@ import (
 	"go.rock.com/rock-platform/rock/server/database"
 	"go.rock.com/rock-platform/rock/server/database/models"
 	"go.rock.com/rock-platform/rock/server/log"
+	"go.rock.com/rock-platform/rock/server/utils"
 	"time"
 )
 
@@ -75,4 +76,33 @@ func ResetRetryCount(userId int64) error {
 		return err
 	}
 	return nil
+}
+
+// update use password by secret
+func UpdateUserPwdBySecret(password, email, secret string) (*models.User, error) {
+	user := new(models.User)
+	db := database.GetDBEngine()
+	if err := db.Where("email = ?", email).Find(&user).Error; err != nil {
+		return nil, err
+	}
+
+	diff := time.Now().Sub(*user.SecretExpiredAt)
+	if diff > 0 {
+		if err := db.Model(&user).Update(map[string]interface{}{"reset_secret": "", "secret_expired_at": nil}).Error; err != nil {
+			return nil, err
+		}
+		err := utils.NewRockError(400, 40000012, "Password reset secret had been expired, please resend email to get new one!")
+		return nil, err
+	}
+
+	if user.ResetSecret != secret {
+		err := utils.NewRockError(400, 40000013, "Password reset secret is not correct")
+		return nil, err
+	}
+	encryptPwd := utils.EncryptPwd(password, user.Salt)
+	if err := db.Model(user).Update(map[string]interface{}{"password": encryptPwd, "reset_secret": "", "secret_expired_at": nil}).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

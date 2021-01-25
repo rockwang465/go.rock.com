@@ -34,3 +34,6 @@ email:
   smtp:
     addr: smtp.163.com
     port: 465
+  secret-expire: 30m
+frontend:
+  domain: http://10.151.3.86:8888

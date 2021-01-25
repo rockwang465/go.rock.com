@@ -39,6 +39,7 @@ const(
 	StatusRequestedRangeNotSatisfiable = 416
 	StatusExpectationFailed            = 417
 	StatusTeapot                       = 418
+    StatusUnprocessableEntity          = 422
 
 	StatusInternalServerError     = 500
 	StatusNotImplemented          = 501
@@ -70,7 +71,7 @@ const(
 ---
 - HttpCode: 400
 - ErrorCode: 40000002
-- 中文名称: 密码长度小于6位
+- 中文名称: 密码长度错误
 
 ---
 - HttpCode: 400
@@ -78,17 +79,58 @@ const(
 - 中文名称: 密码错误
 
 ---
+
 - HttpCode: 400
 - ErrorCode: 40000004
 - 中文名称: 用户名不存在
+
+---
 
 - HttpCode: 400
 - ErrorCode: 40000005
 - 中文名称: 用户id不存在
 
+---
+
 - HttpCode: 400
 - ErrorCode: 40000006
 - 中文名称: 序列化失败
+
+---
+
+- HttpCode: 400
+- ErrorCode: 40000007
+- 中文名称: 密码强度不够
+
+--- 
+
+- HttpCode: 400
+- ErrorCode: 40000008
+- 中文名称: 新密码不能和老密码相同
+
+---
+
+- HttpCode: 400
+- ErrorCode: 40000009
+- 中文名称: 该邮箱已注册
+
+---
+
+- HttpCode: 400
+- ErrorCode: 40000010
+- 中文名称: 两次密码输入不同
+
+---
+
+- HttpCode: 400
+- ErrorCode: 40000011
+- 中文名称: 该邮箱不存在
+
+---
+
+- HttpCode: 400
+- ErrorCode: 40000012
+- 中文名称: secret超时
 
 ---
 
@@ -102,9 +144,13 @@ const(
 - ErrorCode: 40400001
 - 中文名称: cookie中没有发现config
 
+---
+
 - HttpCode: 404
 - ErrorCode: 40400002
 - 中文名称: admin用户禁止删除
+
+
 
 ### 500错误类型
 ---

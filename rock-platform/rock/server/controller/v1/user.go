@@ -34,10 +34,18 @@ func (c *Controller) CreateUser(ctx *gin.Context) {
 		panic(err)
 		return
 	}
-	if len(userReq.Password) < 6 {
-		err := utils.NewRockError(400, 40000002, fmt.Sprintf("The password length is too short, greater than or equal 6")) // generate a error
+
+	err := utils.CheckPwd(userReq.Password)
+	if err != nil {
 		panic(err)
-		return
+	}
+	has, err := api.HasEmail(userReq.Email)
+	if err != nil {
+		panic(err)
+	}
+	if has {
+		err = utils.NewRockError(http.StatusBadRequest, 40000009, fmt.Sprintf("Email %v was registered", userReq.Email))
+		panic(err)
 	}
 
 	user, role, err := api.CreateUser(userReq.Name, userReq.Password, userReq.Email, userReq.RoleId)

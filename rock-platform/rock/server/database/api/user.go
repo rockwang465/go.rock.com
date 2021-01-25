@@ -215,8 +215,12 @@ func UpdateUserPwdById(id int64, oldPwd, newPwd, role string) (*models.User, err
 		return nil, err
 	}
 
-	if len(newPwd) < 6 {
-		err := utils.NewRockError(400, 40000002, fmt.Sprintf("The password length is too short, greater than or equal 6")) // generate a error
+	if oldPwd == newPwd {
+		err = utils.NewRockError(http.StatusBadRequest, 40000008, "The new password cannot be the same as the old one")
+		return nil, err
+	}
+	err = utils.CheckPwd(newPwd)
+	if err != nil {
 		return nil, err
 	}
 
@@ -237,4 +241,44 @@ func UpdateUserPwdById(id int64, oldPwd, newPwd, role string) (*models.User, err
 		return nil, err
 	}
 	return user, nil
+}
+
+// Get user by email
+func GetUserByEmail(email string) (*models.User, error) {
+	db := database.GetDBEngine()
+	user := new(models.User)
+	if err := db.Where("email = ?", email).First(user).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+// Reset user secret by id
+func ResetSecretWithId(id int64, secret string, expire time.Duration) (*models.User, error) {
+	db := database.GetDBEngine()
+	user := new(models.User)
+	if err := db.First(user, id).Error; err != nil {
+		return nil, err
+	}
+
+	secretExpireAt := time.Now().Add(expire)
+	if err := db.Model(user).Update(map[string]interface{}{"reset_secret": secret, "secret_expired_at": secretExpireAt}).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+// Has email by email(true: has, false: not found)
+func HasEmail(email string) (bool, error) {
+	db := database.GetDBEngine()
+	user := new(models.User)
+	err := db.Where("email = ?", email).First(user).Error
+	if err != nil {
+		if err.Error() == "record not found" {
+			return false, nil // not found email
+		}
+		return false, err
+	}
+	//fmt.Printf("user id:%v, email: %v\n", user.Id, user.Email)
+	return true, nil
 }

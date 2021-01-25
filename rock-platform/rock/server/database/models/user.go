@@ -10,9 +10,9 @@ type User struct {
 	Salt     string `json:"salt" gorm:"not null"`
 	//GitlabToken     string     `json:"gitlab_token"`
 	//DroneToken      string     `json:"drone_token"`
-	Token string `json:"token" gorm:"type:varchar(1024)"`
-	//ResetSecret     string     `json:"reset_secret"`
-	//SecretExpiredAt *time.Time `json:"secret_expired_at"`
+	Token           string     `json:"token" gorm:"type:varchar(1024)"`
+	ResetSecret     string     `json:"reset_secret"`
+	SecretExpiredAt *time.Time `json:"secret_expired_at"`
 	LoginRetryCount int64      `json:"login_retry_count"`
 	LoginBlockUntil *time.Time `json:"login_block_until"`
 	//Role            Role       `json:"role" gorm:"ForeignKey:RoleId;AssociationForeignKey:Id"` // use RoleId to ForeignKey

@@ -34,6 +34,9 @@ func (s *Server) InitRouters() {
 		authApi := v1Root.Group("/auth")
 		{
 			authApi.POST("/login", ctlv1.Login)
+			authApi.POST("/logout", ctlv1.Logout)
+			authApi.POST("/reset", ctlv1.CreateResetEmail)
+			authApi.POST("/pwd", ctlv1.UpdateUserPwdWithSecret)
 		}
 
 	}

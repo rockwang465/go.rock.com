@@ -16,12 +16,12 @@ type Server struct {
 
 var SingleServer *Server
 
-var skipLogPath = []string{"/swagger/index.html", "/swagger/swagger-ui.css",
+var skipLogPath = []string{"/health", "/swagger/index.html", "/swagger/swagger-ui.css",
 	"/swagger/swagger-ui-standalone-preset.js", "/swagger/swagger-ui-bundle.js", "/swagger/swagger-ui.css.map",
 	"/swagger/doc.json", "/swagger/swagger-ui-standalone-preset.js.map", "/swagger/swagger-ui-bundle.js.map",
 	"/swagger/favicon-32x32.png", "/swagger/favicon-16x16.png"}
 
-var skipAuthPath = []string{"/v1/auth/login", "/swagger/index.html", "/swagger/swagger-ui.css",
+var skipAuthPath = []string{"/health", "/v1/auth/login", "/v1/auth/reset", "/v1/auth/pwd", "/swagger/index.html", "/swagger/swagger-ui.css",
 	"/swagger/swagger-ui-standalone-preset.js", "/swagger/swagger-ui-bundle.js", "/swagger/swagger-ui.css.map",
 	"/swagger/doc.json", "/swagger/swagger-ui-standalone-preset.js.map", "/swagger/swagger-ui-bundle.js.map",
 	"/swagger/favicon-32x32.png", "/swagger/favicon-16x16.png"}

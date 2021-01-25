@@ -1,9 +1,54 @@
 package utils
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.rock.com/rock-platform/rock/server/database/models"
+	"net/http"
+	"regexp"
 )
+
+const (
+	LevelD = iota
+	LevelC
+	LevelB
+	LevelA
+	LevelS
+
+	PwdMinLength = 6
+	PwdMaxLength = 20
+	PwdMinLevel  = 2
+)
+
+// check password
+func CheckPwd(password string) error {
+	if len(password) < PwdMinLength {
+		err := NewRockError(http.StatusBadRequest, 42200002, fmt.Sprintf("The password length is too short, greater than or equal 6")) // generate a error
+		return err
+	}
+	if len(password) > PwdMaxLength {
+		err := NewRockError(http.StatusBadRequest, 40000002, fmt.Sprintf("The password length is too long, less than or equal 20")) // generate a error
+		return err
+	}
+
+	var level int = LevelD
+	patternList := []string{`[0-9]+`, `[A-Z]+`, `[a-z]+`, `[~!@#$%^&*?_-]+`}
+	for _, pattern := range patternList {
+		match, err := regexp.MatchString(pattern, password)
+		if err != nil {
+			return err
+		}
+		if match {
+			level += 1
+		}
+	}
+
+	if level < PwdMinLevel {
+		err := NewRockError(http.StatusBadRequest, 40000007, "Password not strong")
+		return err
+	}
+	return nil
+}
 
 func CalcPages(total, pageSize int64) int64 {
 	var pages int64

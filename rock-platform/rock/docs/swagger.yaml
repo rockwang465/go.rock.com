@@ -50,19 +50,20 @@ definitions:
       login_block_until:
         type: string
       login_retry_count:
-        description: |-
-          ResetSecret     string     `json:"reset_secret"`
-          SecretExpiredAt *time.Time `json:"secret_expired_at"`
         type: integer
       name:
         type: string
       password:
+        type: string
+      reset_secret:
         type: string
       role_id:
         description: Role            Role       `json:"role" gorm:"ForeignKey:RoleId;AssociationForeignKey:Id"`
           // use RoleId to ForeignKey
         type: integer
       salt:
+        type: string
+      secret_expired_at:
         type: string
       token:
         description: |-
@@ -134,6 +135,34 @@ definitions:
     - name
     - password
     type: object
+  v1.ResetPwdReq:
+    properties:
+      email:
+        example: admin_user@sensetime.com
+        type: string
+      password:
+        example: '********'
+        type: string
+      re_password:
+        example: '********'
+        type: string
+      secret:
+        example: TR6UdhT7ebJOCC5N
+        type: string
+    required:
+    - email
+    - password
+    - re_password
+    - secret
+    type: object
+  v1.ResetUserReq:
+    properties:
+      email:
+        example: admin_user@sensetime.com
+        type: string
+    required:
+    - email
+    type: object
   v1.UpdateUserPwdReq:
     properties:
       new_password:
@@ -177,6 +206,89 @@ paths:
           schema:
             $ref: '#/definitions/utils.HTTPError'
       summary: Login rock platform with name and password
+      tags:
+      - AUTH
+  /v1/auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Api to logout rock platform
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: StatusNoContent
+          schema:
+            type: string
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Logout rock platform
+      tags:
+      - AUTH
+  /v1/auth/pwd:
+    post:
+      consumes:
+      - application/json
+      description: Api to update user password with secret
+      parameters:
+      - description: JSON type input body
+        in: body
+        name: input_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ResetPwdReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            type: string
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Update user's password with secret
+      tags:
+      - AUTH
+  /v1/auth/reset:
+    post:
+      consumes:
+      - application/json
+      description: Api to create reset email
+      parameters:
+      - description: JSON type input body
+        in: body
+        name: input_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ResetUserReq'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: StatusNoContent
+          schema:
+            type: string
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Create reset email
       tags:
       - AUTH
   /v1/users:

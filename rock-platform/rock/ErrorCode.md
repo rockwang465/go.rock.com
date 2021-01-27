@@ -57,6 +57,7 @@ const(
 )
 
 常用状态码:
+201 StatusCreated 创建成功
 400 StatusBadRequest 错误请求
 401 StatusUnauthorized 权限不足
 404 StatusNotFound 请求不存在

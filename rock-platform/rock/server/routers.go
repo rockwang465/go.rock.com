@@ -31,6 +31,18 @@ func (s *Server) InitRouters() {
 			registryApi.PUT("/:id/password", middleware.IsUserSelfOrAdmin, ctlv1.UpdateUserPwd)
 		}
 
+		roleApi := v1Root.Group("/roles")
+		{
+			roleApi.POST("", middleware.IsAdmin, ctlv1.CreateRole)
+			roleApi.GET("", middleware.IsAdmin, ctlv1.GetRoles)
+			roleApi.GET("/:id", middleware.IsAdmin, ctlv1.GetRole)
+			roleApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteRole)
+			roleApi.PUT("/:id", middleware.IsAdmin, ctlv1.UpdateRole)
+			//roleApi.GET("/:id/users", ctlv1.GetRoleUsers)
+			//roleApi.GET("/:id/permissions", ctlv1.GetRolePermissions)
+			//roleApi.PUT("/:id/permissions", ctlv1.ManagerRolePermissions)
+		}
+
 		authApi := v1Root.Group("/auth")
 		{
 			authApi.POST("/login", ctlv1.Login)

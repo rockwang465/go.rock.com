@@ -98,7 +98,6 @@ func GetUsers(pageNum, pageSize int64, filedName string) (*models.UserPagination
 
 	var count int64
 	if err := db.Order("name desc").Offset((pageNum-1)*pageSize).Where("name like ?", query).Find(&Users).Count(&count).Error; err != nil {
-		fmt.Println("err: 1 count")
 		return nil, err
 	}
 

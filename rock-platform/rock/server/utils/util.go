@@ -20,7 +20,7 @@ const (
 	NEW_USER_EMAIL_SUBJECT   = "用户创建提示"
 	NEW_USER_EMAIL_CONTENT   = "系统邮件，请勿回复！\n%s，您好：\n    管理员为您创建了Rock平台的账户：\n        用户名：%s\n        密码：%s \n    请您尽快登录Rock平台并修改初始密码。"
 	RESET_USER_EMAIL_SUBJECT = "用户密码重置提示"
-	RESET_USER_EMAIL_CONTENT = "系统邮件，请勿回复！\n%s，您好：\n    您重置了Rock平台的账户密码：\n        用户名：%s\n        密钥：%s\n        密钥有效时间：%s\n        密钥有效期至: %s\n    请您尽快登录Rock平台使用密码进行密码重置。"
+	RESET_USER_EMAIL_CONTENT = "系统邮件，请勿回复！\n%s，您好：\n    您重置了Rock平台的账户密码：\n        用户名：%s\n        密钥：%s\n        密钥有效时间：%s\n        密钥有效期至: %s\n        重置密码链接：%s\n    请您尽快登录Rock平台使用密码进行密码重置。"
 	//RESET_USER_EMAIL_CONTENT = "系统邮件，请勿回复！\n%s，您好：\n    请您点击以下链接进行密码重置：\n    %s \n    请您尽快登录rock平台并修改密码。"
 )
 
@@ -83,11 +83,12 @@ func SendResetPwdEmail(userName, destEmail, secret string, secretExpire time.Dur
 	port := config.Viper.GetInt("email.smtp.port")
 	addr := config.Viper.GetString("email.smtp.addr")
 	m := gomail.NewMessage()
-	until := time.Now().Add(secretExpire)
-	//frontDomain := config.Viper.GetString("frontend.domain")
+	until := time.Now().Add(secretExpire).Format("2006-01-02 15:04:05")
+	frontDomain := config.Viper.GetString("frontend.domain")
+	link := fmt.Sprintf("%s/v1/auth/pwd", frontDomain)
 	//link := fmt.Sprintf("%s/reset-password?username=%s&secret=%s", frontDomain, userName, secret)
 	//content := fmt.Sprintf(RESET_USER_EMAIL_CONTENT, userName, link)
-	content := fmt.Sprintf(RESET_USER_EMAIL_CONTENT, userName, userName, secret, secretExpire, until)
+	content := fmt.Sprintf(RESET_USER_EMAIL_CONTENT, userName, userName, secret, secretExpire, until, link)
 	m.SetHeader("From", user)
 	m.SetHeader("To", destEmail)
 	m.SetHeader("Subject", RESET_USER_EMAIL_SUBJECT)

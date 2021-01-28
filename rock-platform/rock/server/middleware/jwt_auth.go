@@ -119,7 +119,7 @@ func IsUserSelfOrAdmin(ctx *gin.Context) {
 	}
 
 	// check is user self
-	user, err := api.GetUserDetailResp(config.UserId)
+	user, err := api.GetUserBriefResp(config.UserId)
 	if err != nil {
 		panic(err)
 	}

@@ -39,8 +39,33 @@ func (s *Server) InitRouters() {
 			roleApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteRole)
 			roleApi.PUT("/:id", middleware.IsAdmin, ctlv1.UpdateRole)
 			roleApi.GET("/:id/users", middleware.IsAdmin, ctlv1.GetRoleUsers)
-			//roleApi.GET("/:id/permissions", ctlv1.GetRolePermissions)
-			//roleApi.PUT("/:id/permissions", ctlv1.ManagerRolePermissions)
+			//roleApi.GET("/:id/permissions", middleware.IsAdmin, ctlv1.GetRolePermissions)
+			//roleApi.PUT("/:id/permissions", middleware.IsAdmin, ctlv1.ManagerRolePermissions)
+		}
+
+		//permApi := v1Root.Group("/permissions")
+		//{
+		//	permApi.POST("", ctlv1.CreatePermission)
+		//	permApi.GET("", ctlv1.GetPermissions)
+		//	permApi.GET("/:id", ctlv1.GetPermission)
+		//	permApi.DELETE("/:id", ctlv1.DeletePermission)
+		//	permApi.PUT("/:id", ctlv1.UpdatePermission)
+		//	permApi.GET("/:id/roles", ctlv1.GetPermissionRoles)
+		//}
+
+		projectApi := v1Root.Group("/projects")
+		{
+			projectApi.POST("", middleware.IsAdmin, ctlv1.CreateProject)
+			projectApi.GET("", ctlv1.GetProjects)
+			//projectApi.GET("/:id", ctlv1.GetProject)
+			//projectApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteProject)
+			//projectApi.PUT("/:id", middleware.IsAdmin, ctlv1.UpdateProject)
+			//projectApi.GET("/:id/apps", ctlv1.GetProjectApps)
+			//projectApi.POST("/:id/project-envs", middleware.IsAdmin, ctlv1.CreateProjectEnv)
+			//projectApi.GET("/:id/project-envs", ctlv1.GetProjectEnvs)
+			//projectApi.DELETE("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.DeleteProjectEnv)
+			//projectApi.GET("/:id/project-envs/:pe_id", ctlv1.GetProjectEnv)
+			//projectApi.PUT("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.UpdateProjectEnv)
 		}
 
 		authApi := v1Root.Group("/auth")

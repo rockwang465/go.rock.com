@@ -135,6 +135,12 @@ const(
 
 ---
 
+- HttpCode: 400
+- ErrorCode: 40000012
+- 中文名称: project项目名不存在
+
+---
+
 - HttpCode: 401
 - ErrorCode: 40100001
 - 中文名称: 权限不足

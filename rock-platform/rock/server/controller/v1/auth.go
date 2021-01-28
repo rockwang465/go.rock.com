@@ -45,7 +45,7 @@ func (c *Controller) Login(ctx *gin.Context) {
 	}
 
 	// check user is exist
-	user, err := api.GetUserFullRespByName(userInfo.Name)
+	user, err := api.GetUserDetailRespByName(userInfo.Name)
 	if err != nil {
 		panic(err)
 		return
@@ -111,7 +111,7 @@ func (c *Controller) Login(ctx *gin.Context) {
 	}
 
 	// return user info
-	resp, err := api.GetUserDetailResp(user.Id)
+	resp, err := api.GetUserBriefResp(user.Id)
 	if err != nil {
 		panic(err)
 		return
@@ -226,7 +226,7 @@ func (c *Controller) UpdateUserPwdWithSecret(ctx *gin.Context) {
 		panic(err)
 	}
 
-	userDetail, err := api.GetUserDetailResp(user.Id)
+	userDetail, err := api.GetUserBriefResp(user.Id)
 	if err != nil {
 		panic(err)
 	}

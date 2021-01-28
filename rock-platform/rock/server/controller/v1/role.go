@@ -75,7 +75,7 @@ func (c *Controller) CreateRole(ctx *gin.Context) {
 		panic(err)
 	}
 
-	var resp RoleBriefResp
+	resp := RoleBriefResp{}
 	if err := utils.MarshalResponse(role, &resp); err != nil {
 		panic(err)
 	}
@@ -105,7 +105,7 @@ func (c *Controller) GetRoles(ctx *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	var resp PaginateRoleResp
+	resp := PaginateRoleResp{}
 	if err := utils.MarshalResponse(rolePg, &resp); err != nil {
 		panic(err)
 	}
@@ -134,7 +134,7 @@ func (c *Controller) GetRole(ctx *gin.Context) {
 		panic(err)
 	}
 
-	var resp RoleBriefResp
+	resp := RoleBriefResp{}
 	if err := utils.MarshalResponse(role, &resp); err != nil {
 		panic(err)
 	}
@@ -172,7 +172,7 @@ func (c *Controller) DeleteRole(ctx *gin.Context) {
 // @Param id path integer true "Role ID"
 // @Param description body string true "Role Description"
 // @Param update_body body v1.UpdateRoleReq true "JSON type for update role description"
-// @Success 200 {object} v1.PaginateUserResp "StatusOK"
+// @Success 200 {object} v1.RoleBriefResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/roles/{id} [put]
@@ -191,7 +191,7 @@ func (c *Controller) UpdateRole(ctx *gin.Context) {
 		panic(err)
 	}
 
-	var resp RoleBriefResp
+	resp := RoleBriefResp{}
 	if err := utils.MarshalResponse(role, &resp); err != nil {
 		panic(err)
 	}
@@ -207,7 +207,7 @@ func (c *Controller) UpdateRole(ctx *gin.Context) {
 // @Param id path integer true "Role ID"
 // @Param page_num query integer true "Request page number" default(1)
 // @Param page_size query integer true "Request page size" default(10)
-// @Success 200 {object} v1.PaginateUserResp "StatusOK"
+// @Success 200 {object} v1.PaginateBriefUserResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/roles/{id}/users [get]
@@ -232,7 +232,7 @@ func (c *Controller) GetRoleUsers(ctx *gin.Context) {
 		panic(err)
 	}
 
-	var resp PaginateBriefUserResp
+	resp := PaginateBriefUserResp{}
 	if err := utils.MarshalResponse(userPg, &resp); err != nil {
 		panic(err)
 	}

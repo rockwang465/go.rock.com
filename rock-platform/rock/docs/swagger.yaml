@@ -8,10 +8,17 @@ definitions:
         example: admin_user@sensetime.com
         type: string
       id:
+        description: type UserFullResp struct {
         example: 1
         type: integer
+      login_block_until:
+        example: "2020-12-20 15:15:22"
+        type: string
       name:
         example: admin_user
+        type: string
+      password:
+        example: '********'
         type: string
       role_created_at:
         example: "2020-12-20 15:15:22"
@@ -29,6 +36,12 @@ definitions:
       role_version:
         example: 1
         type: integer
+      salt:
+        example: salt secret
+        type: string
+      token:
+        example: user token
+        type: string
       updated_at:
         example: "2020-12-20 15:15:22"
         type: string
@@ -102,6 +115,17 @@ definitions:
         example: 50000001
         type: integer
     type: object
+  v1.CreateProjectReq:
+    properties:
+      description:
+        example: This is an example
+        type: string
+      name:
+        example: senseguard-example
+        type: string
+    required:
+    - name
+    type: object
   v1.CreateRoleReq:
     properties:
       description:
@@ -146,6 +170,31 @@ definitions:
     - name
     - password
     type: object
+  v1.PaginateBriefUserResp:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/v1.UserBriefResp'
+        type: array
+      page_num:
+        example: 1
+        type: integer
+      pages:
+        example: 1
+        type: integer
+      per_size:
+        example: 10
+        type: integer
+      total:
+        example: 100
+        type: integer
+    required:
+    - items
+    - page_num
+    - pages
+    - per_size
+    - total
+    type: object
   v1.PaginateRoleResp:
     properties:
       items:
@@ -171,11 +220,29 @@ definitions:
     - per_size
     - total
     type: object
-  v1.PaginateUserResp:
+  v1.ProjectBriefResp:
+    properties:
+      created_at:
+        example: "2021-01-28 20:20:20"
+        type: string
+      description:
+        example: This is an example
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: senseguard-example
+        type: string
+      updated_at:
+        example: "2021-01-28 20:20:20"
+        type: string
+    type: object
+  v1.ProjectPagination:
     properties:
       items:
         items:
-          $ref: '#/definitions/v1.UserBriefResp'
+          $ref: '#/definitions/v1.ProjectBriefResp'
         type: array
       page_num:
         example: 1
@@ -275,9 +342,6 @@ definitions:
       created_at:
         example: "2018-10-09T14:57:23+08:00"
         type: string
-      description:
-        example: description for role
-        type: string
       email:
         example: admin@sensetime.com
         type: string
@@ -298,7 +362,6 @@ definitions:
         type: integer
     required:
     - created_at
-    - description
     - email
     - id
     - name
@@ -422,6 +485,45 @@ paths:
       summary: Create reset email
       tags:
       - AUTH
+  /v1/projects:
+    post:
+      consumes:
+      - application/json
+      description: Api to get all projects
+      parameters:
+      - example: 1
+        in: query
+        name: page_num
+        required: true
+        type: integer
+      - example: 20
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      - description: 'omitempty: allow empty'
+        example: rock
+        in: query
+        name: query_field
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ProjectPagination'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get all projects
+      tags:
+      - PROJECT
   /v1/roles:
     get:
       consumes:
@@ -576,7 +678,7 @@ paths:
         "200":
           description: StatusOK
           schema:
-            $ref: '#/definitions/v1.PaginateUserResp'
+            $ref: '#/definitions/v1.RoleBriefResp'
         "400":
           description: StatusBadRequest
           schema:
@@ -617,7 +719,7 @@ paths:
         "200":
           description: StatusOK
           schema:
-            $ref: '#/definitions/v1.PaginateUserResp'
+            $ref: '#/definitions/v1.PaginateBriefUserResp'
         "400":
           description: StatusBadRequest
           schema:

@@ -10,7 +10,8 @@ import (
 	"time"
 )
 
-type UserDetailResp struct {
+type UserBriefResp struct {
+	//type UserDetailResp struct {
 	Id        int64            `json:"id" example:"1"`
 	Name      string           `json:"name" example:"admin_user"`
 	Email     string           `json:"email" example:"admin_user@sensetime.com"`
@@ -26,7 +27,8 @@ type UserDetailResp struct {
 	RoleVersion     int              `json:"role_version" binding:"required" example:"1"`
 }
 
-type UserFullResp struct {
+type UserDetailResp struct {
+	//type UserFullResp struct {
 	Id              int64            `json:"id" example:"1"`
 	Name            string           `json:"name" example:"admin_user"`
 	Password        string           `json:"password" example:"********"`
@@ -97,11 +99,11 @@ func GetUsers(pageNum, pageSize int64, filedName string) (*models.UserPagination
 	Users := make([]*models.User, 0)
 
 	var count int64
-	if err := db.Order("name desc").Offset((pageNum-1)*pageSize).Where("name like ?", query).Find(&Users).Count(&count).Error; err != nil {
+	if err := db.Order("updated_at desc").Offset((pageNum-1)*pageSize).Where("name like ?", query).Find(&Users).Count(&count).Error; err != nil {
 		return nil, err
 	}
 
-	if err := db.Order("name desc").Offset((pageNum-1)*pageSize).Where("name like ?", query).Limit(pageSize).Find(&Users).Error; err != nil {
+	if err := db.Order("updated_at desc").Offset((pageNum-1)*pageSize).Where("name like ?", query).Limit(pageSize).Find(&Users).Error; err != nil {
 		return nil, err
 	}
 
@@ -116,10 +118,19 @@ func GetUsers(pageNum, pageSize int64, filedName string) (*models.UserPagination
 	return userPagination, nil
 }
 
-func GetUserDetailResp(userId int64) (*UserDetailResp, error) {
+func GetUserBriefResp(userId int64) (*UserBriefResp, error) {
 	db := database.GetDBEngine()
-	resp := new(UserDetailResp)
+	resp := new(UserBriefResp)
 	if err := db.Raw("SELECT a.id as id, a.name as name, a.email as email, a.created_at as created_at, a.updated_at as updated_at, b.id as role_id, b.name as role_name, b.description as role_description, b.created_at as role_created_at, b.updated_at as role_updated_at, b.version as role_version from user a LEFT JOIN role b ON a.role_id = b.id where a.id = ? ORDER BY id ASC LIMIT 1", userId).Scan(resp).Error; err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func GetUserBriefRespByName(username string) (*UserBriefResp, error) {
+	db := database.GetDBEngine()
+	resp := new(UserBriefResp)
+	if err := db.Raw("SELECT a.id as id, a.name as name, a.email as email, a.created_at as created_at, a.updated_at as updated_at, b.id as role_id, b.name as role_name, b.description as role_description, b.created_at as role_created_at, b.updated_at as role_updated_at, b.version as role_version from user a LEFT JOIN role b ON a.role_id = b.id where a.name = ? ORDER BY id ASC LIMIT 1", username).Scan(resp).Error; err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -128,15 +139,6 @@ func GetUserDetailResp(userId int64) (*UserDetailResp, error) {
 func GetUserDetailRespByName(username string) (*UserDetailResp, error) {
 	db := database.GetDBEngine()
 	resp := new(UserDetailResp)
-	if err := db.Raw("SELECT a.id as id, a.name as name, a.email as email, a.created_at as created_at, a.updated_at as updated_at, b.id as role_id, b.name as role_name, b.description as role_description, b.created_at as role_created_at, b.updated_at as role_updated_at, b.version as role_version from user a LEFT JOIN role b ON a.role_id = b.id where a.name = ? ORDER BY id ASC LIMIT 1", username).Scan(resp).Error; err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
-func GetUserFullRespByName(username string) (*UserFullResp, error) {
-	db := database.GetDBEngine()
-	resp := new(UserFullResp)
 	if err := db.Raw("SELECT a.id as id, a.name as name, a.password as password, a.email as email, a.salt as salt, a.token as token, a.created_at as created_at, a.updated_at as updated_at, a.login_retry_count as login_retry_count, b.id as role_id, b.name as role_name, b.description as role_description, b.created_at as role_created_at, b.updated_at as role_updated_at, b.version as role_version from user a LEFT JOIN role b ON a.role_id = b.id where a.name = ? ORDER BY id ASC LIMIT 1", username).Scan(resp).Error; err != nil {
 		return nil, err
 	}

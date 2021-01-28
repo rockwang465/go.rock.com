@@ -52,11 +52,11 @@ func GetRoles(pageNum, pageSize int64, filedName string) (*models.RolePagination
 	Roles := make([]*models.Role, 0)
 
 	var count int64
-	if err := db.Order("name desc").Offset((pageNum-1)*pageSize).Where("name like ?", query).Find(&Roles).Count(&count).Error; err != nil {
+	if err := db.Order("updated_at desc").Offset((pageNum-1)*pageSize).Where("name like ?", query).Find(&Roles).Count(&count).Error; err != nil {
 		return nil, err
 	}
 
-	if err := db.Order("name desc").Offset((pageNum-1)*pageSize).Where("name like ?", query).Limit(pageSize).Find(&Roles).Error; err != nil {
+	if err := db.Order("updated_at desc").Offset((pageNum-1)*pageSize).Where("name like ?", query).Limit(pageSize).Find(&Roles).Error; err != nil {
 		return nil, err
 	}
 
@@ -110,7 +110,7 @@ func GetRoleUsers(roleId, pageNum, pageSize int64) (*models.UserPagination, erro
 	Users := make([]*models.User, 0)
 
 	var count int64
-	if err := db.Order("name desc").
+	if err := db.Order("updated_at desc").
 		Offset((pageNum-1)*pageSize).
 		Where("role_id = ?", roleId).
 		Find(&Users).
@@ -118,7 +118,7 @@ func GetRoleUsers(roleId, pageNum, pageSize int64) (*models.UserPagination, erro
 		return nil, err
 	}
 
-	if err := db.Order("name desc").
+	if err := db.Order("updated_at desc").
 		Offset((pageNum-1)*pageSize).
 		Where("role_id = ?", roleId).
 		Limit(pageSize).

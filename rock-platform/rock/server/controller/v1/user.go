@@ -20,14 +20,13 @@ type CreateUserReq struct {
 }
 
 type UserBriefResp struct {
-	Id          int64            `json:"id" binding:"required" example:"1"`
-	Name        string           `json:"name" binding:"required" example:"admin_role"`
-	Email       string           `json:"email" binding:"required" example:"admin@sensetime.com"`
-	Description string           `json:"description" binding:"required" example:"description for role"`
-	RoleId      int64            `json:"role_id"  binding:"required" example:"1"`
-	CreatedAt   models.LocalTime `json:"created_at" binding:"required" example:"2018-10-09T14:57:23+08:00"`
-	UpdatedAt   models.LocalTime `json:"updated_at" binding:"required" example:"2018-10-09T14:57:23+08:00"`
-	Version     int              `json:"version" binding:"required" example:"1"`
+	Id        int64            `json:"id" binding:"required" example:"1"`
+	Name      string           `json:"name" binding:"required" example:"admin_role"`
+	Email     string           `json:"email" binding:"required" example:"admin@sensetime.com"`
+	RoleId    int64            `json:"role_id"  binding:"required" example:"1"`
+	CreatedAt models.LocalTime `json:"created_at" binding:"required" example:"2018-10-09T14:57:23+08:00"`
+	UpdatedAt models.LocalTime `json:"updated_at" binding:"required" example:"2018-10-09T14:57:23+08:00"`
+	Version   int              `json:"version" binding:"required" example:"1"`
 }
 
 type PaginateBriefUserResp struct {
@@ -37,6 +36,19 @@ type PaginateBriefUserResp struct {
 	Pages   int64            `json:"pages" binding:"required" example:"1"`
 	Items   []*UserBriefResp `json:"items" binding:"required"`
 }
+
+//type UserDetailResp struct {
+//	UserBriefResp
+//	RoleId *RoleBriefResp `json:"role_id" binding:"required"`
+//}
+//
+//type PaginateDetailUserResp struct {
+//	PageNum int64            `json:"page_num" binding:"required" example:"1"`
+//	PerSize int64            `json:"per_size" binding:"required" example:"10"`
+//	Total   int64            `json:"total" binding:"required" example:"100"`
+//	Pages   int64            `json:"pages" binding:"required" example:"1"`
+//	Items   []*UserDetailResp `json:"items" binding:"required"`
+//}
 
 // @Summary Create user
 // @Description Api to create user
@@ -91,7 +103,7 @@ func (c *Controller) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := api.GetUserDetailResp(user.Id)
+	resp, err := api.GetUserBriefResp(user.Id)
 	if err != nil {
 		panic(err)
 		return
@@ -124,8 +136,14 @@ func (c *Controller) GetUsers(ctx *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	c.Logger.Infof("Get all users, this pagination user number is: %v", len(userPg.Items))
-	ctx.JSON(http.StatusOK, userPg)
+
+	pgUser := PaginateBriefUserResp{}
+	if err := utils.MarshalResponse(userPg, &pgUser); err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Get all users, this pagination user number is: %v", len(pgUser.Items))
+	ctx.JSON(http.StatusOK, pgUser)
 }
 
 // @Summary Get user with id
@@ -147,7 +165,7 @@ func (c *Controller) GetUser(ctx *gin.Context) {
 		panic(newErr)
 	}
 
-	resp, err := api.GetUserDetailResp(uriIdReq.Id)
+	resp, err := api.GetUserBriefResp(uriIdReq.Id)
 	if err != nil {
 		panic(err)
 	}
@@ -226,7 +244,7 @@ func (c *Controller) UpdateUserPwd(ctx *gin.Context) {
 		ctx.SetCookie("token", user.Token, utils.GetExpireDuration(), "/", "", false, true)
 	}
 
-	resp, err := api.GetUserDetailResp(uriIdReq.Id)
+	resp, err := api.GetUserBriefResp(uriIdReq.Id)
 	if err != nil {
 		panic(err)
 	}

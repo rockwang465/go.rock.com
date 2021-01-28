@@ -197,6 +197,64 @@ var doc = `{
                 }
             }
         },
+        "/v1/projects": {
+            "post": {
+                "description": "Api to get all projects",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PROJECT"
+                ],
+                "summary": "Get all projects",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "name": "page_num",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "example": 20,
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "rock",
+                        "description": "omitempty: allow empty",
+                        "name": "query_field",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ProjectPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/roles": {
             "get": {
                 "description": "api for get all roles",
@@ -386,7 +444,7 @@ var doc = `{
                     "200": {
                         "description": "StatusOK",
                         "schema": {
-                            "$ref": "#/definitions/v1.PaginateUserResp"
+                            "$ref": "#/definitions/v1.RoleBriefResp"
                         }
                     },
                     "400": {
@@ -488,7 +546,7 @@ var doc = `{
                     "200": {
                         "description": "StatusOK",
                         "schema": {
-                            "$ref": "#/definitions/v1.PaginateUserResp"
+                            "$ref": "#/definitions/v1.PaginateBriefUserResp"
                         }
                     },
                     "400": {
@@ -784,12 +842,21 @@ var doc = `{
                     "example": "admin_user@sensetime.com"
                 },
                 "id": {
+                    "description": "type UserFullResp struct {",
                     "type": "integer",
                     "example": 1
+                },
+                "login_block_until": {
+                    "type": "string",
+                    "example": "2020-12-20 15:15:22"
                 },
                 "name": {
                     "type": "string",
                     "example": "admin_user"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "********"
                 },
                 "role_created_at": {
                     "type": "string",
@@ -812,6 +879,14 @@ var doc = `{
                 "role_version": {
                     "type": "integer",
                     "example": 1
+                },
+                "salt": {
+                    "type": "string",
+                    "example": "salt secret"
+                },
+                "token": {
+                    "type": "string",
+                    "example": "user token"
                 },
                 "updated_at": {
                     "type": "string",
@@ -909,6 +984,22 @@ var doc = `{
                 }
             }
         },
+        "v1.CreateProjectReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "This is an example"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "senseguard-example"
+                }
+            }
+        },
         "v1.CreateRoleReq": {
             "type": "object",
             "required": [
@@ -970,6 +1061,40 @@ var doc = `{
                 }
             }
         },
+        "v1.PaginateBriefUserResp": {
+            "type": "object",
+            "required": [
+                "items",
+                "page_num",
+                "pages",
+                "per_size",
+                "total"
+            ],
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.UserBriefResp"
+                    }
+                },
+                "page_num": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "pages": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "per_size": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 100
+                }
+            }
+        },
         "v1.PaginateRoleResp": {
             "type": "object",
             "required": [
@@ -1004,7 +1129,32 @@ var doc = `{
                 }
             }
         },
-        "v1.PaginateUserResp": {
+        "v1.ProjectBriefResp": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2021-01-28 20:20:20"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "This is an example"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "senseguard-example"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2021-01-28 20:20:20"
+                }
+            }
+        },
+        "v1.ProjectPagination": {
             "type": "object",
             "required": [
                 "items",
@@ -1017,7 +1167,7 @@ var doc = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/v1.UserBriefResp"
+                        "$ref": "#/definitions/v1.ProjectBriefResp"
                     }
                 },
                 "page_num": {
@@ -1144,7 +1294,6 @@ var doc = `{
             "type": "object",
             "required": [
                 "created_at",
-                "description",
                 "email",
                 "id",
                 "name",
@@ -1156,10 +1305,6 @@ var doc = `{
                 "created_at": {
                     "type": "string",
                     "example": "2018-10-09T14:57:23+08:00"
-                },
-                "description": {
-                    "type": "string",
-                    "example": "description for role"
                 },
                 "email": {
                     "type": "string",

@@ -73,7 +73,7 @@ func (c *Controller) CreateProject(ctx *gin.Context) {
 // @Router /v1/projects [get]
 func (c *Controller) GetProjects(ctx *gin.Context) {
 	var paginationReq GetPaginationReq
-	if err := ctx.ShouldBindJSON(&paginationReq); err != nil {
+	if err := ctx.ShouldBind(&paginationReq); err != nil {
 		panic(err)
 	}
 
@@ -89,4 +89,35 @@ func (c *Controller) GetProjects(ctx *gin.Context) {
 
 	c.Logger.Infof("Get all projects, this pagination project number is: %v", len(resp.Items))
 	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Get a project
+// @Description Api to get a project
+// @Tags PROJECT
+// @Accept json
+// @Produce json
+// @Param id query integer true "Project ID"
+// @Success 200 {object} v1.ProjectBriefResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/project/{id} [get]
+func (c *Controller) GetProject(ctx *gin.Context) {
+	var idReq IdReq
+	if err := ctx.ShouldBindUri(&idReq); err != nil {
+		panic(err)
+	}
+
+	project, err := api.GetProjectById(idReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := ProjectBriefResp{}
+	if err := utils.MarshalResponse(project, &resp); err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Get project by id:%v", resp.Id)
+	ctx.JSON(http.StatusOK, resp)
+
 }

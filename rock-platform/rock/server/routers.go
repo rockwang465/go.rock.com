@@ -57,7 +57,7 @@ func (s *Server) InitRouters() {
 		{
 			projectApi.POST("", middleware.IsAdmin, ctlv1.CreateProject)
 			projectApi.GET("", ctlv1.GetProjects)
-			//projectApi.GET("/:id", ctlv1.GetProject)
+			projectApi.GET("/:id", ctlv1.GetProject)
 			//projectApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteProject)
 			//projectApi.PUT("/:id", middleware.IsAdmin, ctlv1.UpdateProject)
 			//projectApi.GET("/:id/apps", ctlv1.GetProjectApps)

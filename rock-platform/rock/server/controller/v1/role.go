@@ -218,7 +218,7 @@ func (c *Controller) GetRoleUsers(ctx *gin.Context) {
 	}
 
 	var paginationReq GetPaginationReq
-	if err := ctx.ShouldBindJSON(&paginationReq); err != nil {
+	if err := ctx.ShouldBind(&paginationReq); err != nil {
 		panic(err)
 	}
 

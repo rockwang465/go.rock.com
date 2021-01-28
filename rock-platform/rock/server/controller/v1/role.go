@@ -3,6 +3,8 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"go.rock.com/rock-platform/rock/server/database/api"
+	"go.rock.com/rock-platform/rock/server/database/models"
+	"go.rock.com/rock-platform/rock/server/utils"
 	"net/http"
 )
 
@@ -23,14 +25,22 @@ type UpdateRoleReq struct {
 	Description string `json:"description" binding:"omitempty,max=100" example:"description for role"`
 }
 
-//type RoleBriefResp struct {
-//	Id          int64      `json:"id" binding:"required" example:"1"`
-//	Name        string     `json:"name" binding:"required" example:"admin_role"`
-//	Description string     `json:"description" binding:"required" example:"description for role"`
-//	CreatedAt   *time.Time `json:"created_at" binding:"required" example:"2018-10-09T14:57:23+08:00"`
-//	UpdatedAt   *time.Time `json:"updated_at" binding:"required" example:"2018-10-09T14:57:23+08:00"`
-//	Version     int        `json:"version" binding:"required" example:"1"`
-//}
+type RoleBriefResp struct {
+	Id          int64            `json:"id" binding:"required" example:"1"`
+	Name        string           `json:"name" binding:"required" example:"admin_role"`
+	Description string           `json:"description" binding:"required" example:"description for role"`
+	CreatedAt   models.LocalTime `json:"created_at" binding:"required" example:"2018-10-09T14:57:23+08:00"`
+	UpdatedAt   models.LocalTime `json:"updated_at" binding:"required" example:"2018-10-09T14:57:23+08:00"`
+	Version     int              `json:"version" binding:"required" example:"1"`
+}
+
+type PaginateRoleResp struct {
+	PageNum int64            `json:"page_num" binding:"required" example:"1"`
+	PerSize int64            `json:"per_size" binding:"required" example:"10"`
+	Total   int64            `json:"total" binding:"required" example:"100"`
+	Pages   int64            `json:"pages" binding:"required" example:"1"`
+	Items   []*RoleBriefResp `json:"items" binding:"required"`
+}
 
 // @Summary Create role
 // @Description api for create role
@@ -38,7 +48,7 @@ type UpdateRoleReq struct {
 // @Accept json
 // @Produce json
 // @Param input_body body v1.CreateRoleReq true "JSON type input body"
-// @Success 201 {object} models.Role "StatusCreated"
+// @Success 201 {object} v1.RoleBriefResp "StatusCreated"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/roles [post]
@@ -64,8 +74,14 @@ func (c *Controller) CreateRole(ctx *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	c.Logger.Infof("Create role with id:%v name:%v", role.Id, role.Name)
-	ctx.JSON(http.StatusCreated, role)
+
+	var resp RoleBriefResp
+	if err := utils.MarshalResponse(role, &resp); err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Create role by id:%v name:%v", role.Id, role.Name)
+	ctx.JSON(http.StatusCreated, resp)
 }
 
 // @Summary Get role
@@ -76,22 +92,25 @@ func (c *Controller) CreateRole(ctx *gin.Context) {
 // @Param page_num query integer true "Request page number" default(1)
 // @Param page_size query integer true "Request page size" default(10)
 // @Param QueryField query string false "Fuzzy Query(field: name)"
-// @Success 200 {object} models.RolePagination "StatusOK"
+// @Success 200 {object} v1.PaginateRoleResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/roles [get]
 func (c *Controller) GetRoles(ctx *gin.Context) {
 	var paginationReq GetPaginationReq
-	err := ctx.ShouldBind(&paginationReq)
-	if err != nil {
+	if err := ctx.ShouldBind(&paginationReq); err != nil {
 		panic(err)
 	}
 	rolePg, err := api.GetRoles(paginationReq.PageNum, paginationReq.PageSize, paginationReq.QueryField)
 	if err != nil {
 		panic(err)
 	}
+	var resp PaginateRoleResp
+	if err := utils.MarshalResponse(rolePg, &resp); err != nil {
+		panic(err)
+	}
 	c.Logger.Infof("Get all roles, this pagination role number is: %v", len(rolePg.Items))
-	ctx.JSON(http.StatusOK, rolePg)
+	ctx.JSON(http.StatusOK, resp)
 }
 
 // @Summary Get an role by id
@@ -100,7 +119,7 @@ func (c *Controller) GetRoles(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path integer true "Role ID"
-// @Success 200 {object} models.Role "StatusOK"
+// @Success 200 {object} v1.RoleBriefResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/roles/{id} [get]
@@ -114,7 +133,13 @@ func (c *Controller) GetRole(ctx *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	ctx.JSON(http.StatusOK, role)
+
+	var resp RoleBriefResp
+	if err := utils.MarshalResponse(role, &resp); err != nil {
+		panic(err)
+	}
+	c.Logger.Infof("Get role name:%v by id:%v", role.Name, role.Id)
+	ctx.JSON(http.StatusOK, resp)
 }
 
 // @Summary Get an role by id
@@ -135,6 +160,7 @@ func (c *Controller) DeleteRole(ctx *gin.Context) {
 	if err := api.DeleteRoleById(idReq.Id); err != nil {
 		panic(err)
 	}
+	c.Logger.Infof("Delete role by id:%v", idReq.Id)
 	ctx.JSON(http.StatusNoContent, "")
 }
 
@@ -146,7 +172,7 @@ func (c *Controller) DeleteRole(ctx *gin.Context) {
 // @Param id path integer true "Role ID"
 // @Param description body string true "Role Description"
 // @Param update_body body v1.UpdateRoleReq true "JSON type for update role description"
-// @Success 200 {object} models.Role "StatusOK"
+// @Success 200 {object} v1.PaginateUserResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/roles/{id} [put]
@@ -165,5 +191,52 @@ func (c *Controller) UpdateRole(ctx *gin.Context) {
 		panic(err)
 	}
 
-	ctx.JSON(http.StatusOK, role)
+	var resp RoleBriefResp
+	if err := utils.MarshalResponse(role, &resp); err != nil {
+		panic(err)
+	}
+	c.Logger.Infof("Update role's description by id:%v", idReq.Id)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Get all users by species role id
+// @Description api for get all users by species role id
+// @Tags ROLE
+// @Accept json
+// @Produce json
+// @Param id path integer true "Role ID"
+// @Param page_num query integer true "Request page number" default(1)
+// @Param page_size query integer true "Request page size" default(10)
+// @Success 200 {object} v1.PaginateUserResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/roles/{id}/users [get]
+func (c *Controller) GetRoleUsers(ctx *gin.Context) {
+	var idReq IdReq // role id
+	if err := ctx.ShouldBindUri(&idReq); err != nil {
+		panic(err)
+	}
+
+	var paginationReq GetPaginationReq
+	if err := ctx.ShouldBindJSON(&paginationReq); err != nil {
+		panic(err)
+	}
+
+	_, err := api.GetRoleById(idReq.Id)
+	if err != nil {
+		panic(err)
+	}
+	// get users by role id, not has query field
+	userPg, err := api.GetRoleUsers(idReq.Id, paginationReq.PageNum, paginationReq.PageSize)
+	if err != nil {
+		panic(err)
+	}
+
+	var resp PaginateBriefUserResp
+	if err := utils.MarshalResponse(userPg, &resp); err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Get all users, this pagination role number is: %v", len(userPg.Items))
+	ctx.JSON(http.StatusOK, resp)
 }

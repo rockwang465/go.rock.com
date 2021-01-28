@@ -38,7 +38,7 @@ func (s *Server) InitRouters() {
 			roleApi.GET("/:id", middleware.IsAdmin, ctlv1.GetRole)
 			roleApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteRole)
 			roleApi.PUT("/:id", middleware.IsAdmin, ctlv1.UpdateRole)
-			//roleApi.GET("/:id/users", ctlv1.GetRoleUsers)
+			roleApi.GET("/:id/users", middleware.IsAdmin, ctlv1.GetRoleUsers)
 			//roleApi.GET("/:id/permissions", ctlv1.GetRolePermissions)
 			//roleApi.PUT("/:id/permissions", ctlv1.ManagerRolePermissions)
 		}

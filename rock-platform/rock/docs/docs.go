@@ -238,7 +238,7 @@ var doc = `{
                     "200": {
                         "description": "StatusOK",
                         "schema": {
-                            "$ref": "#/definitions/models.RolePagination"
+                            "$ref": "#/definitions/v1.PaginateRoleResp"
                         }
                     },
                     "400": {
@@ -282,7 +282,7 @@ var doc = `{
                     "201": {
                         "description": "StatusCreated",
                         "schema": {
-                            "$ref": "#/definitions/models.Role"
+                            "$ref": "#/definitions/v1.RoleBriefResp"
                         }
                     },
                     "400": {
@@ -326,7 +326,7 @@ var doc = `{
                     "200": {
                         "description": "StatusOK",
                         "schema": {
-                            "$ref": "#/definitions/models.Role"
+                            "$ref": "#/definitions/v1.RoleBriefResp"
                         }
                     },
                     "400": {
@@ -386,7 +386,7 @@ var doc = `{
                     "200": {
                         "description": "StatusOK",
                         "schema": {
-                            "$ref": "#/definitions/models.Role"
+                            "$ref": "#/definitions/v1.PaginateUserResp"
                         }
                     },
                     "400": {
@@ -429,6 +429,66 @@ var doc = `{
                         "description": "StatusNoContent",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/roles/{id}/users": {
+            "get": {
+                "description": "api for get all users by species role id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ROLE"
+                ],
+                "summary": "Get all users by species role id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Role ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Request page number",
+                        "name": "page_num",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Request page size",
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.PaginateUserResp"
                         }
                     },
                     "400": {
@@ -759,58 +819,6 @@ var doc = `{
                 }
             }
         },
-        "models.Role": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "deleted_at": {
-                    "description": "can not use LocalTime",
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "description": "primary_key, AUTO_INCREMENT",
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "version": {
-                    "description": "DeletedAt LocalTime ` + "`" + `json:\"deleted_at\" gorm:\"type:timestamp;default:null\"` + "`" + `  // error\nDeletedAt LocalTime ` + "`" + `json:\"deleted_at\" gorm:\"type:timestamp null\"` + "`" + `  // error",
-                    "type": "integer"
-                }
-            }
-        },
-        "models.RolePagination": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Role"
-                    }
-                },
-                "page_num": {
-                    "type": "integer"
-                },
-                "pages": {
-                    "type": "integer"
-                },
-                "per_size": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
         "models.User": {
             "type": "object",
             "properties": {
@@ -962,6 +970,74 @@ var doc = `{
                 }
             }
         },
+        "v1.PaginateRoleResp": {
+            "type": "object",
+            "required": [
+                "items",
+                "page_num",
+                "pages",
+                "per_size",
+                "total"
+            ],
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.RoleBriefResp"
+                    }
+                },
+                "page_num": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "pages": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "per_size": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 100
+                }
+            }
+        },
+        "v1.PaginateUserResp": {
+            "type": "object",
+            "required": [
+                "items",
+                "page_num",
+                "pages",
+                "per_size",
+                "total"
+            ],
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.UserBriefResp"
+                    }
+                },
+                "page_num": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "pages": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "per_size": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 100
+                }
+            }
+        },
         "v1.ResetPwdReq": {
             "type": "object",
             "required": [
@@ -1001,6 +1077,43 @@ var doc = `{
                 }
             }
         },
+        "v1.RoleBriefResp": {
+            "type": "object",
+            "required": [
+                "created_at",
+                "description",
+                "id",
+                "name",
+                "updated_at",
+                "version"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2018-10-09T14:57:23+08:00"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "description for role"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "admin_role"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2018-10-09T14:57:23+08:00"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "v1.UpdateRoleReq": {
             "type": "object",
             "properties": {
@@ -1024,6 +1137,53 @@ var doc = `{
                 "old_password": {
                     "type": "string",
                     "example": "********"
+                }
+            }
+        },
+        "v1.UserBriefResp": {
+            "type": "object",
+            "required": [
+                "created_at",
+                "description",
+                "email",
+                "id",
+                "name",
+                "role_id",
+                "updated_at",
+                "version"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2018-10-09T14:57:23+08:00"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "description for role"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "admin@sensetime.com"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "admin_role"
+                },
+                "role_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2018-10-09T14:57:23+08:00"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
                 }
             }
         }

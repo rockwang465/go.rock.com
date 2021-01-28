@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.rock.com/rock-platform/rock/server/database/models"
@@ -75,4 +76,18 @@ func GetConfCtx(ctx *gin.Context) (*models.ConfCtx, error) {
 	}
 
 	return &conf, nil
+}
+
+func MarshalResponse(src, dest interface{}) error {
+	byteSrc, err := json.Marshal(src)
+	if err != nil {
+		return err
+	}
+	fmt.Println(string(byteSrc))
+
+	if err := json.Unmarshal(byteSrc, dest); err != nil {
+		return err
+	}
+	fmt.Println(dest)
+	return nil
 }

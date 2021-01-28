@@ -53,6 +53,7 @@ func (l *Logger) InitLogger() {
 	gin.DefaultWriter = io.MultiWriter(logf, os.Stderr) // gin.DefaultWriter变量能控制日志的保存方式及保存位置
 	log.SetOutput(gin.DefaultWriter)                    // 决定了log应该输出到什么地方，默认是标准输出（同下解释）
 	l.SetOutput(gin.DefaultWriter)                      // 设置output,默认为stderr,可以为任何io.Writer，比如文件*os.File
+	//l.SetReportCaller(true)                             // 显示行号等信息,但是会增加性能消耗
 
 	//Set log level
 	logLevel := config.Viper.GetString("log.level")

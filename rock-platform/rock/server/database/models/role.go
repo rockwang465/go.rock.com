@@ -3,11 +3,11 @@ package models
 import "fmt"
 
 type Role struct {
-	Id          int64  `json:"id" gorm:"unique_index;not null"` // primary_key, AUTO_INCREMENT
-	Name        string `json:"name" gorm:"not null"`
-	Description string `json:"description"`
-	//Users       []*User       `json:"users" gorm:"-"` // - ignore field, not mapping
-	//Permissions []*Permission `json:"permissions" gorm:"-"`
+	Id          int64         `json:"id" gorm:"unique_index;not null"` // primary_key, AUTO_INCREMENT
+	Name        string        `json:"name" gorm:"not null"`
+	Description string        `json:"description"`
+	Users       []*User       `json:"users" gorm:"-"` // - ignore field, not mapping
+	Permissions []*Permission `json:"permissions" gorm:"-"`
 	Common
 }
 

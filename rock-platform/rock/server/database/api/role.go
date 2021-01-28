@@ -94,9 +94,44 @@ func DeleteRoleById(id int64) error {
 
 func UpdateRole(id int64, desc string) (*models.Role, error) {
 	db := database.GetDBEngine()
-	role := new(models.Role)
+	role, err := GetRoleById(id)
+	if err != nil {
+		return nil, err
+	}
 	if err := db.Model(role).Where("id = ?", id).Update(map[string]interface{}{"description": desc}).Error; err != nil {
 		return nil, err
 	}
 	return role, nil
+}
+
+// get all user by role id, not has query field
+func GetRoleUsers(roleId, pageNum, pageSize int64) (*models.UserPagination, error) {
+	db := database.GetDBEngine()
+	Users := make([]*models.User, 0)
+
+	var count int64
+	if err := db.Order("name desc").
+		Offset((pageNum-1)*pageSize).
+		Where("role_id = ?", roleId).
+		Find(&Users).
+		Count(&count).Error; err != nil {
+		return nil, err
+	}
+
+	if err := db.Order("name desc").
+		Offset((pageNum-1)*pageSize).
+		Where("role_id = ?", roleId).
+		Limit(pageSize).
+		Find(&Users).Error; err != nil {
+		return nil, err
+	}
+
+	userPagination := &models.UserPagination{
+		PageNum:  pageNum,
+		PageSize: pageSize,
+		Total:    count,
+		Pages:    utils.CalcPages(count, pageSize),
+		Items:    Users,
+	}
+	return userPagination, nil
 }

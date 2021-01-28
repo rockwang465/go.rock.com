@@ -197,64 +197,6 @@ var doc = `{
                 }
             }
         },
-        "/v1/projects": {
-            "post": {
-                "description": "Api to get all projects",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "PROJECT"
-                ],
-                "summary": "Get all projects",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "example": 1,
-                        "name": "page_num",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "example": 20,
-                        "name": "page_size",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "rock",
-                        "description": "omitempty: allow empty",
-                        "name": "query_field",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "StatusOK",
-                        "schema": {
-                            "$ref": "#/definitions/v1.ProjectPagination"
-                        }
-                    },
-                    "400": {
-                        "description": "StatusBadRequest",
-                        "schema": {
-                            "$ref": "#/definitions/utils.HTTPError"
-                        }
-                    },
-                    "500": {
-                        "description": "StatusInternalServerError",
-                        "schema": {
-                            "$ref": "#/definitions/utils.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
         "/v1/roles": {
             "get": {
                 "description": "api for get all roles",
@@ -984,22 +926,6 @@ var doc = `{
                 }
             }
         },
-        "v1.CreateProjectReq": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "example": "This is an example"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "senseguard-example"
-                }
-            }
-        },
         "v1.CreateRoleReq": {
             "type": "object",
             "required": [
@@ -1109,65 +1035,6 @@ var doc = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/v1.RoleBriefResp"
-                    }
-                },
-                "page_num": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "pages": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "per_size": {
-                    "type": "integer",
-                    "example": 10
-                },
-                "total": {
-                    "type": "integer",
-                    "example": 100
-                }
-            }
-        },
-        "v1.ProjectBriefResp": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string",
-                    "example": "2021-01-28 20:20:20"
-                },
-                "description": {
-                    "type": "string",
-                    "example": "This is an example"
-                },
-                "id": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "name": {
-                    "type": "string",
-                    "example": "senseguard-example"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "example": "2021-01-28 20:20:20"
-                }
-            }
-        },
-        "v1.ProjectPagination": {
-            "type": "object",
-            "required": [
-                "items",
-                "page_num",
-                "pages",
-                "per_size",
-                "total"
-            ],
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.ProjectBriefResp"
                     }
                 },
                 "page_num": {

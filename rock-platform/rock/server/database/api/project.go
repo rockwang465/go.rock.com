@@ -67,7 +67,7 @@ func HasNotProjectByName(name string) error {
 		return err
 	}
 
-	err := utils.NewRockError(400, 40000012, fmt.Sprintf("Project with name(%v) is alerady exist", name))
+	err := utils.NewRockError(400, 40000015, fmt.Sprintf("Project with name(%v) is alerady exist", name))
 	return err
 }
 
@@ -75,6 +75,36 @@ func GetProjectById(id int64) (*models.Project, error) {
 	db := database.GetDBEngine()
 	project := new(models.Project)
 	if err := db.First(project, id).Error; err != nil {
+		if err.Error() == "record not found" {
+			err := utils.NewRockError(400, 40000016, fmt.Sprintf("Project with id(%v) is not found", id))
+			return nil, err
+		}
+		return nil, err
+	}
+	return project, nil
+}
+
+func DeleteProjectById(id int64) error {
+	db := database.GetDBEngine()
+	project, err := GetProjectById(id)
+	if err != nil {
+		return err
+	}
+
+	if err := db.Delete(project, id).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateProject(id int64, desc string) (*models.Project, error) {
+	db := database.GetDBEngine()
+	project, err := GetProjectById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.Model(project).Update(map[string]interface{}{"description": desc}).Error; err != nil {
 		return nil, err
 	}
 	return project, nil

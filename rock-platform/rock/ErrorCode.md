@@ -136,8 +136,31 @@ const(
 ---
 
 - HttpCode: 400
-- ErrorCode: 40000012
-- 中文名称: project项目名不存在
+- ErrorCode: 40000013
+- 中文名称: secret错误
+
+---
+
+- HttpCode: 400
+- ErrorCode: 40000014
+- 中文名称: role_id不存在
+
+---
+- HttpCode: 400
+- ErrorCode: 40000015
+- 中文名称: project项目名称已经存在
+
+---
+
+- HttpCode: 400
+- ErrorCode: 40000016
+- 中文名称: project项目id不存在
+
+---
+
+- HttpCode: 400
+- ErrorCode: 40000017
+- 中文名称: app应用名称已经存在
 
 ---
 

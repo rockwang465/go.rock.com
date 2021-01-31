@@ -95,8 +95,9 @@ func (e *DBEngine) InitDB() {
 	var user = &models.User{} // 或者直接 user := new(models.User),赋值直接用&user
 	var role = &models.Role{} // 或者直接 user := new(models.User),赋值直接用&user
 	var project = &models.Project{}
+	var app = &models.App{}
 	e.AutoMigrate(role, user) // create role user table
-	e.AutoMigrate(project)
+	e.AutoMigrate(project, app)
 	//e.Model(user).AddForeignKey("role_id", "role(id)", "RESTRICT", "RESTRICT") // add ForeignKey,正常业务不应该开启外键束缚,影响数据库性能
 
 	logger.Infof("[Rock Platform] Tables sync finished")

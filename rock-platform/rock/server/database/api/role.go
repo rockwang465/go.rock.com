@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"go.rock.com/rock-platform/rock/server/database"
 	"go.rock.com/rock-platform/rock/server/database/models"
 	"go.rock.com/rock-platform/rock/server/utils"
@@ -75,6 +76,10 @@ func GetRoleById(id int64) (*models.Role, error) {
 	db := database.GetDBEngine()
 	role := new(models.Role)
 	if err := db.First(role, id).Error; err != nil {
+		if err.Error() == "record not found" {
+			err = utils.NewRockError(400, 40000014, fmt.Sprintf("Role with id(%v) is not found", id))
+			return nil, err
+		}
 		return nil, err
 	}
 	return role, nil
@@ -82,8 +87,9 @@ func GetRoleById(id int64) (*models.Role, error) {
 
 func DeleteRoleById(id int64) error {
 	db := database.GetDBEngine()
-	role := &models.Role{
-		Id: id,
+	role, err := GetRoleById(id)
+	if err != nil {
+		return err
 	}
 
 	if err := db.Delete(role).Error; err != nil {
@@ -98,7 +104,7 @@ func UpdateRole(id int64, desc string) (*models.Role, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := db.Model(role).Where("id = ?", id).Update(map[string]interface{}{"description": desc}).Error; err != nil {
+	if err := db.Model(role).Update(map[string]interface{}{"description": desc}).Error; err != nil {
 		return nil, err
 	}
 	return role, nil

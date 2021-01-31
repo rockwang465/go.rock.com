@@ -12,3 +12,11 @@ type App struct {
 	GitlabProjectId int64  `json:"gitlab_project_id" gorm:"not null"`
 	Common
 }
+
+type AppPagination struct {
+	PageNum  int64  `json:"page_num"`
+	PageSize int64  `json:"page_size"`
+	Total    int64  `json:"total"`
+	Pages    int64  `json:"pages"`
+	Items    []*App `json:"items"`
+}

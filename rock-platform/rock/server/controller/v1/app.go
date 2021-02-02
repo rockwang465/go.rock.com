@@ -42,6 +42,10 @@ type GetAppsPaginationReq struct {
 	Id int64 `json:"id" form:"id" binding:"required,min=1" example:"1"`
 }
 
+type UpdateAppReq struct {
+	Description string `json:"description" binding:"omitempty,max=100" example:"description for app"`
+}
+
 // @Summary Create app
 // @Description Api to create app
 // @Tags APP
@@ -50,6 +54,7 @@ type GetAppsPaginationReq struct {
 // @Param input_body body v1.CreateAppReq true "JSON type input body"
 // @Success 201 {object} v1.AppBriefResp "StatusCreated"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/apps [post]
 func (c *Controller) CreateApp(ctx *gin.Context) {
@@ -93,6 +98,7 @@ func (c *Controller) CreateApp(ctx *gin.Context) {
 // @Param query_field query string false "Fuzzy Query(field: name)"
 // @Success 200 {object} v1.ProjectPagination "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/apps [get]
 func (c *Controller) GetApps(ctx *gin.Context) {
@@ -112,5 +118,93 @@ func (c *Controller) GetApps(ctx *gin.Context) {
 	}
 
 	c.Logger.Infof("Get all apps, this pagination app number is: %v", len(resp.Items))
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Get an app by id
+// @Description api for get an app by id
+// @Tags APP
+// @Accept json
+// @Produce json
+// @Param id path integer true "App ID"
+// @Success 200 {object} v1.AppBriefResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/apps/{id} [get]
+func (c *Controller) GetApp(ctx *gin.Context) {
+	var idReq IdReq
+	if err := ctx.ShouldBindUri(&idReq); err != nil {
+		panic(err)
+	}
+
+	app, err := api.GetAppById(idReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := AppBriefResp{}
+	if err := utils.MarshalResponse(app, &resp); err != nil {
+		panic(err)
+	}
+	c.Logger.Infof("Get app name:%v by id:%v", app.Name, app.Id)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Get an app by id
+// @Description api for get an app by id
+// @Tags APP
+// @Accept json
+// @Produce json
+// @Param id path integer true "App ID"
+// @Success 204 {object} string "StatusNoContent"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/apps/{id} [delete]
+func (c *Controller) DeleteApp(ctx *gin.Context) {
+	var idReq IdReq
+	if err := ctx.ShouldBindUri(&idReq); err != nil {
+		panic(err)
+	}
+	if err := api.DeleteAppById(idReq.Id); err != nil {
+		panic(err)
+	}
+	c.Logger.Infof("Delete app by id:%v", idReq.Id)
+	ctx.JSON(http.StatusNoContent, "")
+}
+
+// @Summary Update app description by id and body
+// @Description api for update app description
+// @Tags APP
+// @Accept json
+// @Produce json
+// @Param id path integer true "App ID"
+// @Param update_body body v1.UpdateAppReq true "JSON type for update app description"
+// @Success 200 {object} v1.AppBriefResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/apps/{id} [put]
+func (c *Controller) UpdateApp(ctx *gin.Context) {
+	var idReq IdReq
+	if err := ctx.ShouldBindUri(&idReq); err != nil {
+		panic(err)
+	}
+
+	var descReq UpdateAppReq
+	if err := ctx.ShouldBindJSON(&descReq); err != nil {
+		panic(err)
+	}
+	app, err := api.UpdateApp(idReq.Id, descReq.Description)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := RoleBriefResp{}
+	if err := utils.MarshalResponse(app, &resp); err != nil {
+		panic(err)
+	}
+	c.Logger.Infof("Update app's description by id:%v", idReq.Id)
 	ctx.JSON(http.StatusOK, resp)
 }

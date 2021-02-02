@@ -121,6 +121,7 @@ func (c *Controller) GetRoles(ctx *gin.Context) {
 // @Param id path integer true "Role ID"
 // @Success 200 {object} v1.RoleBriefResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/roles/{id} [get]
 func (c *Controller) GetRole(ctx *gin.Context) {
@@ -150,6 +151,7 @@ func (c *Controller) GetRole(ctx *gin.Context) {
 // @Param id path integer true "Role ID"
 // @Success 204 {object} string "StatusNoContent"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/roles/{id} [delete]
 func (c *Controller) DeleteRole(ctx *gin.Context) {
@@ -170,10 +172,10 @@ func (c *Controller) DeleteRole(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path integer true "Role ID"
-// @Param description body string true "Role Description"
 // @Param update_body body v1.UpdateRoleReq true "JSON type for update role description"
 // @Success 200 {object} v1.RoleBriefResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/roles/{id} [put]
 func (c *Controller) UpdateRole(ctx *gin.Context) {
@@ -209,6 +211,7 @@ func (c *Controller) UpdateRole(ctx *gin.Context) {
 // @Param page_size query integer true "Request page size" default(10)
 // @Success 200 {object} v1.PaginateBriefUserResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/roles/{id}/users [get]
 func (c *Controller) GetRoleUsers(ctx *gin.Context) {

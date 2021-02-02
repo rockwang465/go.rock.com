@@ -76,7 +76,7 @@ func GetProjectById(id int64) (*models.Project, error) {
 	project := new(models.Project)
 	if err := db.First(project, id).Error; err != nil {
 		if err.Error() == "record not found" {
-			err := utils.NewRockError(400, 40000016, fmt.Sprintf("Project with id(%v) is not found", id))
+			err := utils.NewRockError(404, 40400004, fmt.Sprintf("Project with id(%v) is not found", id))
 			return nil, err
 		}
 		return nil, err

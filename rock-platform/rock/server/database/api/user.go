@@ -164,7 +164,7 @@ func HasUserById(userId int64) (*models.User, error) {
 	var user = new(models.User)
 	if err := db.Where("id = ?", userId).First(user).Error; err != nil {
 		if err.Error() == "record not found" {
-			err := utils.NewRockError(400, 40000005, fmt.Sprintf("User with id(%v) was not found", userId))
+			err := utils.NewRockError(404, 40400005, fmt.Sprintf("User with id(%v) was not found", userId))
 			return nil, err
 		}
 		return nil, err

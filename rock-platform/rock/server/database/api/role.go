@@ -77,7 +77,7 @@ func GetRoleById(id int64) (*models.Role, error) {
 	role := new(models.Role)
 	if err := db.First(role, id).Error; err != nil {
 		if err.Error() == "record not found" {
-			err = utils.NewRockError(400, 40000014, fmt.Sprintf("Role with id(%v) is not found", id))
+			err = utils.NewRockError(404, 40400006, fmt.Sprintf("Role with id(%v) is not found", id))
 			return nil, err
 		}
 		return nil, err

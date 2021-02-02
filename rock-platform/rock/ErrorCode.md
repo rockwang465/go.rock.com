@@ -88,12 +88,6 @@ const(
 ---
 
 - HttpCode: 400
-- ErrorCode: 40000005
-- 中文名称: 用户id不存在
-
----
-
-- HttpCode: 400
 - ErrorCode: 40000006
 - 中文名称: 序列化失败
 
@@ -140,21 +134,9 @@ const(
 - 中文名称: secret错误
 
 ---
-
-- HttpCode: 400
-- ErrorCode: 40000014
-- 中文名称: role_id不存在
-
----
 - HttpCode: 400
 - ErrorCode: 40000015
 - 中文名称: project项目名称已经存在
-
----
-
-- HttpCode: 400
-- ErrorCode: 40000016
-- 中文名称: project项目id不存在
 
 ---
 
@@ -163,7 +145,6 @@ const(
 - 中文名称: app应用名称已经存在
 
 ---
-
 - HttpCode: 401
 - ErrorCode: 40100001
 - 中文名称: 权限不足
@@ -180,6 +161,29 @@ const(
 - ErrorCode: 40400002
 - 中文名称: admin用户禁止删除
 
+---
+
+- HttpCode: 404
+- ErrorCode: 40400003
+- 中文名称: app应用id不存在
+
+---
+
+- HttpCode: 404
+- ErrorCode: 40400004
+- 中文名称: project项目id不存在
+
+---
+
+- HttpCode: 404
+- ErrorCode: 40400005
+- 中文名称: 用户id不存在
+
+---
+
+- HttpCode: 404
+- ErrorCode: 40400006
+- 中文名称: role_id不存在
 
 
 ### 500错误类型

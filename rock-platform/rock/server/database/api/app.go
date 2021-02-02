@@ -67,6 +67,44 @@ func GetApps(pageNum, pageSize int64, queryField string, projectId int64) (*mode
 	return appPagination, nil
 }
 
+func GetAppById(id int64) (*models.App, error) {
+	db := database.GetDBEngine()
+	app := new(models.App)
+	if err := db.First(app, id).Error; err != nil {
+		if err.Error() == "record not found" {
+			err = utils.NewRockError(404, 40400003, fmt.Sprintf("App with id(%v) is not found", id))
+			return nil, err
+		}
+		return nil, err
+	}
+	return app, nil
+}
+
+func DeleteAppById(id int64) error {
+	db := database.GetDBEngine()
+	app, err := GetAppById(id)
+	if err != nil {
+		return err
+	}
+
+	if err := db.Delete(app).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateApp(id int64, desc string) (*models.App, error) {
+	db := database.GetDBEngine()
+	app, err := GetAppById(id)
+	if err != nil {
+		return nil, err
+	}
+	if err := db.Model(app).Update(map[string]interface{}{"description": desc}).Error; err != nil {
+		return nil, err
+	}
+	return app, nil
+}
+
 // ensure not same name app in same projectId
 func hasNotAppWithSameNameAndProject(name string, projectId int64) error {
 	db := database.GetDBEngine()

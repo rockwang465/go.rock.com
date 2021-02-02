@@ -103,6 +103,7 @@ func (c *Controller) GetProjects(ctx *gin.Context) {
 // @Param id query integer true "Project ID"
 // @Success 200 {object} v1.ProjectBriefResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/project/{id} [get]
 func (c *Controller) GetProject(ctx *gin.Context) {
@@ -134,6 +135,7 @@ func (c *Controller) GetProject(ctx *gin.Context) {
 // @Param id body integer true "Project ID"
 // @Success 204 {object} string "StatusNoContent"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/project/{id} [delete]
 func (c *Controller) DeleteProject(ctx *gin.Context) {
@@ -155,10 +157,10 @@ func (c *Controller) DeleteProject(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path integer true "Project ID"
-// @Param description body string true "Role Description"
 // @Param update_body body v1.UpdateProjectReq true "JSON type for update project description"
 // @Success 200 {object} v1.ProjectBriefResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/projects/{id} [put]
 func (c *Controller) UpdateProject(ctx *gin.Context) {

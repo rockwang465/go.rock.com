@@ -24,6 +24,276 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/v1/apps": {
+            "get": {
+                "description": "Api to get all apps",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Get all apps",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Request page number",
+                        "name": "page_num",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "App number size",
+                        "name": "per_size",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Fuzzy Query(field: name)",
+                        "name": "query_field",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ProjectPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Api to create app",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Create app",
+                "parameters": [
+                    {
+                        "description": "JSON type input body",
+                        "name": "input_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CreateAppReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "StatusCreated",
+                        "schema": {
+                            "$ref": "#/definitions/v1.AppBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/apps/{id}": {
+            "get": {
+                "description": "api for get an app by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Get an app by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.AppBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "api for update app description",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Update app description by id and body",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "JSON type for update app description",
+                        "name": "update_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdateAppReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.AppBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "api for get an app by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Get an app by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "StatusNoContent",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/login": {
             "post": {
                 "description": "Api to login rock platform with name and password",
@@ -197,8 +467,108 @@ var doc = `{
                 }
             }
         },
+        "/v1/project/{id}": {
+            "get": {
+                "description": "Api to get a project",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PROJECT"
+                ],
+                "summary": "Get a project",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ProjectBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Api to get a project",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PROJECT"
+                ],
+                "summary": "Get a project",
+                "parameters": [
+                    {
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "StatusNoContent",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/projects": {
-            "post": {
+            "get": {
                 "description": "Api to get all projects",
                 "consumes": [
                     "application/json"
@@ -213,22 +583,23 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "example": 1,
+                        "default": 1,
+                        "description": "Request page number",
                         "name": "page_num",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "example": 20,
-                        "name": "page_size",
+                        "default": 10,
+                        "description": "Project number size",
+                        "name": "per_size",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "example": "rock",
-                        "description": "omitempty: allow empty",
+                        "description": "Fuzzy Query(field: name)",
                         "name": "query_field",
                         "in": "query"
                     }
@@ -242,6 +613,109 @@ var doc = `{
                     },
                     "400": {
                         "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Api to create project",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PROJECT"
+                ],
+                "summary": "Create project",
+                "parameters": [
+                    {
+                        "description": "JSON type input body",
+                        "name": "input_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CreateProjectReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "StatusCreated",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ProjectBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/projects/{id}": {
+            "put": {
+                "description": "api for update project description",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ROLE"
+                ],
+                "summary": "Update project description by id and body",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "JSON type for update project description",
+                        "name": "update_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdateProjectReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ProjectBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
                         "schema": {
                             "$ref": "#/definitions/utils.HTTPError"
                         }
@@ -393,6 +867,12 @@ var doc = `{
                             "$ref": "#/definitions/utils.HTTPError"
                         }
                     },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
                     "500": {
                         "description": "StatusInternalServerError",
                         "schema": {
@@ -422,15 +902,6 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "description": "Role Description",
-                        "name": "description",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "description": "JSON type for update role description",
                         "name": "update_body",
                         "in": "body",
@@ -449,6 +920,12 @@ var doc = `{
                     },
                     "400": {
                         "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
                         "schema": {
                             "$ref": "#/definitions/utils.HTTPError"
                         }
@@ -491,6 +968,12 @@ var doc = `{
                     },
                     "400": {
                         "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
                         "schema": {
                             "$ref": "#/definitions/utils.HTTPError"
                         }
@@ -551,6 +1034,12 @@ var doc = `{
                     },
                     "400": {
                         "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
                         "schema": {
                             "$ref": "#/definitions/utils.HTTPError"
                         }
@@ -984,6 +1473,84 @@ var doc = `{
                 }
             }
         },
+        "v1.AppBriefResp": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2021-01-28 20:20:20"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "description the app"
+                },
+                "drone_repo_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "full_name": {
+                    "type": "string",
+                    "example": "senseguard/test_app"
+                },
+                "gitlab_address": {
+                    "type": "string",
+                    "example": "http://gitlab.sensetime.com"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "test_app"
+                },
+                "owner": {
+                    "type": "string",
+                    "example": "1"
+                },
+                "project_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2021-01-28 20:20:20"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "v1.CreateAppReq": {
+            "type": "object",
+            "required": [
+                "name",
+                "project_id"
+            ],
+            "properties": {
+                "description": {
+                    "description": "描述这个app",
+                    "type": "string",
+                    "example": "description the app"
+                },
+                "gitlab_project_id": {
+                    "description": "当前用户在gitlab上拥有的project名称(即app的名称)",
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "description": "新建的app的名称",
+                    "type": "string",
+                    "example": "test_app"
+                },
+                "project_id": {
+                    "description": "属于哪个project(id关联)",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "v1.CreateProjectReq": {
             "type": "object",
             "required": [
@@ -992,11 +1559,11 @@ var doc = `{
             "properties": {
                 "description": {
                     "type": "string",
-                    "example": "This is an example"
+                    "example": "description the project"
                 },
                 "name": {
                     "type": "string",
-                    "example": "senseguard-example"
+                    "example": "test-project"
                 }
             }
         },
@@ -1138,7 +1705,7 @@ var doc = `{
                 },
                 "description": {
                     "type": "string",
-                    "example": "This is an example"
+                    "example": "description the project"
                 },
                 "id": {
                     "type": "integer",
@@ -1146,7 +1713,7 @@ var doc = `{
                 },
                 "name": {
                     "type": "string",
-                    "example": "senseguard-example"
+                    "example": "test-project"
                 },
                 "updated_at": {
                     "type": "string",
@@ -1261,6 +1828,24 @@ var doc = `{
                 "version": {
                     "type": "integer",
                     "example": 1
+                }
+            }
+        },
+        "v1.UpdateAppReq": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "description for app"
+                }
+            }
+        },
+        "v1.UpdateProjectReq": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "description the project"
                 }
             }
         },

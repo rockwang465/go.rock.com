@@ -115,13 +115,71 @@ definitions:
         example: 50000001
         type: integer
     type: object
+  v1.AppBriefResp:
+    properties:
+      created_at:
+        example: "2021-01-28 20:20:20"
+        type: string
+      description:
+        example: description the app
+        type: string
+      drone_repo_id:
+        example: 1
+        type: integer
+      full_name:
+        example: senseguard/test_app
+        type: string
+      gitlab_address:
+        example: http://gitlab.sensetime.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: test_app
+        type: string
+      owner:
+        example: "1"
+        type: string
+      project_id:
+        example: 1
+        type: integer
+      updated_at:
+        example: "2021-01-28 20:20:20"
+        type: string
+      version:
+        example: 1
+        type: integer
+    type: object
+  v1.CreateAppReq:
+    properties:
+      description:
+        description: 描述这个app
+        example: description the app
+        type: string
+      gitlab_project_id:
+        description: 当前用户在gitlab上拥有的project名称(即app的名称)
+        example: 1
+        type: integer
+      name:
+        description: 新建的app的名称
+        example: test_app
+        type: string
+      project_id:
+        description: 属于哪个project(id关联)
+        example: 1
+        type: integer
+    required:
+    - name
+    - project_id
+    type: object
   v1.CreateProjectReq:
     properties:
       description:
-        example: This is an example
+        example: description the project
         type: string
       name:
-        example: senseguard-example
+        example: test-project
         type: string
     required:
     - name
@@ -226,13 +284,13 @@ definitions:
         example: "2021-01-28 20:20:20"
         type: string
       description:
-        example: This is an example
+        example: description the project
         type: string
       id:
         example: 1
         type: integer
       name:
-        example: senseguard-example
+        example: test-project
         type: string
       updated_at:
         example: "2021-01-28 20:20:20"
@@ -319,6 +377,18 @@ definitions:
     - updated_at
     - version
     type: object
+  v1.UpdateAppReq:
+    properties:
+      description:
+        example: description for app
+        type: string
+    type: object
+  v1.UpdateProjectReq:
+    properties:
+      description:
+        example: description the project
+        type: string
+    type: object
   v1.UpdateRoleReq:
     properties:
       description:
@@ -372,6 +442,186 @@ definitions:
 info:
   contact: {}
 paths:
+  /v1/apps:
+    get:
+      consumes:
+      - application/json
+      description: Api to get all apps
+      parameters:
+      - default: 1
+        description: Request page number
+        in: query
+        name: page_num
+        required: true
+        type: integer
+      - default: 10
+        description: App number size
+        in: query
+        name: per_size
+        required: true
+        type: integer
+      - description: 'Fuzzy Query(field: name)'
+        in: query
+        name: query_field
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ProjectPagination'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get all apps
+      tags:
+      - APP
+    post:
+      consumes:
+      - application/json
+      description: Api to create app
+      parameters:
+      - description: JSON type input body
+        in: body
+        name: input_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateAppReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: StatusCreated
+          schema:
+            $ref: '#/definitions/v1.AppBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Create app
+      tags:
+      - APP
+  /v1/apps/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: api for get an app by id
+      parameters:
+      - description: App ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: StatusNoContent
+          schema:
+            type: string
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get an app by id
+      tags:
+      - APP
+    get:
+      consumes:
+      - application/json
+      description: api for get an app by id
+      parameters:
+      - description: App ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.AppBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get an app by id
+      tags:
+      - APP
+    put:
+      consumes:
+      - application/json
+      description: api for update app description
+      parameters:
+      - description: App ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: JSON type for update app description
+        in: body
+        name: update_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateAppReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.AppBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Update app description by id and body
+      tags:
+      - APP
   /v1/auth/login:
     post:
       consumes:
@@ -485,24 +735,91 @@ paths:
       summary: Create reset email
       tags:
       - AUTH
+  /v1/project/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Api to get a project
+      parameters:
+      - description: Project ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: StatusNoContent
+          schema:
+            type: string
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get a project
+      tags:
+      - PROJECT
+    get:
+      consumes:
+      - application/json
+      description: Api to get a project
+      parameters:
+      - description: Project ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ProjectBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get a project
+      tags:
+      - PROJECT
   /v1/projects:
-    post:
+    get:
       consumes:
       - application/json
       description: Api to get all projects
       parameters:
-      - example: 1
+      - default: 1
+        description: Request page number
         in: query
         name: page_num
         required: true
         type: integer
-      - example: 20
+      - default: 10
+        description: Project number size
         in: query
-        name: page_size
+        name: per_size
         required: true
         type: integer
-      - description: 'omitempty: allow empty'
-        example: rock
+      - description: 'Fuzzy Query(field: name)'
         in: query
         name: query_field
         type: string
@@ -524,6 +841,74 @@ paths:
       summary: Get all projects
       tags:
       - PROJECT
+    post:
+      consumes:
+      - application/json
+      description: Api to create project
+      parameters:
+      - description: JSON type input body
+        in: body
+        name: input_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateProjectReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: StatusCreated
+          schema:
+            $ref: '#/definitions/v1.ProjectBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Create project
+      tags:
+      - PROJECT
+  /v1/projects/{id}:
+    put:
+      consumes:
+      - application/json
+      description: api for update project description
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: JSON type for update project description
+        in: body
+        name: update_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateProjectReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ProjectBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Update project description by id and body
+      tags:
+      - ROLE
   /v1/roles:
     get:
       consumes:
@@ -615,6 +1000,10 @@ paths:
           description: StatusBadRequest
           schema:
             $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
         "500":
           description: StatusInternalServerError
           schema:
@@ -643,6 +1032,10 @@ paths:
           description: StatusBadRequest
           schema:
             $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
         "500":
           description: StatusInternalServerError
           schema:
@@ -660,12 +1053,6 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Role Description
-        in: body
-        name: description
-        required: true
-        schema:
-          type: string
       - description: JSON type for update role description
         in: body
         name: update_body
@@ -681,6 +1068,10 @@ paths:
             $ref: '#/definitions/v1.RoleBriefResp'
         "400":
           description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
           schema:
             $ref: '#/definitions/utils.HTTPError'
         "500":
@@ -722,6 +1113,10 @@ paths:
             $ref: '#/definitions/v1.PaginateBriefUserResp'
         "400":
           description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
           schema:
             $ref: '#/definitions/utils.HTTPError'
         "500":

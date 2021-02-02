@@ -72,9 +72,9 @@ func (s *Server) InitRouters() {
 		{
 			appApi.POST("", ctlv1.CreateApp)
 			appApi.GET("", ctlv1.GetApps)
-			//appApi.GET("/:id", ctlv1.GetApp)
-			//appApi.DELETE("/:id", ctlv1.DeleteApp)
-			//appApi.PUT("/:id", ctlv1.UpdateApp)
+			appApi.GET("/:id", ctlv1.GetApp)
+			appApi.DELETE("/:id", ctlv1.DeleteApp)
+			appApi.PUT("/:id", ctlv1.UpdateApp)
 			//appApi.PUT("/:id/gitlab", ctlv1.UpdateAppGitlabProject)
 			//appApi.GET("/:id/builds", ctlv1.GetAppBuilds)
 			//appApi.POST("/:id/builds", ctlv1.CreateAppBuild)

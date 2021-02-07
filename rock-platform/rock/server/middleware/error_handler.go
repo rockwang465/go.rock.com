@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
+	"github.com/rockwang465/drone/drone-go/drone"
 	"go.rock.com/rock-platform/rock/server/log"
 	"go.rock.com/rock-platform/rock/server/utils"
 	"net/http"
@@ -33,7 +34,15 @@ func ErrorHandler() gin.HandlerFunc {
 					})
 					ctx.Abort()
 					return
-					// case *drone.DroneError:
+				case *drone.DroneError:
+					// 如果error内无明显的报错信息，可以去drone-server服务的日志里查看
+					logger.Errorf("Drone Error: %v", e)
+					ctx.JSON(http.StatusInternalServerError, gin.H{
+						"error":      e.Error(),
+						"error_code": e.ErrCode,
+					})
+					ctx.Abort()
+					return
 					// case *k8sErr.StatusError:
 					// validator.ValidationErrors:
 				default:

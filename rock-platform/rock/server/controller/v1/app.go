@@ -1,7 +1,9 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"go.rock.com/rock-platform/rock/server/client/drone-api"
 	"go.rock.com/rock-platform/rock/server/database/api"
 	"go.rock.com/rock-platform/rock/server/database/models"
 	"go.rock.com/rock-platform/rock/server/utils"
@@ -58,23 +60,40 @@ type UpdateAppReq struct {
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/apps [post]
 func (c *Controller) CreateApp(ctx *gin.Context) {
+	cfgCtx, err := utils.GetConfCtx(ctx)
+	if err != nil {
+		panic(err)
+	}
+
 	var createApp CreateAppReq
 	if err := ctx.ShouldBindJSON(&createApp); err != nil {
 		panic(err)
 	}
 
 	app := new(models.App)
-	var err error
 	if createApp.GitlabProjectId == 0 {
 		app, err = api.CreateApp(createApp.Name, "", "", createApp.Description, "", createApp.ProjectId, 0, 0)
 		if err != nil {
 			panic(err)
 		}
 	} else {
-		// 后期补上:
-		// fullName owner droneRepoId 是通过drone，使用用户的access token获取到的
-		// gitlabAddr 也是通过drone， 通过drone的token，获取gitlab的地址等
-		app, err = api.CreateApp(createApp.Name, "", "", createApp.Description, "", createApp.ProjectId, createApp.GitlabProjectId, 0)
+		remote, err := drone_api.SyncRemoteRepo(cfgCtx.DroneToken, createApp.GitlabProjectId)
+		if err != nil {
+			panic(err)
+		}
+		repo, err := drone_api.ActiveRepo(cfgCtx.DroneToken, remote.ID)
+		if err != nil {
+			err := utils.NewRockError(403, 40300002, "Permission deny, because you don't have gitlab project master permission")
+			panic(err)
+		}
+		fmt.Printf("repo.FullName:%v\n", repo.FullName)
+		fmt.Printf("repo.Owner:%v\n", repo.Owner)
+		fmt.Printf("createApp.Description:%v\n", createApp.Description)
+		fmt.Printf("remote.Clone:%s\n", remote.Clone)
+		fmt.Printf("createApp.ProjectId:%v\n", createApp.ProjectId)
+		fmt.Printf("createApp.GitlabProjectId:%v\n", createApp.GitlabProjectId)
+		fmt.Printf("repo.ID:%v\n", repo.ID)
+		app, err = api.CreateApp(createApp.Name, repo.FullName, repo.Owner, createApp.Description, remote.Clone, createApp.ProjectId, createApp.GitlabProjectId, repo.ID)
 		if err != nil {
 			panic(err)
 		}

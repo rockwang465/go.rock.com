@@ -12,17 +12,18 @@ const (
 )
 
 type Claim struct {
-	UserId   int64  `json:"user_id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Role     string `json:"role"`
+	UserId     int64  `json:"user_id"`
+	Username   string `json:"username"`
+	DroneToken string `json:"drone_token"`
+	Password   string `json:"password"`
+	Role       string `json:"role"`
 	jwt.StandardClaims
 }
 
 var jwtKey = []byte("Is_a_jwt_secret_key_from_rock_platform")
 
 // generate token
-func GenerateToken(userId int64, username, password, role string) (string, error) {
+func GenerateToken(userId int64, username, droneToken, password, role string) (string, error) {
 	config := conf.GetConfig()
 	logger := log.GetLogger()
 	nowTime := time.Now()
@@ -43,10 +44,11 @@ func GenerateToken(userId int64, username, password, role string) (string, error
 
 	expireTime := nowTime.Add(time.Minute + userDefineExpire)
 	claim := &Claim{
-		UserId:   userId,
-		Username: username,
-		Password: password,
-		Role:     role,
+		UserId:     userId,
+		Username:   username,
+		DroneToken: droneToken,
+		Password:   password,
+		Role:       role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			IssuedAt:  nowTime.Unix(),

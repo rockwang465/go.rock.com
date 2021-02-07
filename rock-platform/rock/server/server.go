@@ -44,6 +44,7 @@ func (s *Server) InitServer() {
 	s.addMiddleWare(
 		middleware.AccessLog(skipLogPath...),
 		middleware.Auth(skipAuthPath...),
+		middleware.NoCache, // 阻止缓存响应
 		middleware.ErrorHandler(),
 	)
 	s.InitRouters()     // 初始化路由(定义所有的url)

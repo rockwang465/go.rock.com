@@ -16,7 +16,7 @@ server:
   login-block-duration: 5m  # default 5m
 log:
   dir: /var/log/rock
-  level: Debug  # default Info , you can choice Debug、Info、Warn、Error
+  level: Debug  # default Info , you can choice Debug/Info/Warn/Error
 db:
   driver: mysql
   charset: utf8mb4
@@ -37,3 +37,5 @@ email:
   secret-expire: 30m
 frontend:
   domain: http://10.151.3.86:8888
+drone:  # drone-server
+  addr: http://10.151.3.86:8100

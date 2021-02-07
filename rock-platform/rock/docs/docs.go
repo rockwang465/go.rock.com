@@ -729,6 +729,47 @@ var doc = `{
                 }
             }
         },
+        "/v1/repos": {
+            "get": {
+                "description": "Api to get remote(gitlab) all repos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "REPO"
+                ],
+                "summary": "Get remote all repos",
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.DroneRepoBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/roles": {
             "get": {
                 "description": "api for get all roles",
@@ -1254,6 +1295,65 @@ var doc = `{
                 }
             }
         },
+        "/v1/users/{id}/access": {
+            "put": {
+                "description": "Api to update user access token info by id and body",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "USER"
+                ],
+                "summary": "Update user access token info by id and body",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "Id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "JSON body for update user access token",
+                        "name": "update_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdateUserAccessTokenReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.UserBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/users/{id}/password": {
             "put": {
                 "description": "Api to update user password with id and old password",
@@ -1326,9 +1426,17 @@ var doc = `{
                     "type": "string",
                     "example": "2020-12-20 15:15:22"
                 },
+                "drone_token": {
+                    "type": "string",
+                    "example": "drone_token"
+                },
                 "email": {
                     "type": "string",
                     "example": "admin_user@sensetime.com"
+                },
+                "gitlab_token": {
+                    "type": "string",
+                    "example": "gitlabe_token"
                 },
                 "id": {
                     "description": "type UserFullResp struct {",
@@ -1393,7 +1501,13 @@ var doc = `{
                     "description": "can not use LocalTime",
                     "type": "string"
                 },
+                "drone_token": {
+                    "type": "string"
+                },
                 "email": {
+                    "type": "string"
+                },
+                "gitlab_token": {
                     "type": "string"
                 },
                 "id": {
@@ -1425,7 +1539,6 @@ var doc = `{
                     "type": "string"
                 },
                 "token": {
-                    "description": "GitlabToken     string     ` + "`" + `json:\"gitlab_token\"` + "`" + `\nDroneToken      string     ` + "`" + `json:\"drone_token\"` + "`" + `",
                     "type": "string"
                 },
                 "updated_at": {
@@ -1606,6 +1719,35 @@ var doc = `{
                 },
                 "role_id": {
                     "description": "RoleId   *RoleIdReq ` + "`" + `json:\"role_id\" binding:\"required\"` + "`" + `  // 用顺义的这种定义，ctx.ShouldBind报错",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "v1.DroneRepoBriefResp": {
+            "type": "object",
+            "properties": {
+                "clone_url": {
+                    "type": "string",
+                    "example": "http://gitlab.sz.sensetime.com/fis-infra/infra-console.git"
+                },
+                "full_name": {
+                    "type": "string",
+                    "example": "fis-infra/infra-console"
+                },
+                "is_added": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "name": {
+                    "type": "string",
+                    "example": "infra-console"
+                },
+                "owner": {
+                    "type": "string",
+                    "example": "admin"
+                },
+                "project_id": {
                     "type": "integer",
                     "example": 1
                 }
@@ -1855,6 +1997,19 @@ var doc = `{
                 "description": {
                     "type": "string",
                     "example": "description for role"
+                }
+            }
+        },
+        "v1.UpdateUserAccessTokenReq": {
+            "type": "object",
+            "required": [
+                "gitlab_token"
+            ],
+            "properties": {
+                "gitlab_token": {
+                    "description": "gitlab access token",
+                    "type": "string",
+                    "example": "real gitlab access token"
                 }
             }
         },

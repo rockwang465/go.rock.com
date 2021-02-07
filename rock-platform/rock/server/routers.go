@@ -22,13 +22,15 @@ func (s *Server) InitRouters() {
 
 	v1Root := router.Group("/v1")
 	{
-		registryApi := v1Root.Group("/users")
+		userApi := v1Root.Group("/users")
 		{
-			registryApi.POST("", middleware.IsAdmin, ctlv1.CreateUser)
-			registryApi.GET("", middleware.IsAdmin, ctlv1.GetUsers)
-			registryApi.GET("/:id", middleware.IsUserSelfOrAdmin, ctlv1.GetUser)
-			registryApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteUser)
-			registryApi.PUT("/:id/password", middleware.IsUserSelfOrAdmin, ctlv1.UpdateUserPwd)
+			userApi.POST("", middleware.IsAdmin, ctlv1.CreateUser)
+			userApi.GET("", middleware.IsAdmin, ctlv1.GetUsers)
+			userApi.GET("/:id", middleware.IsUserSelfOrAdmin, ctlv1.GetUser)
+			userApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteUser)
+			userApi.PUT("/:id/access", middleware.IsUserSelfOrAdmin, ctlv1.UpdateUserAccessToken) // 关联token按钮,更新access token
+			userApi.PUT("/:id/password", middleware.IsUserSelfOrAdmin, ctlv1.UpdateUserPwd)
+			//userApi.PUT("/:id/roles", middleware.IsAdmin, ctlv1.UpdateUserRole)
 		}
 
 		roleApi := v1Root.Group("/roles")
@@ -95,6 +97,11 @@ func (s *Server) InitRouters() {
 			authApi.POST("/logout", ctlv1.Logout)
 			authApi.POST("/reset", ctlv1.CreateResetEmail)
 			authApi.POST("/pwd", ctlv1.UpdateUserPwdWithSecret)
+		}
+
+		repoApi := v1Root.Group("/repos")
+		{
+			repoApi.GET("", ctlv1.GetRemoteRepos)
 		}
 
 	}

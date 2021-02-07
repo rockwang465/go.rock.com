@@ -185,6 +185,18 @@ const(
 - ErrorCode: 40400006
 - 中文名称: role_id不存在
 
+---
+
+- HttpCode: 403
+- ErrorCode: 40300001
+- 中文名称: 关联的Gitlab账号，对该工程没有master权限
+
+---
+
+- HttpCode: 412
+- ErrorCode: 41200001
+- 中文名称: 缺少gitlab access token
+
 
 ### 500错误类型
 ---
@@ -201,6 +213,11 @@ const(
 - HttpCode: 500
 - ErrorCode: 50000003
 - 中文名称: 未知邮件系统错误
+
+---
+- HttpCode: 500
+- ErrorCode: 50000004
+- 中文名称: 未知Drone错误
 
 ```
 - HttpCode: 400

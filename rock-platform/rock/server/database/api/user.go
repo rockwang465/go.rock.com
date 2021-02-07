@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/go-sql-driver/mysql"
+	drone_api "go.rock.com/rock-platform/rock/server/client/drone-api"
 	"go.rock.com/rock-platform/rock/server/database"
 	"go.rock.com/rock-platform/rock/server/database/models"
 	"go.rock.com/rock-platform/rock/server/utils"
@@ -34,6 +35,8 @@ type UserDetailResp struct {
 	Password        string           `json:"password" example:"********"`
 	Email           string           `json:"email" example:"admin_user@sensetime.com"`
 	Salt            string           `json:"salt" example:"salt secret"`
+	GitlabToken     string           `json:"gitlab_token" example:"gitlabe_token"`
+	DroneToken      string           `json:"drone_token" example:"drone_token"`
 	Token           string           `json:"token" example:"user token"`
 	CreatedAt       models.LocalTime `json:"created_at" example:"2020-12-20 15:15:22"`
 	UpdatedAt       models.LocalTime `json:"updated_at" example:"2020-12-20 15:15:22"`
@@ -139,7 +142,16 @@ func GetUserBriefRespByName(username string) (*UserBriefResp, error) {
 func GetUserDetailRespByName(username string) (*UserDetailResp, error) {
 	db := database.GetDBEngine()
 	resp := new(UserDetailResp)
-	if err := db.Raw("SELECT a.id as id, a.name as name, a.password as password, a.email as email, a.salt as salt, a.token as token, a.created_at as created_at, a.updated_at as updated_at, a.login_retry_count as login_retry_count, b.id as role_id, b.name as role_name, b.description as role_description, b.created_at as role_created_at, b.updated_at as role_updated_at, b.version as role_version from user a LEFT JOIN role b ON a.role_id = b.id where a.name = ? ORDER BY id ASC LIMIT 1", username).Scan(resp).Error; err != nil {
+	if err := db.Raw("SELECT a.id as id, a.name as name, a.password as password, a.email as email, a.salt as salt, a.token as token, a.gitlab_token as gitlab_token, a.drone_token as drone_token, a.created_at as created_at, a.updated_at as updated_at, a.login_retry_count as login_retry_count, b.id as role_id, b.name as role_name, b.description as role_description, b.created_at as role_created_at, b.updated_at as role_updated_at, b.version as role_version from user a LEFT JOIN role b ON a.role_id = b.id where a.name = ? ORDER BY id ASC LIMIT 1", username).Scan(resp).Error; err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func GetUserDetailRespById(id int64) (*UserDetailResp, error) {
+	db := database.GetDBEngine()
+	resp := new(UserDetailResp)
+	if err := db.Raw("SELECT a.id as id, a.name as name, a.password as password, a.email as email, a.salt as salt, a.token as token, a.gitlab_token as gitlab_token, a.drone_token as drone_token, a.created_at as created_at, a.updated_at as updated_at, a.login_retry_count as login_retry_count, b.id as role_id, b.name as role_name, b.description as role_description, b.created_at as role_created_at, b.updated_at as role_updated_at, b.version as role_version from user a LEFT JOIN role b ON a.role_id = b.id where a.id = ? ORDER BY id ASC LIMIT 1", id).Scan(resp).Error; err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -232,7 +244,7 @@ func UpdateUserPwdById(id int64, oldPwd, newPwd, role string) (*models.User, err
 	}
 
 	encNewPwd := utils.EncryptPwd(newPwd, user.Salt)
-	token, err := utils.GenerateToken(id, user.Name, encNewPwd, role)
+	token, err := utils.GenerateToken(id, user.Name, user.DroneToken, encNewPwd, role)
 	if err != nil {
 		return nil, err
 	}
@@ -282,4 +294,25 @@ func HasEmail(email string) (bool, error) {
 	}
 	//fmt.Printf("user id:%v, email: %v\n", user.Id, user.Email)
 	return true, nil
+}
+
+// Update user gitlab access token and drone token
+func UpdateUserAccessTokenById(id int64, accessToken string) (*models.User, error) {
+	db := database.GetDBEngine()
+	user, err := HasUserById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if user.GitlabToken != accessToken && accessToken != "" {
+		droneJwt, err := drone_api.GetJwt(user.Name, accessToken) // generate drone token
+		if err != nil {
+			return nil, err
+		}
+		droneToken := droneJwt.Token
+		if err := db.Model(user).Update(map[string]interface{}{"gitlab_token": accessToken, "drone_token": droneToken}).Error; err != nil {
+			return nil, err
+		}
+	}
+	return user, nil
 }

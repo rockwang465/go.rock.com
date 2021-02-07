@@ -37,6 +37,10 @@ type PaginateBriefUserResp struct {
 	Items   []*UserBriefResp `json:"items" binding:"required"`
 }
 
+type UpdateUserAccessTokenReq struct {
+	GitlabToken string `json:"gitlab_token" binding:"required" example:"real gitlab access token"` // gitlab access token
+}
+
 //type UserDetailResp struct {
 //	UserBriefResp
 //	RoleId *RoleBriefResp `json:"role_id" binding:"required"`
@@ -91,7 +95,7 @@ func (c *Controller) CreateUser(ctx *gin.Context) {
 	}
 	c.Logger.Debugf("Send create User(%s)'s email successfully", user.Name)
 
-	token, err := utils.GenerateToken(user.Id, user.Name, user.Password, role.Name)
+	token, err := utils.GenerateToken(user.Id, user.Name, user.DroneToken, user.Password, role.Name)
 	if err != nil {
 		panic(err)
 		return
@@ -250,5 +254,68 @@ func (c *Controller) UpdateUserPwd(ctx *gin.Context) {
 	}
 
 	c.Logger.Infof("Update user with id: %v", uriIdReq.Id)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Update user access token info by id and body
+// @Description Api to update user access token info by id and body
+// @Tags USER
+// @Accept json
+// @Produce json
+// @Param Id path integer true "User ID"
+// @Param update_body body v1.UpdateUserAccessTokenReq true "JSON body for update user access token"
+// @Success 200 {object} v1.UserBriefResp
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/users/{id}/access [put]
+func (c *Controller) UpdateUserAccessToken(ctx *gin.Context) {
+	cfgCtx, err := utils.GetConfCtx(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	var idReq IdReq
+	if err := ctx.ShouldBindUri(&idReq); err != nil {
+		panic(err)
+	}
+
+	var req UpdateUserAccessTokenReq
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		panic(err)
+	}
+
+	accessToken := req.GitlabToken
+	user, err := api.UpdateUserAccessTokenById(idReq.Id, accessToken)
+	if err != nil {
+		panic(err)
+	}
+
+	role, err := api.GetRoleById(user.RoleId)
+	if err != nil {
+		panic(err)
+	}
+
+	token, err := utils.GenerateToken(user.Id, user.Name, user.DroneToken, user.Password, role.Name)
+	if err != nil {
+		panic(err)
+	}
+
+	if user.Token != token {
+		user, err := api.UpdateUserToken(user.Id, token)
+		if err != nil {
+			panic(err)
+		}
+
+		if cfgCtx.Username == user.Name {
+			ctx.SetCookie("token", user.Token, utils.GetExpireDuration(), "/", "", false, true)
+		}
+	}
+
+	var resp UserBriefResp
+	if err := utils.MarshalResponse(user, &resp); err != nil {
+		panic(err)
+	}
+	c.Infof("Update user's token info with id %v", user.Id)
 	ctx.JSON(http.StatusOK, resp)
 }

@@ -84,15 +84,15 @@ func Auth(skipPath ...string) gin.HandlerFunc {
 
 			// authorize success, set cookie
 			var cfgCtx = models.ConfCtx{
-				UserId:   claim.UserId,
-				Username: claim.Username,
-				Role:     claim.Role,
+				UserId:     claim.UserId,
+				Username:   claim.Username,
+				Role:       claim.Role,
+				DroneToken: claim.DroneToken,
 			}
 			ctx.Set("custom_config", cfgCtx)
 			ctx.SetCookie("token", user.Token, utils.GetExpireDuration(), "/", "", false, true)
-
-			ctx.Next()
 		}
+		ctx.Next()
 	}
 }
 

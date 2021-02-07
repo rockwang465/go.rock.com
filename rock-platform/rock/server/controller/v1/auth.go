@@ -94,7 +94,7 @@ func (c *Controller) Login(ctx *gin.Context) {
 	//}
 
 	// generate jwt token
-	token, err := utils.GenerateToken(user.Id, user.Name, user.Password, user.RoleName)
+	token, err := utils.GenerateToken(user.Id, user.Name, user.DroneToken, user.Password, user.RoleName)
 	if err != nil {
 		panic(err)
 		return
@@ -230,7 +230,7 @@ func (c *Controller) UpdateUserPwdWithSecret(ctx *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	token, err := utils.GenerateToken(user.Id, user.Name, user.Password, userDetail.RoleName)
+	token, err := utils.GenerateToken(user.Id, user.Name, user.DroneToken, user.Password, userDetail.RoleName)
 	user, err = api.UpdateUserToken(user.Id, token)
 	if err != nil {
 		panic(err)

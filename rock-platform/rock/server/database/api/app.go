@@ -105,6 +105,16 @@ func UpdateApp(id int64, desc string) (*models.App, error) {
 	return app, nil
 }
 
+// get all apps
+func GetAppsList() ([]*models.App, error) {
+	db := database.GetDBEngine()
+	apps := make([]*models.App, 0)
+	if err := db.Find(&apps).Error; err != nil {
+		return nil, err
+	}
+	return apps, nil
+}
+
 // ensure not same name app in same projectId
 func hasNotAppWithSameNameAndProject(name string, projectId int64) error {
 	db := database.GetDBEngine()

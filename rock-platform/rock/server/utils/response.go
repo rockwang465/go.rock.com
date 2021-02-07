@@ -83,11 +83,9 @@ func MarshalResponse(src, dest interface{}) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(byteSrc))
 
 	if err := json.Unmarshal(byteSrc, dest); err != nil {
 		return err
 	}
-	fmt.Println(dest)
 	return nil
 }

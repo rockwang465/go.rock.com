@@ -11,17 +11,62 @@
 + 用于各节点信息的数据存储(用户token、admin.conf)
 
 ## 3.使用前准备
-+ 配置`config.yaml`到`/etc/rock`目录下
-+ 创建数据库`rock`
-```
-docker run mysql
+### 3.1 配置`config.yaml`到`/etc/rock`目录下
+### 3.2 创建数据库`rock`
+```text
+# docker run mysql
 10.151.3.85
+缺少本地bin-log数据缓存，实际项目请注意
 docker run --restart=always --name mysql-test -p 3333:3306 -e MYSQL\_ROOT\_PASSWORD=rock1314 -d mysql:5.7.23
 mysql -uroot -P3333 -h0.0.0.0 -prock1314
 mysql> create database rock character set UTF8mb4 collate utf8mb4_bin; 
 mysql> ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'rock1314';
+
+# add iptables rules
 # iptables -I INPUT -p tcp -m tcp --dport 3333 -j ACCEPT
 # iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+```
+### 3.3 创建数据库`drone`
++ docker run mysql for drone
+```text
+缺少本地bin-log数据缓存，实际项目请注意
+# docker run --restart=always --name mysql-drone -p 3306:3306 -e MYSQL\_ROOT\_PASSWORD=123456 -d mysql:5.7.23
+```
+
++ create database
+```text
+# docker exec -it mysql-drone bash
+# mysql -uroot -p123456
+mysql> CREATE USER 'drone'@'localhost'  IDENTIFIED BY '123456';  # 创建用户
+mysql> CREATE USER 'drone'@'%'  IDENTIFIED BY '123456';  # 远程登录
+mysql> GRANT ALL PRIVILEGES ON *.* to 'drone'@'%' identified by '123456';  # 授权用户所有权限
+mysql> CREATE DATABASE drone55 character set UTF8mb4 collate utf8mb4_bin;  # 建库
+mysql> ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '123456';
+mysql> ALTER USER 'drone'@'%' IDENTIFIED WITH mysql_native_password BY 'drone_123456';
+mysql> FLUSH PRIVILEGES;
+```
+
++ add iptables rules
+```text
+# iptables -I INPUT -p tcp -m tcp --dport 3306 -j ACCEPT
+# iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+```
+
+### 3.4 解决不能使用`GROUP BY`问题
+```text
+mysql> SELECT @@sql_mode;
++-------------------------------------------------------------------------------------------------------------------------------------------+
+| @@sql_mode                                                                                                                                |
++-------------------------------------------------------------------------------------------------------------------------------------------+
+| ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION |
++-------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+对新建数据库有效:
+mysql> SET @@global.sql_mode ='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+
+对于已存在的数据库需要执行:
+mysql> SET sql_mode ='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
 ```
 
 ## 4.使用介绍

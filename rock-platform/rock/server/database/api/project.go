@@ -67,7 +67,7 @@ func HasNotProjectByName(name string) error {
 		return err
 	}
 
-	err := utils.NewRockError(400, 40000015, fmt.Sprintf("Project with name(%v) is alerady exist", name))
+	err := utils.NewRockError(400, 40000015, fmt.Sprintf("Project with name(%v) already exists", name))
 	return err
 }
 

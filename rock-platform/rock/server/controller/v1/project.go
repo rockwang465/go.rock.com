@@ -21,7 +21,7 @@ type ProjectBriefResp struct {
 	UpdateAt    models.LocalTime `json:"updated_at" example:"2021-01-28 20:20:20"`
 }
 
-type ProjectPagination struct {
+type PaginationProjectResp struct {
 	PageNum int64               `json:"page_num" binding:"required" example:"1"`
 	PerSize int64               `json:"per_size" binding:"required" example:"10"`
 	Total   int64               `json:"total" binding:"required" example:"100"`
@@ -71,7 +71,7 @@ func (c *Controller) CreateProject(ctx *gin.Context) {
 // @Param page_num query integer true "Request page number" default(1)
 // @Param per_size query integer true "Project number size" default(10)
 // @Param query_field query string false "Fuzzy Query(field: name)"
-// @Success 200 {object} v1.ProjectPagination "StatusOK"
+// @Success 200 {object} v1.PaginationProjectResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/projects [get]
@@ -86,7 +86,7 @@ func (c *Controller) GetProjects(ctx *gin.Context) {
 		panic(err)
 	}
 
-	resp := ProjectPagination{}
+	resp := PaginationProjectResp{}
 	if err := utils.MarshalResponse(projectPg, &resp); err != nil {
 		panic(err)
 	}

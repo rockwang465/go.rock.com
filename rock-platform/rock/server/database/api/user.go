@@ -58,7 +58,7 @@ func CreateUser(username, password, email string, roleId int64) (*models.User, *
 	var user = &models.User{}
 	db.Where("name = ?", username).First(&user)
 	if user.Id != 0 {
-		err := utils.NewRockError(400, 40000001, fmt.Sprintf("user with name(%v) is alerady exist", username)) // generate a error
+		err := utils.NewRockError(400, 40000001, fmt.Sprintf("user with name(%v) already exists", username)) // generate a error
 		return nil, nil, err
 	}
 
@@ -88,7 +88,7 @@ func CreateUser(username, password, email string, roleId int64) (*models.User, *
 		dbErr, ok := err.(*mysql.MySQLError)
 		if ok {
 			if dbErr.Number == 1062 {
-				err = utils.NewRockError(400, 40000001, fmt.Sprintf("user with name(%v) is alerady exist", username))
+				err = utils.NewRockError(400, 40000001, fmt.Sprintf("user with name(%v) already exists", username))
 			}
 		}
 		return nil, nil, err

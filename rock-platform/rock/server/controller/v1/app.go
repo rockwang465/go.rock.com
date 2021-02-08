@@ -108,7 +108,7 @@ func (c *Controller) CreateApp(ctx *gin.Context) {
 // @Param page_num query integer true "Request page number" default(1)
 // @Param per_size query integer true "App number size" default(10)
 // @Param query_field query string false "Fuzzy Query(field: name)"
-// @Success 200 {object} v1.ProjectPagination "StatusOK"
+// @Success 200 {object} v1.PaginateAppResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"

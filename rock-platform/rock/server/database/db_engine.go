@@ -97,9 +97,9 @@ func (e *DBEngine) InitDB() {
 	var project = &models.Project{}
 	var app = &models.App{}
 	var cluster = &models.Cluster{}
-	//var env = &models.Env{}
+	var env = &models.Env{}
 	e.AutoMigrate(role, user) // create role user table
-	e.AutoMigrate(project, app, cluster)
+	e.AutoMigrate(project, app, cluster, env)
 	//e.Model(user).AddForeignKey("role_id", "role(id)", "RESTRICT", "RESTRICT") // add ForeignKey,正常业务不应该开启外键束缚,影响数据库性能
 
 	logger.Infof("[Rock Platform] Tables sync finished")

@@ -104,6 +104,6 @@ func hasNotClusterWithSameName(name string) error {
 		}
 		return err
 	}
-	err := utils.NewRockError(400, 40000018, fmt.Sprintf("Cluster with name(%v) is alerady exist", name))
+	err := utils.NewRockError(400, 40000018, fmt.Sprintf("Cluster with name(%v) already exists", name))
 	return err
 }

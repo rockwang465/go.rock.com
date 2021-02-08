@@ -97,7 +97,7 @@ func (s *Server) InitRouters() {
 			clusterApi.GET("", ctlv1.GetClusters)
 			clusterApi.GET("/:id", ctlv1.GetCluster)
 			clusterApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteCluster)
-			//clusterApi.PUT("/:id", middleware.IsAdmin, ctlv1.UpdateCluster)
+			clusterApi.PUT("/:id", middleware.IsAdmin, ctlv1.UpdateCluster)
 			//clusterApi.GET("/:id/envs", ctlv1.GetClusterEnvs)
 			//clusterApi.GET("/:id/nodes", ctlv1.GetClusterNodes) // 获取节点信息
 			//clusterApi.GET("/:id/nodes/:name", ctlv1.GetClusterNode)
@@ -111,23 +111,23 @@ func (s *Server) InitRouters() {
 			//clusterApi.GET("/:id/license-clics", middleware.IsSystemAdminOrAdmin, ctlv1.GetClientLicenses)
 		}
 
-		//envApi := v1Root.Group("/envs")
-		//{
-		//	envApi.POST("", ctlv1.CreateEnv)
-		//	//envApi.GET("", ctlv1.GetEnvs)
-		//	//envApi.GET("/:id", ctlv1.GetEnv)
-		//	//envApi.DELETE("/:id", ctlv1.DeleteEnv)
-		//	//envApi.PUT("/:id", ctlv1.UpdateEnv)
-		//	//envApi.POST("/:id/jobs", ctlv1.CreateEnvJob)
-		//	//envApi.POST("/:id/cronjobs", ctlv1.CreateEnvCronJob)
-		//}
+		envApi := v1Root.Group("/envs")
+		{
+			envApi.POST("", ctlv1.CreateEnv)
+			envApi.GET("", ctlv1.GetEnvs)
+			envApi.GET("/:id", ctlv1.GetEnv)
+			envApi.DELETE("/:id", ctlv1.DeleteEnv)
+			envApi.PUT("/:id", ctlv1.UpdateEnv)
+			//envApi.POST("/:id/jobs", ctlv1.CreateEnvJob)
+			//envApi.POST("/:id/cronjobs", ctlv1.CreateEnvCronJob)
+		}
 
 		authApi := v1Root.Group("/auth")
 		{
 			authApi.POST("/login", ctlv1.Login)
 			authApi.POST("/logout", ctlv1.Logout)
 			authApi.POST("/reset", ctlv1.CreateResetEmail)
-			authApi.POST("/pwd", ctlv1.UpdateUserPwdWithSecret)
+			authApi.PUT("/pwd", ctlv1.UpdateUserPwdWithSecret)
 		}
 
 		repoApi := v1Root.Group("/repos")

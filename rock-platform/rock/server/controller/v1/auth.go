@@ -192,7 +192,7 @@ func (c *Controller) CreateResetEmail(ctx *gin.Context) {
 // @Success 200 {object} string "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
-// @Router /v1/auth/pwd [post]
+// @Router /v1/auth/pwd [put]
 func (c *Controller) UpdateUserPwdWithSecret(ctx *gin.Context) {
 	var pwdReq ResetPwdReq
 	err := ctx.ShouldBind(&pwdReq)

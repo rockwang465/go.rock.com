@@ -23,7 +23,7 @@ type ClusterBriefResp struct {
 	UpdateAt    models.LocalTime `json:"updated_at" example:"2021-01-28 20:20:20"`
 }
 
-type ClusterPagination struct {
+type PaginationClusterResp struct {
 	PageNum int64               `json:"page_num" binding:"required" example:"1"`
 	PerSize int64               `json:"per_size" binding:"required" example:"10"`
 	Total   int64               `json:"total" binding:"required" example:"100"`
@@ -81,7 +81,7 @@ func (c *Controller) CreateCluster(ctx *gin.Context) {
 // @Param page_num query integer true "Request page number" default(1)
 // @Param per_size query integer true "Cluster number size" default(10)
 // @Param query_field query string false "Fuzzy Query(field: name)"
-// @Success 200 {object} v1.ClusterPagination "StatusOK"
+// @Success 200 {object} v1.PaginationClusterResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/clusters [get]
@@ -96,7 +96,7 @@ func (c *Controller) GetClusters(ctx *gin.Context) {
 		panic(err)
 	}
 
-	resp := ClusterPagination{}
+	resp := PaginationClusterResp{}
 	if err := utils.MarshalResponse(clusterPg, &resp); err != nil {
 		panic(err)
 	}

@@ -157,9 +157,21 @@ const(
 - 中文名称: 传入的k8s config错误
 
 ---
+
+- HttpCode: 400
+- ErrorCode: 40000020
+- 中文名称: 该cluster_id已存在对应namespace
+
+---
 - HttpCode: 401
 - ErrorCode: 40100001
 - 中文名称: 权限不足
+
+---
+
+- HttpCode: 403
+- ErrorCode: 40300001
+- 中文名称: 关联的Gitlab账号，对该工程没有master权限
 
 ---
 
@@ -205,9 +217,9 @@ const(
 
 ---
 
-- HttpCode: 403
-- ErrorCode: 40300001
-- 中文名称: 关联的Gitlab账号，对该工程没有master权限
+- HttpCode: 404
+- ErrorCode: 40400008
+- 中文名称: env_id不存在
 
 ---
 

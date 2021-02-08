@@ -1,10 +1,10 @@
 package models
 
 type Env struct {
-	Id          int64    `json:"id" gorm:"unique_index;not null"`
-	Description string   `json:"description"`
-	Namespace   string   `json:"namespace" gorm:"not null"`
-	ClusterId   *Cluster `json:"cluster_id"`
+	Id          int64  `json:"id" gorm:"unique_index;not null"`
+	Description string `json:"description"`
+	Namespace   string `json:"namespace" gorm:"not null"`
+	ClusterId   int64  `json:"cluster_id" gorm:"not null"`
 	Common
 }
 

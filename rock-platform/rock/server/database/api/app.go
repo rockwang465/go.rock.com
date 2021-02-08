@@ -132,6 +132,6 @@ func hasNotAppWithSameNameAndProject(name string, projectId int64) error {
 		}
 		return err
 	}
-	err = utils.NewRockError(400, 40000017, fmt.Sprintf("App with name(%v) in project_id(%v) is alerady exist", name, projectId))
+	err = utils.NewRockError(400, 40000017, fmt.Sprintf("App with name(%v) in project_id(%v) already exists", name, projectId))
 	return err
 }

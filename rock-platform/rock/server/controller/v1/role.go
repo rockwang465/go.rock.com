@@ -143,8 +143,8 @@ func (c *Controller) GetRole(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, resp)
 }
 
-// @Summary Get an role by id
-// @Description api for get an role by id
+// @Summary Delete an role by id
+// @Description api for delete an role by id
 // @Tags ROLE
 // @Accept json
 // @Produce json
@@ -229,7 +229,7 @@ func (c *Controller) GetRoleUsers(ctx *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	// get users by role id, not has query field
+	// get users by role id, no query field
 	userPg, err := api.GetRoleUsers(idReq.Id, paginationReq.PageNum, paginationReq.PageSize)
 	if err != nil {
 		panic(err)

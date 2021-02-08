@@ -76,7 +76,7 @@ func GetProjectById(id int64) (*models.Project, error) {
 	project := new(models.Project)
 	if err := db.First(project, id).Error; err != nil {
 		if err.Error() == "record not found" {
-			err := utils.NewRockError(404, 40400004, fmt.Sprintf("Project with id(%v) is not found", id))
+			err := utils.NewRockError(404, 40400004, fmt.Sprintf("Project with id(%v) was not found", id))
 			return nil, err
 		}
 		return nil, err
@@ -108,4 +108,38 @@ func UpdateProject(id int64, desc string) (*models.Project, error) {
 		return nil, err
 	}
 	return project, nil
+}
+
+// get all app by project id, no query field
+func GetAppsByProjectId(projectId, pageNum, pageSize int64, filedName string) (*models.AppPagination, error) {
+	db := database.GetDBEngine()
+	query := "%" + filedName + "%"
+	Apps := make([]*models.App, 0)
+
+	var count int64
+	if err := db.Order("updated_at desc").
+		Offset((pageNum-1)*pageSize).
+		Where("project_id = ?", projectId).
+		Where("name like ?", query).
+		Find(&Apps).
+		Count(&count).Error; err != nil {
+		return nil, err
+	}
+
+	if err := db.Order("updated_at desc").
+		Offset((pageNum-1)*pageSize).
+		Where("project_id = ?", projectId).
+		Limit(pageSize).
+		Find(&Apps).Error; err != nil {
+		return nil, err
+	}
+
+	appPagination := &models.AppPagination{
+		PageNum:  pageNum,
+		PageSize: pageSize,
+		Total:    count,
+		Pages:    utils.CalcPages(count, pageSize),
+		Items:    Apps,
+	}
+	return appPagination, nil
 }

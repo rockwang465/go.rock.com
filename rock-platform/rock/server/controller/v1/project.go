@@ -95,8 +95,8 @@ func (c *Controller) GetProjects(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, resp)
 }
 
-// @Summary Get a project
-// @Description Api to get a project
+// @Summary Get a project by id
+// @Description Api to get a project by id
 // @Tags PROJECT
 // @Accept json
 // @Produce json
@@ -105,7 +105,7 @@ func (c *Controller) GetProjects(ctx *gin.Context) {
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
-// @Router /v1/project/{id} [get]
+// @Router /v1/projects/{id} [get]
 func (c *Controller) GetProject(ctx *gin.Context) {
 	var idReq IdReq
 	if err := ctx.ShouldBindUri(&idReq); err != nil {
@@ -127,8 +127,8 @@ func (c *Controller) GetProject(ctx *gin.Context) {
 
 }
 
-// @Summary Get a project
-// @Description Api to get a project
+// @Summary Delete a project by id
+// @Description Api to delete a project by id
 // @Tags PROJECT
 // @Accept json
 // @Produce json
@@ -137,7 +137,7 @@ func (c *Controller) GetProject(ctx *gin.Context) {
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
-// @Router /v1/project/{id} [delete]
+// @Router /v1/projects/{id} [delete]
 func (c *Controller) DeleteProject(ctx *gin.Context) {
 	var idReq IdReq
 	if err := ctx.ShouldBindUri(&idReq); err != nil {
@@ -153,7 +153,7 @@ func (c *Controller) DeleteProject(ctx *gin.Context) {
 
 // @Summary Update project description by id and body
 // @Description api for update project description
-// @Tags ROLE
+// @Tags PROJECT
 // @Accept json
 // @Produce json
 // @Param id path integer true "Project ID"
@@ -183,5 +183,48 @@ func (c *Controller) UpdateProject(ctx *gin.Context) {
 		panic(err)
 	}
 	c.Logger.Infof("Update project's description by id:%v", idReq.Id)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Get all apps by species project id
+// @Description api for get all apps by project id
+// @Tags PROJECT
+// @Accept json
+// @Produce json
+// @Param id path integer true "Project ID"
+// @Param page_num query integer true "Request page number" default(1)
+// @Param page_size query integer true "Request page size" default(10)
+// @Success 200 {object} v1.PaginateAppResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/projects/{id}/apps [get]
+func (c *Controller) GetProjectApps(ctx *gin.Context) {
+	var idReq IdReq // project id
+	if err := ctx.ShouldBindUri(&idReq); err != nil {
+		panic(err)
+	}
+
+	var paginationReq GetPaginationReq
+	if err := ctx.ShouldBind(&paginationReq); err != nil {
+		panic(err)
+	}
+
+	_, err := api.GetProjectById(idReq.Id)
+	if err != nil {
+		panic(err)
+	}
+	// get apps by project id
+	appPg, err := api.GetAppsByProjectId(idReq.Id, paginationReq.PageNum, paginationReq.PageSize, paginationReq.QueryField)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := PaginateAppResp{}
+	if err := utils.MarshalResponse(appPg, &resp); err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Get all apps with project id %v", idReq.Id)
 	ctx.JSON(http.StatusOK, resp)
 }

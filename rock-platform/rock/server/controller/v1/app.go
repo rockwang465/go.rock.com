@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.rock.com/rock-platform/rock/server/client/drone-api"
 	"go.rock.com/rock-platform/rock/server/database/api"
@@ -31,7 +30,7 @@ type AppBriefResp struct {
 	Version       int64            `json:"version" example:"1"`
 }
 
-type AppPagination struct {
+type PaginateAppResp struct {
 	PageNum int64           `json:"page_num" binding:"required" example:"1"`
 	PerSize int64           `json:"per_size" binding:"required" example:"10"`
 	Total   int64           `json:"total" binding:"required" example:"100"`
@@ -86,13 +85,7 @@ func (c *Controller) CreateApp(ctx *gin.Context) {
 			err := utils.NewRockError(403, 40300002, "Permission deny, because you don't have gitlab project master permission")
 			panic(err)
 		}
-		fmt.Printf("repo.FullName:%v\n", repo.FullName)
-		fmt.Printf("repo.Owner:%v\n", repo.Owner)
-		fmt.Printf("createApp.Description:%v\n", createApp.Description)
-		fmt.Printf("remote.Clone:%s\n", remote.Clone)
-		fmt.Printf("createApp.ProjectId:%v\n", createApp.ProjectId)
-		fmt.Printf("createApp.GitlabProjectId:%v\n", createApp.GitlabProjectId)
-		fmt.Printf("repo.ID:%v\n", repo.ID)
+
 		app, err = api.CreateApp(createApp.Name, repo.FullName, repo.Owner, createApp.Description, remote.Clone, createApp.ProjectId, createApp.GitlabProjectId, repo.ID)
 		if err != nil {
 			panic(err)
@@ -131,7 +124,7 @@ func (c *Controller) GetApps(ctx *gin.Context) {
 		panic(err)
 	}
 
-	resp := AppPagination{}
+	resp := PaginateAppResp{}
 	if err := utils.MarshalResponse(appPg, &resp); err != nil {
 		panic(err)
 	}
@@ -200,7 +193,7 @@ func (c *Controller) DeleteApp(ctx *gin.Context) {
 // @Produce json
 // @Param id path integer true "App ID"
 // @Param update_body body v1.UpdateAppReq true "JSON type for update app description"
-// @Success 200 {object} v1.AppBriefResp "StatusOK"
+// @Success 200 {object} v1.RoleBriefResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"

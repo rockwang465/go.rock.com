@@ -222,7 +222,7 @@ var doc = `{
                     "200": {
                         "description": "StatusOK",
                         "schema": {
-                            "$ref": "#/definitions/v1.AppBriefResp"
+                            "$ref": "#/definitions/v1.RoleBriefResp"
                         }
                     },
                     "400": {
@@ -467,9 +467,9 @@ var doc = `{
                 }
             }
         },
-        "/v1/project/{id}": {
+        "/v1/clusters": {
             "get": {
-                "description": "Api to get a project",
+                "description": "Api to get all k8s clusters",
                 "consumes": [
                     "application/json"
                 ],
@@ -477,13 +477,116 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "PROJECT"
+                    "CLUSTER"
                 ],
-                "summary": "Get a project",
+                "summary": "Get all clusters",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Project ID",
+                        "default": 1,
+                        "description": "Request page number",
+                        "name": "page_num",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Cluster number size",
+                        "name": "per_size",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Fuzzy Query(field: name)",
+                        "name": "query_field",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ClusterPagination"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Api to create k8s cluster",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CLUSTER"
+                ],
+                "summary": "Create cluster",
+                "parameters": [
+                    {
+                        "description": "JSON type input body",
+                        "name": "input_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CreateClusterReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "StatusCreated",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ClusterBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/clusters/{id}": {
+            "get": {
+                "description": "Api to get a cluster by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CLUSTER"
+                ],
+                "summary": "Get a cluster by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cluster ID",
                         "name": "id",
                         "in": "query",
                         "required": true
@@ -493,7 +596,64 @@ var doc = `{
                     "200": {
                         "description": "StatusOK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ProjectBriefResp"
+                            "$ref": "#/definitions/v1.ClusterBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "api for update cluster description",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CLUSTER"
+                ],
+                "summary": "Update cluster description by id and body",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cluster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "JSON type for update cluster description",
+                        "name": "update_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdateClusterReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ClusterBriefResp"
                         }
                     },
                     "400": {
@@ -517,7 +677,7 @@ var doc = `{
                 }
             },
             "delete": {
-                "description": "Api to get a project",
+                "description": "Api to delete a cluster by id",
                 "consumes": [
                     "application/json"
                 ],
@@ -525,12 +685,12 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "PROJECT"
+                    "CLUSTER"
                 ],
-                "summary": "Get a project",
+                "summary": "Delete a cluster by id",
                 "parameters": [
                     {
-                        "description": "Project ID",
+                        "description": "Cluster ID",
                         "name": "id",
                         "in": "body",
                         "required": true,
@@ -671,6 +831,54 @@ var doc = `{
             }
         },
         "/v1/projects/{id}": {
+            "get": {
+                "description": "Api to get a project by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PROJECT"
+                ],
+                "summary": "Get a project by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ProjectBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
             "put": {
                 "description": "api for update project description",
                 "consumes": [
@@ -680,7 +888,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "ROLE"
+                    "PROJECT"
                 ],
                 "summary": "Update project description by id and body",
                 "parameters": [
@@ -706,6 +914,122 @@ var doc = `{
                         "description": "StatusOK",
                         "schema": {
                             "$ref": "#/definitions/v1.ProjectBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Api to delete a project by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PROJECT"
+                ],
+                "summary": "Delete a project by id",
+                "parameters": [
+                    {
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "StatusNoContent",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/projects/{id}/apps": {
+            "get": {
+                "description": "api for get all apps by project id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PROJECT"
+                ],
+                "summary": "Get all apps by species project id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Request page number",
+                        "name": "page_num",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Request page size",
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.PaginateAppResp"
                         }
                     },
                     "400": {
@@ -980,7 +1304,7 @@ var doc = `{
                 }
             },
             "delete": {
-                "description": "api for get an role by id",
+                "description": "api for delete an role by id",
                 "consumes": [
                     "application/json"
                 ],
@@ -990,7 +1314,7 @@ var doc = `{
                 "tags": [
                     "ROLE"
                 ],
-                "summary": "Get an role by id",
+                "summary": "Delete an role by id",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1635,6 +1959,65 @@ var doc = `{
                 }
             }
         },
+        "v1.ClusterBriefResp": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2021-01-28 20:20:20"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "description for a k8s cluster"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "test-cluster"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2021-01-28 20:20:20"
+                }
+            }
+        },
+        "v1.ClusterPagination": {
+            "type": "object",
+            "required": [
+                "items",
+                "page_num",
+                "pages",
+                "per_size",
+                "total"
+            ],
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.ClusterBriefResp"
+                    }
+                },
+                "page_num": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "pages": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "per_size": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 100
+                }
+            }
+        },
         "v1.CreateAppReq": {
             "type": "object",
             "required": [
@@ -1661,6 +2044,27 @@ var doc = `{
                     "description": "属于哪个project(id关联)",
                     "type": "integer",
                     "example": 1
+                }
+            }
+        },
+        "v1.CreateClusterReq": {
+            "type": "object",
+            "required": [
+                "config",
+                "name"
+            ],
+            "properties": {
+                "config": {
+                    "type": "string",
+                    "example": "k8s config file"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "description for a k8s cluster"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "test-cluster"
                 }
             }
         },
@@ -1767,6 +2171,40 @@ var doc = `{
                 "password": {
                     "type": "string",
                     "example": "********"
+                }
+            }
+        },
+        "v1.PaginateAppResp": {
+            "type": "object",
+            "required": [
+                "items",
+                "page_num",
+                "pages",
+                "per_size",
+                "total"
+            ],
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.AppBriefResp"
+                    }
+                },
+                "page_num": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "pages": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "per_size": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 100
                 }
             }
         },
@@ -1979,6 +2417,15 @@ var doc = `{
                 "description": {
                     "type": "string",
                     "example": "description for app"
+                }
+            }
+        },
+        "v1.UpdateClusterReq": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "description the cluster"
                 }
             }
         },

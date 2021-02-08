@@ -77,7 +77,7 @@ func GetRoleById(id int64) (*models.Role, error) {
 	role := new(models.Role)
 	if err := db.First(role, id).Error; err != nil {
 		if err.Error() == "record not found" {
-			err = utils.NewRockError(404, 40400006, fmt.Sprintf("Role with id(%v) is not found", id))
+			err = utils.NewRockError(404, 40400006, fmt.Sprintf("Role with id(%v) was not found", id))
 			return nil, err
 		}
 		return nil, err
@@ -110,7 +110,7 @@ func UpdateRole(id int64, desc string) (*models.Role, error) {
 	return role, nil
 }
 
-// get all user by role id, not has query field
+// get all user by role id, no query field
 func GetRoleUsers(roleId, pageNum, pageSize int64) (*models.UserPagination, error) {
 	db := database.GetDBEngine()
 	Users := make([]*models.User, 0)

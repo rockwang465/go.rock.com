@@ -145,6 +145,12 @@ const(
 - 中文名称: app应用名称已经存在
 
 ---
+
+- HttpCode: 400
+- ErrorCode: 40000018
+- 中文名称: cluster集群名称已经存在
+
+---
 - HttpCode: 401
 - ErrorCode: 40100001
 - 中文名称: 权限不足
@@ -184,6 +190,12 @@ const(
 - HttpCode: 404
 - ErrorCode: 40400006
 - 中文名称: role_id不存在
+
+---
+
+- HttpCode: 404
+- ErrorCode: 40400007
+- 中文名称: cluster_id不存在
 
 ---
 

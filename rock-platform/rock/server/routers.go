@@ -62,7 +62,7 @@ func (s *Server) InitRouters() {
 			projectApi.GET("/:id", ctlv1.GetProject)
 			projectApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteProject)
 			projectApi.PUT("/:id", middleware.IsAdmin, ctlv1.UpdateProject)
-			//projectApi.GET("/:id/apps", ctlv1.GetProjectApps)
+			projectApi.GET("/:id/apps", ctlv1.GetProjectApps)
 			//projectApi.POST("/:id/project-envs", middleware.IsAdmin, ctlv1.CreateProjectEnv)
 			//projectApi.GET("/:id/project-envs", ctlv1.GetProjectEnvs)
 			//projectApi.DELETE("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.DeleteProjectEnv)
@@ -90,6 +90,37 @@ func (s *Server) InitRouters() {
 			//appApi.GET("/:id/config", ctlv1.GetAppConf)
 			//appApi.PUT("/:id/config", ctlv1.UpdateOrCreateAppConf)
 		}
+
+		clusterApi := v1Root.Group("/clusters")
+		{
+			clusterApi.POST("", middleware.IsAdmin, ctlv1.CreateCluster)
+			clusterApi.GET("", ctlv1.GetClusters)
+			clusterApi.GET("/:id", ctlv1.GetCluster)
+			clusterApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteCluster)
+			//clusterApi.PUT("/:id", middleware.IsAdmin, ctlv1.UpdateCluster)
+			//clusterApi.GET("/:id/envs", ctlv1.GetClusterEnvs)
+			//clusterApi.GET("/:id/nodes", ctlv1.GetClusterNodes) // 获取节点信息
+			//clusterApi.GET("/:id/nodes/:name", ctlv1.GetClusterNode)
+			//clusterApi.GET("/:id/jobs", ctlv1.GetClusterJobs)
+			//clusterApi.GET("/:id/namespaces/:namespace/jobs/:name", ctlv1.GetClusterJob)
+			//clusterApi.GET("/:id/license-status", middleware.IsSystemAdminOrAdmin, ctlv1.GetLicenseStatus)
+			//clusterApi.GET("/:id/license-c2v", middleware.IsSystemAdminOrAdmin, ctlv1.GetC2vFile)
+			//clusterApi.GET("/:id/license-fingerprint", middleware.IsSystemAdminOrAdmin, ctlv1.GetFingerprintFile)
+			//clusterApi.POST("/:id/license-online", middleware.IsSystemAdminOrAdmin, ctlv1.ActiveOnline)
+			//clusterApi.POST("/:id/license-offline", middleware.IsSystemAdminOrAdmin, ctlv1.ActiveOffline)
+			//clusterApi.GET("/:id/license-clics", middleware.IsSystemAdminOrAdmin, ctlv1.GetClientLicenses)
+		}
+
+		//envApi := v1Root.Group("/envs")
+		//{
+		//	envApi.POST("", ctlv1.CreateEnv)
+		//	//envApi.GET("", ctlv1.GetEnvs)
+		//	//envApi.GET("/:id", ctlv1.GetEnv)
+		//	//envApi.DELETE("/:id", ctlv1.DeleteEnv)
+		//	//envApi.PUT("/:id", ctlv1.UpdateEnv)
+		//	//envApi.POST("/:id/jobs", ctlv1.CreateEnvJob)
+		//	//envApi.POST("/:id/cronjobs", ctlv1.CreateEnvCronJob)
+		//}
 
 		authApi := v1Root.Group("/auth")
 		{

@@ -158,6 +158,49 @@ definitions:
         example: 1
         type: integer
     type: object
+  v1.ClusterBriefResp:
+    properties:
+      created_at:
+        example: "2021-01-28 20:20:20"
+        type: string
+      description:
+        example: description for a k8s cluster
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: test-cluster
+        type: string
+      updated_at:
+        example: "2021-01-28 20:20:20"
+        type: string
+    type: object
+  v1.ClusterPagination:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/v1.ClusterBriefResp'
+        type: array
+      page_num:
+        example: 1
+        type: integer
+      pages:
+        example: 1
+        type: integer
+      per_size:
+        example: 10
+        type: integer
+      total:
+        example: 100
+        type: integer
+    required:
+    - items
+    - page_num
+    - pages
+    - per_size
+    - total
+    type: object
   v1.CreateAppReq:
     properties:
       description:
@@ -179,6 +222,21 @@ definitions:
     required:
     - name
     - project_id
+    type: object
+  v1.CreateClusterReq:
+    properties:
+      config:
+        example: k8s config file
+        type: string
+      description:
+        example: description for a k8s cluster
+        type: string
+      name:
+        example: test-cluster
+        type: string
+    required:
+    - config
+    - name
     type: object
   v1.CreateProjectReq:
     properties:
@@ -255,6 +313,31 @@ definitions:
     required:
     - name
     - password
+    type: object
+  v1.PaginateAppResp:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/v1.AppBriefResp'
+        type: array
+      page_num:
+        example: 1
+        type: integer
+      pages:
+        example: 1
+        type: integer
+      per_size:
+        example: 10
+        type: integer
+      total:
+        example: 100
+        type: integer
+    required:
+    - items
+    - page_num
+    - pages
+    - per_size
+    - total
     type: object
   v1.PaginateBriefUserResp:
     properties:
@@ -409,6 +492,12 @@ definitions:
     properties:
       description:
         example: description for app
+        type: string
+    type: object
+  v1.UpdateClusterReq:
+    properties:
+      description:
+        example: description the cluster
         type: string
     type: object
   v1.UpdateProjectReq:
@@ -643,7 +732,7 @@ paths:
         "200":
           description: StatusOK
           schema:
-            $ref: '#/definitions/v1.AppBriefResp'
+            $ref: '#/definitions/v1.RoleBriefResp'
         "400":
           description: StatusBadRequest
           schema:
@@ -772,13 +861,82 @@ paths:
       summary: Create reset email
       tags:
       - AUTH
-  /v1/project/{id}:
+  /v1/clusters:
+    get:
+      consumes:
+      - application/json
+      description: Api to get all k8s clusters
+      parameters:
+      - default: 1
+        description: Request page number
+        in: query
+        name: page_num
+        required: true
+        type: integer
+      - default: 10
+        description: Cluster number size
+        in: query
+        name: per_size
+        required: true
+        type: integer
+      - description: 'Fuzzy Query(field: name)'
+        in: query
+        name: query_field
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ClusterPagination'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get all clusters
+      tags:
+      - CLUSTER
+    post:
+      consumes:
+      - application/json
+      description: Api to create k8s cluster
+      parameters:
+      - description: JSON type input body
+        in: body
+        name: input_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateClusterReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: StatusCreated
+          schema:
+            $ref: '#/definitions/v1.ClusterBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Create cluster
+      tags:
+      - CLUSTER
+  /v1/clusters/{id}:
     delete:
       consumes:
       - application/json
-      description: Api to get a project
+      description: Api to delete a cluster by id
       parameters:
-      - description: Project ID
+      - description: Cluster ID
         in: body
         name: id
         required: true
@@ -803,15 +961,15 @@ paths:
           description: StatusInternalServerError
           schema:
             $ref: '#/definitions/utils.HTTPError'
-      summary: Get a project
+      summary: Delete a cluster by id
       tags:
-      - PROJECT
+      - CLUSTER
     get:
       consumes:
       - application/json
-      description: Api to get a project
+      description: Api to get a cluster by id
       parameters:
-      - description: Project ID
+      - description: Cluster ID
         in: query
         name: id
         required: true
@@ -822,7 +980,7 @@ paths:
         "200":
           description: StatusOK
           schema:
-            $ref: '#/definitions/v1.ProjectBriefResp'
+            $ref: '#/definitions/v1.ClusterBriefResp'
         "400":
           description: StatusBadRequest
           schema:
@@ -835,9 +993,47 @@ paths:
           description: StatusInternalServerError
           schema:
             $ref: '#/definitions/utils.HTTPError'
-      summary: Get a project
+      summary: Get a cluster by id
       tags:
-      - PROJECT
+      - CLUSTER
+    put:
+      consumes:
+      - application/json
+      description: api for update cluster description
+      parameters:
+      - description: Cluster ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: JSON type for update cluster description
+        in: body
+        name: update_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateClusterReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ClusterBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Update cluster description by id and body
+      tags:
+      - CLUSTER
   /v1/projects:
     get:
       consumes:
@@ -908,6 +1104,71 @@ paths:
       tags:
       - PROJECT
   /v1/projects/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Api to delete a project by id
+      parameters:
+      - description: Project ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: StatusNoContent
+          schema:
+            type: string
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Delete a project by id
+      tags:
+      - PROJECT
+    get:
+      consumes:
+      - application/json
+      description: Api to get a project by id
+      parameters:
+      - description: Project ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ProjectBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get a project by id
+      tags:
+      - PROJECT
     put:
       consumes:
       - application/json
@@ -945,7 +1206,52 @@ paths:
             $ref: '#/definitions/utils.HTTPError'
       summary: Update project description by id and body
       tags:
-      - ROLE
+      - PROJECT
+  /v1/projects/{id}/apps:
+    get:
+      consumes:
+      - application/json
+      description: api for get all apps by project id
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: 1
+        description: Request page number
+        in: query
+        name: page_num
+        required: true
+        type: integer
+      - default: 10
+        description: Request page size
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.PaginateAppResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get all apps by species project id
+      tags:
+      - PROJECT
   /v1/repos:
     get:
       consumes:
@@ -1046,7 +1352,7 @@ paths:
     delete:
       consumes:
       - application/json
-      description: api for get an role by id
+      description: api for delete an role by id
       parameters:
       - description: Role ID
         in: path
@@ -1072,7 +1378,7 @@ paths:
           description: StatusInternalServerError
           schema:
             $ref: '#/definitions/utils.HTTPError'
-      summary: Get an role by id
+      summary: Delete an role by id
       tags:
       - ROLE
     get:

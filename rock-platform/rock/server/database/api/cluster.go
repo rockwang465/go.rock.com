@@ -82,14 +82,14 @@ func DeleteClusterById(id int64) error {
 	return nil
 }
 
-func UpdateCluster(id int64, desc string) (*models.Cluster, error) {
+func UpdateCluster(id int64, desc, config string) (*models.Cluster, error) {
 	db := database.GetDBEngine()
 	cluster, err := GetClusterById(id)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := db.Model(cluster).Update(map[string]interface{}{"description": desc}).Error; err != nil {
+	if err := db.Model(cluster).Update(map[string]interface{}{"description": desc, "config": config}).Error; err != nil {
 		return nil, err
 	}
 	return cluster, nil

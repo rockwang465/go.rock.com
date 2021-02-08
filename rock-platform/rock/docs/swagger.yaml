@@ -496,9 +496,14 @@ definitions:
     type: object
   v1.UpdateClusterReq:
     properties:
+      config:
+        example: k8s config file
+        type: string
       description:
         example: description the cluster
         type: string
+    required:
+    - config
     type: object
   v1.UpdateProjectReq:
     properties:

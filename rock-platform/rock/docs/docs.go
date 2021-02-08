@@ -2422,7 +2422,14 @@ var doc = `{
         },
         "v1.UpdateClusterReq": {
             "type": "object",
+            "required": [
+                "config"
+            ],
             "properties": {
+                "config": {
+                    "type": "string",
+                    "example": "k8s config file"
+                },
                 "description": {
                     "type": "string",
                     "example": "description the cluster"

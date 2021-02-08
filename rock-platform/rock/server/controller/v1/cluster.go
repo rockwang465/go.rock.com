@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
+	"go.rock.com/rock-platform/rock/server/client/k8s"
 	"go.rock.com/rock-platform/rock/server/database/api"
 	"go.rock.com/rock-platform/rock/server/database/models"
 	"go.rock.com/rock-platform/rock/server/utils"
@@ -32,6 +33,7 @@ type ClusterPagination struct {
 
 type UpdateClusterReq struct {
 	Description string `json:"description" binding:"omitempty,max=100" example:"description the cluster"`
+	Config      string `json:"config" binding:"required" example:"k8s config file"`
 }
 
 // @Summary Create cluster
@@ -45,12 +47,19 @@ type UpdateClusterReq struct {
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/clusters [post]
 func (c *Controller) CreateCluster(ctx *gin.Context) {
+	// postman存放/etc/kubernetes/admin.conf,需要先从yaml转为字符串方式，操作方法如下:
+	// sed s/$/"\\\n"/ /etc/kubernetes/admin.conf | tr -d "\n"
 	var req CreateClusterReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		panic(err)
 	}
 
 	// check k8s status
+	if err := k8s.IsK8sHealth(req.Config); err != nil {
+		c.Logger.Error("use k8s config request failed, ", err)
+		err = utils.NewRockError(400, 40000019, "the k8s config is not correct, please check it")
+		panic(err)
+	}
 
 	cluster, err := api.CreateCluster(req.Name, req.Description, req.Config)
 	if err != nil {
@@ -169,14 +178,18 @@ func (c *Controller) UpdateCluster(ctx *gin.Context) {
 		panic(err)
 	}
 
-	var descReq UpdateClusterReq
-	if err := ctx.ShouldBindJSON(&descReq); err != nil {
+	var req UpdateClusterReq
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		panic(err)
 	}
 
 	// check k8s status
+	if err := k8s.IsK8sHealth(req.Config); err != nil {
+		c.Logger.Error("use k8s config request failed, ", err)
+		err = utils.NewRockError(400, 40000019, "the k8s config is not correct, please check it")
+	}
 
-	cluster, err := api.UpdateCluster(idReq.Id, descReq.Description)
+	cluster, err := api.UpdateCluster(idReq.Id, req.Description, req.Config)
 	if err != nil {
 		panic(err)
 	}
@@ -185,6 +198,6 @@ func (c *Controller) UpdateCluster(ctx *gin.Context) {
 	if err := utils.MarshalResponse(cluster, &resp); err != nil {
 		panic(err)
 	}
-	c.Logger.Infof("Update cluster's description by id:%v", idReq.Id)
+	c.Logger.Infof("Update cluster's config by id:%v", idReq.Id)
 	ctx.JSON(http.StatusOK, resp)
 }

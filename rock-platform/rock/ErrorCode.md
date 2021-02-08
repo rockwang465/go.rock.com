@@ -151,6 +151,12 @@ const(
 - 中文名称: cluster集群名称已经存在
 
 ---
+
+- HttpCode: 400
+- ErrorCode: 40000019
+- 中文名称: 传入的k8s config错误
+
+---
 - HttpCode: 401
 - ErrorCode: 40100001
 - 中文名称: 权限不足

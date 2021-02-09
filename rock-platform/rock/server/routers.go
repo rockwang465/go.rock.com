@@ -30,7 +30,7 @@ func (s *Server) InitRouters() {
 			userApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteUser)
 			userApi.PUT("/:id/access", middleware.IsUserSelfOrAdmin, ctlv1.UpdateUserAccessToken) // 关联token按钮,更新access token
 			userApi.PUT("/:id/password", middleware.IsUserSelfOrAdmin, ctlv1.UpdateUserPwd)
-			//userApi.PUT("/:id/roles", middleware.IsAdmin, ctlv1.UpdateUserRole)
+			userApi.PUT("/:id/roles", middleware.IsAdmin, ctlv1.UpdateUserRole)
 		}
 
 		roleApi := v1Root.Group("/roles")

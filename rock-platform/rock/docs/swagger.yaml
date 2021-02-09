@@ -176,31 +176,6 @@ definitions:
         example: "2021-01-28 20:20:20"
         type: string
     type: object
-  v1.ClusterPagination:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/v1.ClusterBriefResp'
-        type: array
-      page_num:
-        example: 1
-        type: integer
-      pages:
-        example: 1
-        type: integer
-      per_size:
-        example: 10
-        type: integer
-      total:
-        example: 100
-        type: integer
-    required:
-    - items
-    - page_num
-    - pages
-    - per_size
-    - total
-    type: object
   v1.CreateAppReq:
     properties:
       description:
@@ -237,6 +212,20 @@ definitions:
     required:
     - config
     - name
+    type: object
+  v1.CreateEnvReq:
+    properties:
+      cluster_id:
+        type: integer
+      description:
+        example: description for env
+        type: string
+      namespace:
+        example: namespace of k8s cluster
+        type: string
+    required:
+    - cluster_id
+    - namespace
     type: object
   v1.CreateProjectReq:
     properties:
@@ -299,6 +288,30 @@ definitions:
         example: admin
         type: string
       project_id:
+        example: 1
+        type: integer
+    type: object
+  v1.EnvBriefResp:
+    properties:
+      cluster_id:
+        example: 1
+        type: integer
+      created_at:
+        example: "2021-01-28 20:20:20"
+        type: string
+      description:
+        example: description for env
+        type: string
+      id:
+        example: 1
+        type: integer
+      namespace:
+        example: namespace of k8s cluster
+        type: string
+      updated_at:
+        example: "2021-01-28 20:20:20"
+        type: string
+      version:
         example: 1
         type: integer
     type: object
@@ -389,25 +402,57 @@ definitions:
     - per_size
     - total
     type: object
-  v1.ProjectBriefResp:
+  v1.PaginationClusterResp:
     properties:
-      created_at:
-        example: "2021-01-28 20:20:20"
-        type: string
-      description:
-        example: description the project
-        type: string
-      id:
+      items:
+        items:
+          $ref: '#/definitions/v1.ClusterBriefResp'
+        type: array
+      page_num:
         example: 1
         type: integer
-      name:
-        example: test-project
-        type: string
-      updated_at:
-        example: "2021-01-28 20:20:20"
-        type: string
+      pages:
+        example: 1
+        type: integer
+      per_size:
+        example: 10
+        type: integer
+      total:
+        example: 100
+        type: integer
+    required:
+    - items
+    - page_num
+    - pages
+    - per_size
+    - total
     type: object
-  v1.ProjectPagination:
+  v1.PaginationEnvResp:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/v1.EnvBriefResp'
+        type: array
+      page_num:
+        example: 1
+        type: integer
+      pages:
+        example: 1
+        type: integer
+      per_size:
+        example: 10
+        type: integer
+      total:
+        example: 100
+        type: integer
+    required:
+    - items
+    - page_num
+    - pages
+    - per_size
+    - total
+    type: object
+  v1.PaginationProjectResp:
     properties:
       items:
         items:
@@ -431,6 +476,24 @@ definitions:
     - pages
     - per_size
     - total
+    type: object
+  v1.ProjectBriefResp:
+    properties:
+      created_at:
+        example: "2021-01-28 20:20:20"
+        type: string
+      description:
+        example: description the project
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: test-project
+        type: string
+      updated_at:
+        example: "2021-01-28 20:20:20"
+        type: string
     type: object
   v1.ResetPwdReq:
     properties:
@@ -505,6 +568,12 @@ definitions:
     required:
     - config
     type: object
+  v1.UpdateEnvReq:
+    properties:
+      description:
+        example: description for env
+        type: string
+    type: object
   v1.UpdateProjectReq:
     properties:
       description:
@@ -537,6 +606,14 @@ definitions:
     required:
     - new_password
     - old_password
+    type: object
+  v1.UpdateUserRoleReq:
+    properties:
+      role_id:
+        example: 1
+        type: integer
+    required:
+    - role_id
     type: object
   v1.UserBriefResp:
     properties:
@@ -601,7 +678,7 @@ paths:
         "200":
           description: StatusOK
           schema:
-            $ref: '#/definitions/v1.ProjectPagination'
+            $ref: '#/definitions/v1.PaginateAppResp'
         "400":
           description: StatusBadRequest
           schema:
@@ -807,7 +884,7 @@ paths:
       tags:
       - AUTH
   /v1/auth/pwd:
-    post:
+    put:
       consumes:
       - application/json
       description: Api to update user password with secret
@@ -894,7 +971,7 @@ paths:
         "200":
           description: StatusOK
           schema:
-            $ref: '#/definitions/v1.ClusterPagination'
+            $ref: '#/definitions/v1.PaginationClusterResp'
         "400":
           description: StatusBadRequest
           schema:
@@ -1039,6 +1116,178 @@ paths:
       summary: Update cluster description by id and body
       tags:
       - CLUSTER
+  /v1/envs:
+    get:
+      consumes:
+      - application/json
+      description: Api to get all env
+      parameters:
+      - default: 1
+        description: Request page number
+        in: query
+        name: page_num
+        required: true
+        type: integer
+      - default: 10
+        description: Env number size
+        in: query
+        name: per_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.PaginationEnvResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get all envs
+      tags:
+      - ENV
+    post:
+      consumes:
+      - application/json
+      description: Api to create env
+      parameters:
+      - description: JSON type input body
+        in: body
+        name: input_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateEnvReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: StatusCreated
+          schema:
+            $ref: '#/definitions/v1.EnvBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Create env
+      tags:
+      - ENV
+  /v1/envs/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: api for get an env by id
+      parameters:
+      - description: Env ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: StatusNoContent
+          schema:
+            type: string
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get an env by id
+      tags:
+      - ENV
+    get:
+      consumes:
+      - application/json
+      description: api for get an env by id
+      parameters:
+      - description: Env ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.EnvBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get an env by id
+      tags:
+      - ENV
+    put:
+      consumes:
+      - application/json
+      description: api for update env description
+      parameters:
+      - description: Env ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: JSON type for update env description
+        in: body
+        name: update_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateEnvReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.EnvBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Update env description by id and body
+      tags:
+      - ENV
   /v1/projects:
     get:
       consumes:
@@ -1067,7 +1316,7 @@ paths:
         "200":
           description: StatusOK
           schema:
-            $ref: '#/definitions/v1.ProjectPagination'
+            $ref: '#/definitions/v1.PaginationProjectResp'
         "400":
           description: StatusBadRequest
           schema:
@@ -1711,6 +1960,45 @@ paths:
           schema:
             $ref: '#/definitions/utils.HTTPError'
       summary: Update user password with id and old password
+      tags:
+      - USER
+  /v1/users/{id}/roles:
+    put:
+      consumes:
+      - application/json
+      description: Api to update user role by id and role id
+      parameters:
+      - description: User ID
+        in: path
+        name: Id
+        required: true
+        type: integer
+      - description: JSON body for update user role
+        in: body
+        name: update_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateUserRoleReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.UserBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Update user role by id and role id
       tags:
       - USER
 swagger: "2.0"

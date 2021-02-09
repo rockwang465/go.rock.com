@@ -41,6 +41,10 @@ type UpdateUserAccessTokenReq struct {
 	GitlabToken string `json:"gitlab_token" binding:"required" example:"real gitlab access token"` // gitlab access token
 }
 
+type UpdateUserRoleReq struct {
+	RoleId int64 `json:"role_id" binding:"required,min=1" example:"1"`
+}
+
 //type UserDetailResp struct {
 //	UserBriefResp
 //	RoleId *RoleBriefResp `json:"role_id" binding:"required"`
@@ -317,5 +321,68 @@ func (c *Controller) UpdateUserAccessToken(ctx *gin.Context) {
 		panic(err)
 	}
 	c.Infof("Update user's token info with id %v", user.Id)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Update user role by id and role id
+// @Description Api to update user role by id and role id
+// @Tags USER
+// @Accept json
+// @Produce json
+// @Param Id path integer true "User ID"
+// @Param update_body body v1.UpdateUserRoleReq true "JSON body for update user role"
+// @Success 200 {object} v1.UserBriefResp
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/users/{id}/roles [put]
+func (c *Controller) UpdateUserRole(ctx *gin.Context) {
+	cfgCtx, err := utils.GetConfCtx(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	var idReq IdReq
+	if err := ctx.ShouldBindUri(&idReq); err != nil {
+		panic(err)
+	}
+
+	var req UpdateUserRoleReq
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		panic(err)
+	}
+
+	user, err := api.UpdateUserRole(idReq.Id, req.RoleId)
+	if err != nil {
+		panic(err)
+	}
+
+	role, err := api.GetRoleById(idReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	// update token and set cookie
+	token, err := utils.GenerateToken(idReq.Id, user.Name, user.DroneToken, user.Password, role.Name)
+	if err != nil {
+		panic(err)
+	}
+
+	if user.Token != token {
+		user, err = api.UpdateUserToken(user.Id, token)
+		if err != nil {
+			panic(err)
+		}
+		if cfgCtx.Username == user.Name {
+			ctx.SetCookie("token", user.Token, utils.GetExpireDuration(), "/", "", false, true)
+		}
+	}
+
+	resp := UserBriefResp{}
+	if err := utils.MarshalResponse(user, &resp); err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Update user role by id:%v role_id:%v", idReq.Id, req.RoleId)
 	ctx.JSON(http.StatusOK, resp)
 }

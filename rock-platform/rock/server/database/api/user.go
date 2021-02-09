@@ -316,3 +316,23 @@ func UpdateUserAccessTokenById(id int64, accessToken string) (*models.User, erro
 	}
 	return user, nil
 }
+
+// update user's role id
+func UpdateUserRole(id, roleId int64) (*models.User, error) {
+	db := database.GetDBEngine()
+	user, err := HasUserById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// can not change the admin user's role id
+	if user.Name == "admin" {
+		err := utils.NewRockError(400, 40000021, "admin user's admin property can't be changed")
+		return nil, err
+	}
+
+	if err := db.Model(user).Update(map[string]interface{}{"role_id": roleId}).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
+}

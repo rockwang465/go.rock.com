@@ -163,6 +163,14 @@ const(
 - 中文名称: 该cluster_id已存在对应namespace
 
 ---
+
+- HttpCode: 400
+- ErrorCode: 40000021
+- 中文名称: admin用户的role_id不允许修改
+
+
+
+---
 - HttpCode: 401
 - ErrorCode: 40100001
 - 中文名称: 权限不足

@@ -176,6 +176,53 @@ definitions:
         example: "2021-01-28 20:20:20"
         type: string
     type: object
+  v1.ClusterNodeResp:
+    properties:
+      annotations:
+        items:
+          $ref: '#/definitions/v1.NodeAnnotation'
+        type: array
+      architecture:
+        example: amd64
+        type: string
+      container_run_time_version:
+        example: docker://19.3.4
+        type: string
+      created_at:
+        example: "2021-02-13T18:12:05+08:00"
+        type: string
+      hostname:
+        example: kubernetes-master1
+        type: string
+      internal_ip:
+        example: 10.10.10.10
+        type: string
+      kernel_version:
+        example: 4.18.0-193.6.3.el8_2.x86_64
+        type: string
+      labels:
+        items:
+          $ref: '#/definitions/v1.NodeLabel'
+        type: array
+      name:
+        example: kubernetes-master1
+        type: string
+      os:
+        example: linux
+        type: string
+      os_image:
+        example: CentOS Linux 8 (Core)
+        type: string
+      pod_cidr:
+        example: 10.244.0.0/24
+        type: string
+      uid:
+        example: 3550d3f1-51b4-41e7-ba65-83d029f31e2b
+        type: string
+      unschedulable:
+        example: false
+        type: boolean
+    type: object
   v1.CreateAppReq:
     properties:
       description:
@@ -226,6 +273,23 @@ definitions:
     required:
     - cluster_id
     - namespace
+    type: object
+  v1.CreateProjectEnvReq:
+    properties:
+      description:
+        example: description the cluster project env
+        type: string
+      env_id:
+        description: env表中对应(基于cluster_id进行查询的)namespace对应的id字段值。如cluster_id为164的default名称空间对应的id为448
+        example: 1
+        type: integer
+      name:
+        description: 要创建的项目环境的名字(project_env表的name)
+        example: cluster name
+        type: string
+    required:
+    - env_id
+    - name
     type: object
   v1.CreateProjectReq:
     properties:
@@ -327,6 +391,24 @@ definitions:
     - name
     - password
     type: object
+  v1.NodeAnnotation:
+    properties:
+      key:
+        example: flannel.alpha.coreos.com/backend-type
+        type: string
+      value:
+        example: host-gw
+        type: string
+    type: object
+  v1.NodeLabel:
+    properties:
+      key:
+        example: beta.kubernetes.io/os
+        type: string
+      value:
+        example: linux
+        type: string
+    type: object
   v1.PaginateAppResp:
     properties:
       items:
@@ -336,11 +418,11 @@ definitions:
       page_num:
         example: 1
         type: integer
+      page_size:
+        example: 10
+        type: integer
       pages:
         example: 1
-        type: integer
-      per_size:
-        example: 10
         type: integer
       total:
         example: 100
@@ -348,8 +430,8 @@ definitions:
     required:
     - items
     - page_num
+    - page_size
     - pages
-    - per_size
     - total
     type: object
   v1.PaginateBriefUserResp:
@@ -361,11 +443,11 @@ definitions:
       page_num:
         example: 1
         type: integer
+      page_size:
+        example: 10
+        type: integer
       pages:
         example: 1
-        type: integer
-      per_size:
-        example: 10
         type: integer
       total:
         example: 100
@@ -373,8 +455,8 @@ definitions:
     required:
     - items
     - page_num
+    - page_size
     - pages
-    - per_size
     - total
     type: object
   v1.PaginateRoleResp:
@@ -386,11 +468,11 @@ definitions:
       page_num:
         example: 1
         type: integer
+      page_size:
+        example: 10
+        type: integer
       pages:
         example: 1
-        type: integer
-      per_size:
-        example: 10
         type: integer
       total:
         example: 100
@@ -398,8 +480,8 @@ definitions:
     required:
     - items
     - page_num
+    - page_size
     - pages
-    - per_size
     - total
     type: object
   v1.PaginationClusterResp:
@@ -411,11 +493,11 @@ definitions:
       page_num:
         example: 1
         type: integer
+      page_size:
+        example: 10
+        type: integer
       pages:
         example: 1
-        type: integer
-      per_size:
-        example: 10
         type: integer
       total:
         example: 100
@@ -423,8 +505,8 @@ definitions:
     required:
     - items
     - page_num
+    - page_size
     - pages
-    - per_size
     - total
     type: object
   v1.PaginationEnvResp:
@@ -436,11 +518,11 @@ definitions:
       page_num:
         example: 1
         type: integer
+      page_size:
+        example: 10
+        type: integer
       pages:
         example: 1
-        type: integer
-      per_size:
-        example: 10
         type: integer
       total:
         example: 100
@@ -448,8 +530,8 @@ definitions:
     required:
     - items
     - page_num
+    - page_size
     - pages
-    - per_size
     - total
     type: object
   v1.PaginationProjectResp:
@@ -461,11 +543,11 @@ definitions:
       page_num:
         example: 1
         type: integer
+      page_size:
+        example: 10
+        type: integer
       pages:
         example: 1
-        type: integer
-      per_size:
-        example: 10
         type: integer
       total:
         example: 100
@@ -473,8 +555,8 @@ definitions:
     required:
     - items
     - page_num
+    - page_size
     - pages
-    - per_size
     - total
     type: object
   v1.ProjectBriefResp:
@@ -491,6 +573,30 @@ definitions:
       name:
         example: test-project
         type: string
+      updated_at:
+        example: "2021-01-28 20:20:20"
+        type: string
+    type: object
+  v1.ProjectEnvBriefResp:
+    properties:
+      created_at:
+        example: "2021-01-28 20:20:20"
+        type: string
+      description:
+        example: description the project
+        type: string
+      env_id:
+        example: 1
+        type: integer
+      id:
+        example: 1
+        type: integer
+      name:
+        example: test-project
+        type: string
+      project_id:
+        example: 1
+        type: integer
       updated_at:
         example: "2021-01-28 20:20:20"
         type: string
@@ -665,7 +771,7 @@ paths:
       - default: 10
         description: App number size
         in: query
-        name: per_size
+        name: page_size
         required: true
         type: integer
       - description: 'Fuzzy Query(field: name)'
@@ -958,7 +1064,7 @@ paths:
       - default: 10
         description: Cluster number size
         in: query
-        name: per_size
+        name: page_size
         required: true
         type: integer
       - description: 'Fuzzy Query(field: name)'
@@ -1116,6 +1222,119 @@ paths:
       summary: Update cluster description by id and body
       tags:
       - CLUSTER
+  /v1/clusters/{id}/envs:
+    get:
+      consumes:
+      - application/json
+      description: api for get cluster envs by id
+      parameters:
+      - description: Cluster ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: 1
+        description: Request page number
+        in: query
+        name: page_num
+        required: true
+        type: integer
+      - default: 10
+        description: Env number size
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.PaginationEnvResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get cluster envs by id
+      tags:
+      - CLUSTER
+  /v1/clusters/{id}/nodes:
+    get:
+      consumes:
+      - application/json
+      description: api for get specific cluster's all nodes
+      parameters:
+      - description: Cluster ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            items:
+              $ref: '#/definitions/v1.ClusterNodeResp'
+            type: array
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get specific cluster's all nodes
+      tags:
+      - CLUSTER
+  /v1/clusters/{id}/nodes/{name}:
+    get:
+      consumes:
+      - application/json
+      description: api for get a specific cluster node
+      parameters:
+      - description: Cluster ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ClusterNodeResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get a specific cluster node
+      tags:
+      - CLUSTER
   /v1/envs:
     get:
       consumes:
@@ -1131,7 +1350,7 @@ paths:
       - default: 10
         description: Env number size
         in: query
-        name: per_size
+        name: page_size
         required: true
         type: integer
       produces:
@@ -1303,7 +1522,7 @@ paths:
       - default: 10
         description: Project number size
         in: query
-        name: per_size
+        name: page_size
         required: true
         type: integer
       - description: 'Fuzzy Query(field: name)'
@@ -1504,6 +1723,77 @@ paths:
           schema:
             $ref: '#/definitions/utils.HTTPError'
       summary: Get all apps by species project id
+      tags:
+      - PROJECT
+  /v1/projects/{id}/project-envs:
+    get:
+      consumes:
+      - application/json
+      description: api for get all project env
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ProjectEnvBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get all project env
+      tags:
+      - PROJECT
+    post:
+      consumes:
+      - application/json
+      description: api for create project env by project_id env_id name
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: JSON type input body
+        in: body
+        name: input_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateProjectEnvReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ProjectEnvBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Create project env by project_id env_id name
       tags:
       - PROJECT
   /v1/repos:

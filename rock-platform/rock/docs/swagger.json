@@ -30,7 +30,7 @@
                         "type": "integer",
                         "default": 10,
                         "description": "App number size",
-                        "name": "per_size",
+                        "name": "page_size",
                         "in": "query",
                         "required": true
                     },
@@ -473,7 +473,7 @@
                         "type": "integer",
                         "default": 10,
                         "description": "Cluster number size",
-                        "name": "per_size",
+                        "name": "page_size",
                         "in": "query",
                         "required": true
                     },
@@ -707,6 +707,175 @@
                 }
             }
         },
+        "/v1/clusters/{id}/envs": {
+            "get": {
+                "description": "api for get cluster envs by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CLUSTER"
+                ],
+                "summary": "Get cluster envs by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cluster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Request page number",
+                        "name": "page_num",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Env number size",
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.PaginationEnvResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/clusters/{id}/nodes": {
+            "get": {
+                "description": "api for get specific cluster's all nodes",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CLUSTER"
+                ],
+                "summary": "Get specific cluster's all nodes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cluster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.ClusterNodeResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/clusters/{id}/nodes/{name}": {
+            "get": {
+                "description": "api for get a specific cluster node",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CLUSTER"
+                ],
+                "summary": "Get a specific cluster node",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cluster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ClusterNodeResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/envs": {
             "get": {
                 "description": "Api to get all env",
@@ -733,7 +902,7 @@
                         "type": "integer",
                         "default": 10,
                         "description": "Env number size",
-                        "name": "per_size",
+                        "name": "page_size",
                         "in": "query",
                         "required": true
                     }
@@ -991,7 +1160,7 @@
                         "type": "integer",
                         "default": 10,
                         "description": "Project number size",
-                        "name": "per_size",
+                        "name": "page_size",
                         "in": "query",
                         "required": true
                     },
@@ -1268,6 +1437,113 @@
                         "description": "StatusOK",
                         "schema": {
                             "$ref": "#/definitions/v1.PaginateAppResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/projects/{id}/project-envs": {
+            "get": {
+                "description": "api for get all project env",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PROJECT"
+                ],
+                "summary": "Get all project env",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ProjectEnvBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "api for create project env by project_id env_id name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PROJECT"
+                ],
+                "summary": "Create project env by project_id env_id name",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "JSON type input body",
+                        "name": "input_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CreateProjectEnvReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ProjectEnvBriefResp"
                         }
                     },
                     "400": {
@@ -2281,6 +2557,71 @@
                 }
             }
         },
+        "v1.ClusterNodeResp": {
+            "type": "object",
+            "properties": {
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.NodeAnnotation"
+                    }
+                },
+                "architecture": {
+                    "type": "string",
+                    "example": "amd64"
+                },
+                "container_run_time_version": {
+                    "type": "string",
+                    "example": "docker://19.3.4"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2021-02-13T18:12:05+08:00"
+                },
+                "hostname": {
+                    "type": "string",
+                    "example": "kubernetes-master1"
+                },
+                "internal_ip": {
+                    "type": "string",
+                    "example": "10.10.10.10"
+                },
+                "kernel_version": {
+                    "type": "string",
+                    "example": "4.18.0-193.6.3.el8_2.x86_64"
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.NodeLabel"
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "example": "kubernetes-master1"
+                },
+                "os": {
+                    "type": "string",
+                    "example": "linux"
+                },
+                "os_image": {
+                    "type": "string",
+                    "example": "CentOS Linux 8 (Core)"
+                },
+                "pod_cidr": {
+                    "type": "string",
+                    "example": "10.244.0.0/24"
+                },
+                "uid": {
+                    "type": "string",
+                    "example": "3550d3f1-51b4-41e7-ba65-83d029f31e2b"
+                },
+                "unschedulable": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
         "v1.CreateAppReq": {
             "type": "object",
             "required": [
@@ -2348,6 +2689,29 @@
                 "namespace": {
                     "type": "string",
                     "example": "namespace of k8s cluster"
+                }
+            }
+        },
+        "v1.CreateProjectEnvReq": {
+            "type": "object",
+            "required": [
+                "env_id",
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "description the cluster project env"
+                },
+                "env_id": {
+                    "description": "env表中对应(基于cluster_id进行查询的)namespace对应的id字段值。如cluster_id为164的default名称空间对应的id为448",
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "description": "要创建的项目环境的名字(project_env表的name)",
+                    "type": "string",
+                    "example": "cluster name"
                 }
             }
         },
@@ -2490,13 +2854,39 @@
                 }
             }
         },
+        "v1.NodeAnnotation": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "example": "flannel.alpha.coreos.com/backend-type"
+                },
+                "value": {
+                    "type": "string",
+                    "example": "host-gw"
+                }
+            }
+        },
+        "v1.NodeLabel": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "example": "beta.kubernetes.io/os"
+                },
+                "value": {
+                    "type": "string",
+                    "example": "linux"
+                }
+            }
+        },
         "v1.PaginateAppResp": {
             "type": "object",
             "required": [
                 "items",
                 "page_num",
+                "page_size",
                 "pages",
-                "per_size",
                 "total"
             ],
             "properties": {
@@ -2510,13 +2900,13 @@
                     "type": "integer",
                     "example": 1
                 },
+                "page_size": {
+                    "type": "integer",
+                    "example": 10
+                },
                 "pages": {
                     "type": "integer",
                     "example": 1
-                },
-                "per_size": {
-                    "type": "integer",
-                    "example": 10
                 },
                 "total": {
                     "type": "integer",
@@ -2529,8 +2919,8 @@
             "required": [
                 "items",
                 "page_num",
+                "page_size",
                 "pages",
-                "per_size",
                 "total"
             ],
             "properties": {
@@ -2544,13 +2934,13 @@
                     "type": "integer",
                     "example": 1
                 },
+                "page_size": {
+                    "type": "integer",
+                    "example": 10
+                },
                 "pages": {
                     "type": "integer",
                     "example": 1
-                },
-                "per_size": {
-                    "type": "integer",
-                    "example": 10
                 },
                 "total": {
                     "type": "integer",
@@ -2563,8 +2953,8 @@
             "required": [
                 "items",
                 "page_num",
+                "page_size",
                 "pages",
-                "per_size",
                 "total"
             ],
             "properties": {
@@ -2578,13 +2968,13 @@
                     "type": "integer",
                     "example": 1
                 },
+                "page_size": {
+                    "type": "integer",
+                    "example": 10
+                },
                 "pages": {
                     "type": "integer",
                     "example": 1
-                },
-                "per_size": {
-                    "type": "integer",
-                    "example": 10
                 },
                 "total": {
                     "type": "integer",
@@ -2597,8 +2987,8 @@
             "required": [
                 "items",
                 "page_num",
+                "page_size",
                 "pages",
-                "per_size",
                 "total"
             ],
             "properties": {
@@ -2612,13 +3002,13 @@
                     "type": "integer",
                     "example": 1
                 },
+                "page_size": {
+                    "type": "integer",
+                    "example": 10
+                },
                 "pages": {
                     "type": "integer",
                     "example": 1
-                },
-                "per_size": {
-                    "type": "integer",
-                    "example": 10
                 },
                 "total": {
                     "type": "integer",
@@ -2631,8 +3021,8 @@
             "required": [
                 "items",
                 "page_num",
+                "page_size",
                 "pages",
-                "per_size",
                 "total"
             ],
             "properties": {
@@ -2646,13 +3036,13 @@
                     "type": "integer",
                     "example": 1
                 },
+                "page_size": {
+                    "type": "integer",
+                    "example": 10
+                },
                 "pages": {
                     "type": "integer",
                     "example": 1
-                },
-                "per_size": {
-                    "type": "integer",
-                    "example": 10
                 },
                 "total": {
                     "type": "integer",
@@ -2665,8 +3055,8 @@
             "required": [
                 "items",
                 "page_num",
+                "page_size",
                 "pages",
-                "per_size",
                 "total"
             ],
             "properties": {
@@ -2680,13 +3070,13 @@
                     "type": "integer",
                     "example": 1
                 },
+                "page_size": {
+                    "type": "integer",
+                    "example": 10
+                },
                 "pages": {
                     "type": "integer",
                     "example": 1
-                },
-                "per_size": {
-                    "type": "integer",
-                    "example": 10
                 },
                 "total": {
                     "type": "integer",
@@ -2712,6 +3102,39 @@
                 "name": {
                     "type": "string",
                     "example": "test-project"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2021-01-28 20:20:20"
+                }
+            }
+        },
+        "v1.ProjectEnvBriefResp": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2021-01-28 20:20:20"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "description the project"
+                },
+                "env_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "test-project"
+                },
+                "project_id": {
+                    "type": "integer",
+                    "example": 1
                 },
                 "updated_at": {
                     "type": "string",

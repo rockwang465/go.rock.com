@@ -95,6 +95,42 @@ func UpdateCluster(id int64, desc, config string) (*models.Cluster, error) {
 	return cluster, nil
 }
 
+func GetClusterEnvsById(clusterId, pageNum, pageSize int64) (*models.EnvPagination, error) {
+	db := database.GetDBEngine()
+	Envs := make([]*models.Env, 0)
+
+	_, err := GetClusterById(clusterId)
+	if err != nil {
+		return nil, err
+	}
+
+	var count int64
+	if err := db.Order("updated_at desc").
+		Offset((pageNum-1)*pageSize).
+		Where("cluster_id = ?", clusterId).
+		Find(&Envs).
+		Count(&count).Error; err != nil {
+		return nil, err
+	}
+
+	if err := db.Order("updated_at desc").
+		Offset((pageNum-1)*pageSize).
+		Where("cluster_id = ?", clusterId).
+		Limit(pageSize).
+		Find(&Envs).Error; err != nil {
+		return nil, err
+	}
+
+	envPagination := &models.EnvPagination{
+		PageNum:  pageNum,
+		PageSize: pageSize,
+		Total:    count,
+		Pages:    utils.CalcPages(count, pageSize),
+		Items:    Envs,
+	}
+	return envPagination, nil
+}
+
 func hasNotClusterWithSameName(name string) error {
 	db := database.GetDBEngine()
 	cluster := new(models.Cluster)

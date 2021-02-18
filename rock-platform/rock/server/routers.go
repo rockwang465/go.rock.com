@@ -63,8 +63,8 @@ func (s *Server) InitRouters() {
 			projectApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteProject)
 			projectApi.PUT("/:id", middleware.IsAdmin, ctlv1.UpdateProject)
 			projectApi.GET("/:id/apps", ctlv1.GetProjectApps)
-			//projectApi.POST("/:id/project-envs", middleware.IsAdmin, ctlv1.CreateProjectEnv)
-			//projectApi.GET("/:id/project-envs", ctlv1.GetProjectEnvs)
+			projectApi.POST("/:id/project-envs", middleware.IsAdmin, ctlv1.CreateProjectEnv) // 对指定project_id增加项目环境(project_env表)
+			projectApi.GET("/:id/project-envs", ctlv1.GetProjectEnvs)
 			//projectApi.DELETE("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.DeleteProjectEnv)
 			//projectApi.GET("/:id/project-envs/:pe_id", ctlv1.GetProjectEnv)
 			//projectApi.PUT("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.UpdateProjectEnv)
@@ -98,9 +98,9 @@ func (s *Server) InitRouters() {
 			clusterApi.GET("/:id", ctlv1.GetCluster)
 			clusterApi.DELETE("/:id", middleware.IsAdmin, ctlv1.DeleteCluster)
 			clusterApi.PUT("/:id", middleware.IsAdmin, ctlv1.UpdateCluster)
-			//clusterApi.GET("/:id/envs", ctlv1.GetClusterEnvs)
-			//clusterApi.GET("/:id/nodes", ctlv1.GetClusterNodes) // 获取节点信息
-			//clusterApi.GET("/:id/nodes/:name", ctlv1.GetClusterNode)
+			clusterApi.GET("/:id/envs", ctlv1.GetClusterEnvs)        // 获取指定cluster_id的env信息
+			clusterApi.GET("/:id/nodes", ctlv1.GetClusterNodes)      // 获取指定cluster_id的节点信息
+			clusterApi.GET("/:id/nodes/:name", ctlv1.GetClusterNode) // 获取指定节点名称的节点信息
 			//clusterApi.GET("/:id/jobs", ctlv1.GetClusterJobs)
 			//clusterApi.GET("/:id/namespaces/:namespace/jobs/:name", ctlv1.GetClusterJob)
 			//clusterApi.GET("/:id/license-status", middleware.IsSystemAdminOrAdmin, ctlv1.GetLicenseStatus)

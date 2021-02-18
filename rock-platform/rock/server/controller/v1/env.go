@@ -27,11 +27,11 @@ type EnvBriefResp struct {
 }
 
 type PaginationEnvResp struct {
-	PageNum int64           `json:"page_num" binding:"required" example:"1"`
-	PerSize int64           `json:"per_size" binding:"required" example:"10"`
-	Total   int64           `json:"total" binding:"required" example:"100"`
-	Pages   int64           `json:"pages" binding:"required" example:"1"`
-	Items   []*EnvBriefResp `json:"items" binding:"required"`
+	PageNum  int64           `json:"page_num" binding:"required" example:"1"`
+	PageSize int64           `json:"page_size" binding:"required" example:"10"`
+	Total    int64           `json:"total" binding:"required" example:"100"`
+	Pages    int64           `json:"pages" binding:"required" example:"1"`
+	Items    []*EnvBriefResp `json:"items" binding:"required"`
 }
 
 type UpdateEnvReq struct {
@@ -74,7 +74,7 @@ func (c *Controller) CreateEnv(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param page_num query integer true "Request page number" default(1)
-// @Param per_size query integer true "Env number size" default(10)
+// @Param page_size query integer true "Env number size" default(10)
 // @Success 200 {object} v1.PaginationEnvResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"

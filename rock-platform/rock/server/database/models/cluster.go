@@ -11,7 +11,7 @@ type Cluster struct {
 
 type ClusterPagination struct {
 	PageNum  int64      `json:"page_num"`
-	PageSize int64      `json:"per_size"`
+	PageSize int64      `json:"page_size"`
 	Total    int64      `json:"total"`
 	Pages    int64      `json:"pages"`
 	Items    []*Cluster `json:"items"`

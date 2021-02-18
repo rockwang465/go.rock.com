@@ -35,11 +35,11 @@ type RoleBriefResp struct {
 }
 
 type PaginateRoleResp struct {
-	PageNum int64            `json:"page_num" binding:"required" example:"1"`
-	PerSize int64            `json:"per_size" binding:"required" example:"10"`
-	Total   int64            `json:"total" binding:"required" example:"100"`
-	Pages   int64            `json:"pages" binding:"required" example:"1"`
-	Items   []*RoleBriefResp `json:"items" binding:"required"`
+	PageNum  int64            `json:"page_num" binding:"required" example:"1"`
+	PageSize int64            `json:"page_size" binding:"required" example:"10"`
+	Total    int64            `json:"total" binding:"required" example:"100"`
+	Pages    int64            `json:"pages" binding:"required" example:"1"`
+	Items    []*RoleBriefResp `json:"items" binding:"required"`
 }
 
 // @Summary Create role

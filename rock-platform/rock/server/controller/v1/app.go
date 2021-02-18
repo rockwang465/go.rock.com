@@ -31,11 +31,11 @@ type AppBriefResp struct {
 }
 
 type PaginateAppResp struct {
-	PageNum int64           `json:"page_num" binding:"required" example:"1"`
-	PerSize int64           `json:"per_size" binding:"required" example:"10"`
-	Total   int64           `json:"total" binding:"required" example:"100"`
-	Pages   int64           `json:"pages" binding:"required" example:"1"`
-	Items   []*AppBriefResp `json:"items" binding:"required"`
+	PageNum  int64           `json:"page_num" binding:"required" example:"1"`
+	PageSize int64           `json:"page_size" binding:"required" example:"10"`
+	Total    int64           `json:"total" binding:"required" example:"100"`
+	Pages    int64           `json:"pages" binding:"required" example:"1"`
+	Items    []*AppBriefResp `json:"items" binding:"required"`
 }
 
 type GetAppsPaginationReq struct {
@@ -80,6 +80,7 @@ func (c *Controller) CreateApp(ctx *gin.Context) {
 		if err != nil {
 			panic(err)
 		}
+		// example: createApp.GitlabProjectId:9616, remote.ID:9 (drone repo id)
 		repo, err := drone_api.ActiveRepo(cfgCtx.DroneToken, remote.ID)
 		if err != nil {
 			err := utils.NewRockError(403, 40300002, "Permission deny, because you don't have gitlab project master permission")
@@ -106,7 +107,7 @@ func (c *Controller) CreateApp(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param page_num query integer true "Request page number" default(1)
-// @Param per_size query integer true "App number size" default(10)
+// @Param page_size query integer true "App number size" default(10)
 // @Param query_field query string false "Fuzzy Query(field: name)"
 // @Success 200 {object} v1.PaginateAppResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"

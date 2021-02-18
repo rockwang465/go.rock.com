@@ -168,7 +168,11 @@ const(
 - ErrorCode: 40000021
 - 中文名称: admin用户的role_id不允许修改
 
+---
 
+- HttpCode: 400
+- ErrorCode: 40000022
+- 中文名称: 该project_id env_id name已存在
 
 ---
 - HttpCode: 401
@@ -228,6 +232,12 @@ const(
 - HttpCode: 404
 - ErrorCode: 40400008
 - 中文名称: env_id不存在
+
+---
+
+- HttpCode: 404
+- ErrorCode: 40400009
+- 中文名称: project_env_id不存在
 
 ---
 

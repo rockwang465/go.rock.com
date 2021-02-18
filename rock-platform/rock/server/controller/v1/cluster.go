@@ -24,11 +24,11 @@ type ClusterBriefResp struct {
 }
 
 type PaginationClusterResp struct {
-	PageNum int64               `json:"page_num" binding:"required" example:"1"`
-	PerSize int64               `json:"per_size" binding:"required" example:"10"`
-	Total   int64               `json:"total" binding:"required" example:"100"`
-	Pages   int64               `json:"pages" binding:"required" example:"1"`
-	Items   []*ClusterBriefResp `json:"items" binding:"required"`
+	PageNum  int64               `json:"page_num" binding:"required" example:"1"`
+	PageSize int64               `json:"page_size" binding:"required" example:"10"`
+	Total    int64               `json:"total" binding:"required" example:"100"`
+	Pages    int64               `json:"pages" binding:"required" example:"1"`
+	Items    []*ClusterBriefResp `json:"items" binding:"required"`
 }
 
 type UpdateClusterReq struct {
@@ -79,7 +79,7 @@ func (c *Controller) CreateCluster(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param page_num query integer true "Request page number" default(1)
-// @Param per_size query integer true "Cluster number size" default(10)
+// @Param page_size query integer true "Cluster number size" default(10)
 // @Param query_field query string false "Fuzzy Query(field: name)"
 // @Success 200 {object} v1.PaginationClusterResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
@@ -199,5 +199,43 @@ func (c *Controller) UpdateCluster(ctx *gin.Context) {
 		panic(err)
 	}
 	c.Logger.Infof("Update cluster's config by id:%v", idReq.Id)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Get cluster envs by id
+// @Description api for get cluster envs by id
+// @Tags CLUSTER
+// @Accept json
+// @Produce json
+// @Param id path integer true "Cluster ID"
+// @Param page_num query integer true "Request page number" default(1)
+// @Param page_size query integer true "Env number size" default(10)
+// @Success 200 {object} v1.PaginationEnvResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/clusters/{id}/envs [get]
+func (c *Controller) GetClusterEnvs(ctx *gin.Context) {
+	var idReq IdReq
+	if err := ctx.ShouldBindUri(&idReq); err != nil {
+		panic(err)
+	}
+
+	var paginationReq GetPaginationReq
+	if err := ctx.ShouldBind(&paginationReq); err != nil {
+		panic(err)
+	}
+
+	Envs, err := api.GetClusterEnvsById(idReq.Id, paginationReq.PageNum, paginationReq.PageSize)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := PaginationEnvResp{}
+	if err := utils.MarshalResponse(Envs, &resp); err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Get cluster envs by cluster id:%v", idReq.Id)
 	ctx.JSON(http.StatusOK, resp)
 }

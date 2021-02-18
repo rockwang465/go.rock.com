@@ -30,7 +30,7 @@ func SyncRemoteRepo(jwt string, gitlabProjectId int64) (*drone.RemoteRepo, error
 }
 
 // curl http://gitlab.sz.sensetime.com/api/v4/projects/11222
-
+// get repo information by drone repo id
 func ActiveRepo(jwt string, repoId int64) (*drone.Repo, error) {
 	client, err := getClient(jwt)
 	if err != nil {

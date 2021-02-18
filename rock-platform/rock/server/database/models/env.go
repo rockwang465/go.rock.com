@@ -21,7 +21,7 @@ type Env struct {
 
 type EnvPagination struct {
 	PageNum  int64  `json:"page_num"`
-	PageSize int64  `json:"per_size"`
+	PageSize int64  `json:"page_size"`
 	Total    int64  `json:"total"`
 	Pages    int64  `json:"pages"`
 	Items    []*Env `json:"items"`
@@ -29,7 +29,7 @@ type EnvPagination struct {
 
 //type BriefEnvPagination struct {
 //	PageNum  int64       `json:"page_num"`
-//	PageSize int64       `json:"per_size"`
+//	PageSize int64       `json:"page_size"`
 //	Total    int64       `json:"total"`
 //	Pages    int64       `json:"pages"`
 //	Items    []*BriefEnv `json:"items"`

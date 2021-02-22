@@ -28,6 +28,8 @@ db:
   password: rock1314
 tiller:
   port: 31134
+chartsRepo:
+  addr: http://10.151.3.75:8080
 email:
   user: wangyecheng465@163.com
   password: OXQBIWAMOOAYOHNV  # 163 authorization code

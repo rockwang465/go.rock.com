@@ -115,6 +115,20 @@ func GetAppsList() ([]*models.App, error) {
 	return apps, nil
 }
 
+// update an app gitlabAddress, fullName, owner, gitlabProjectId, droneRepoId
+func UpdateAppGitlabAddressById(appId int64, fullName, owner, gitlabAddress string, gitlabProjectId, droneRepoId int64) (*models.App, error) {
+	app, err := GetAppById(appId)
+	if err != nil {
+		return nil, err
+	}
+
+	db := database.GetDBEngine()
+	if err := db.Model(app).Update(map[string]interface{}{"full_name": fullName, "owner": owner, "gitlab_project_id": gitlabProjectId, "gitlab_address": gitlabAddress, "drone_repo_id": droneRepoId}).Error; err != nil {
+		return nil, err
+	}
+	return app, nil
+}
+
 // ensure not same name app in same projectId
 func hasNotAppWithSameNameAndProject(name string, projectId int64) error {
 	db := database.GetDBEngine()

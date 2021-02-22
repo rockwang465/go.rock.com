@@ -65,9 +65,9 @@ func (s *Server) InitRouters() {
 			projectApi.GET("/:id/apps", ctlv1.GetProjectApps)
 			projectApi.POST("/:id/project-envs", middleware.IsAdmin, ctlv1.CreateProjectEnv) // 对指定project_id增加项目环境(project_env表)
 			projectApi.GET("/:id/project-envs", ctlv1.GetProjectEnvs)
-			//projectApi.DELETE("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.DeleteProjectEnv)
-			//projectApi.GET("/:id/project-envs/:pe_id", ctlv1.GetProjectEnv)
-			//projectApi.PUT("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.UpdateProjectEnv)
+			//projectApi.DELETE("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.DeleteProjectEnv) // 暂时无法继续写，缺少app_conf表 // 删除指定project(project_id)下指定项目环境(project_env_id)
+			projectApi.GET("/:id/project-envs/:pe_id", ctlv1.GetProjectEnv)                        // 查看指定project(project_id)下指定项目环境(project_env_id)的信息
+			projectApi.PUT("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.UpdateProjectEnv) // 更新指定project(project_id)下指定项目环境(project_env_id)的信息
 		}
 
 		appApi := v1Root.Group("/apps")
@@ -77,7 +77,7 @@ func (s *Server) InitRouters() {
 			appApi.GET("/:id", ctlv1.GetApp)
 			appApi.DELETE("/:id", ctlv1.DeleteApp)
 			appApi.PUT("/:id", ctlv1.UpdateApp)
-			//appApi.PUT("/:id/gitlab", ctlv1.UpdateAppGitlabProject)
+			appApi.PUT("/:id/gitlab", ctlv1.UpdateAppGitlabProject) // 修改应用的gitlab地址
 			//appApi.GET("/:id/builds", ctlv1.GetAppBuilds)
 			//appApi.POST("/:id/builds", ctlv1.CreateAppBuild)
 			//appApi.GET("/:id/branches", ctlv1.GetAppBranches)
@@ -89,6 +89,14 @@ func (s *Server) InitRouters() {
 			//appApi.DELETE("/:id/config", ctlv1.DeleteAppConf)
 			//appApi.GET("/:id/config", ctlv1.GetAppConf)
 			//appApi.PUT("/:id/config", ctlv1.UpdateOrCreateAppConf)
+		}
+
+		chartApi := v1Root.Group("/charts")
+		{
+			chartApi.GET("", ctlv1.GetAllCharts)
+			chartApi.GET("/:name", ctlv1.GetNamedChartVersions)                        // 获取指定服务的所有版本号
+			chartApi.GET("/:name/versions/:version", ctlv1.GetNamedChartVersion)       // 获取指定服务的指定版本号
+			chartApi.DELETE("/:name/versions/:version", ctlv1.DeleteNamedChartVersion) // 删除指定服务的指定版本号
 		}
 
 		clusterApi := v1Root.Group("/clusters")

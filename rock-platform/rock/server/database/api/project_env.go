@@ -92,8 +92,40 @@ func GetProjectEnvById(id int64) (*models.ProjectEnv, error) {
 	return projectEnv, nil
 }
 
+func DeleteProjectEnvById(projectEnvId int64) error {
+	//// ensure has project_env_id
+	//projectEnv, err := GetProjectEnvById(projectEnvId)
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//db := database.GetDBEngine()
+	//// ensure not has project_env_id in models.AppConf table
+	//err = hasProjectEnvRelevantResource(db, projectEnvId)
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//if err := db.Delete(projectEnv).Error; err != nil {
+	//	return err
+	//}
+	return nil
+}
+
+func UpdateProjectEnv(projectEnvId int64, desc string) (*models.ProjectEnv, error) {
+	projectEnv, err := GetProjectEnvById(projectEnvId)
+	if err != nil {
+		return nil, err
+	}
+
+	db := database.GetDBEngine()
+	if err := db.Model(projectEnv).Update(map[string]interface{}{"description": desc}).Error; err != nil {
+		return nil, err
+	}
+	return projectEnv, nil
+}
+
 func hasNotSameProjectEnv(projectEnv *models.ProjectEnv) error {
-	fmt.Printf("%#v\n", projectEnv)
 	db := database.GetDBEngine()
 	pe := new(models.ProjectEnv)
 	if err := db.Where(projectEnv).First(pe).Error; err != nil {

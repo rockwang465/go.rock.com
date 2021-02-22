@@ -158,6 +158,68 @@ definitions:
         example: 1
         type: integer
     type: object
+  v1.ChartDetail:
+    properties:
+      name:
+        example: mysql
+        type: string
+      version:
+        items:
+          $ref: '#/definitions/v1.ChartVersion'
+        type: array
+    required:
+    - name
+    - version
+    type: object
+  v1.ChartVersion:
+    properties:
+      apiVersion:
+        example: v1
+        type: string
+      appVersion:
+        example: 5.7.28
+        type: string
+      created:
+        example: "2020-10-23T08:27:01.937112605Z"
+        type: string
+      description:
+        example: Fast, reliable, scalable, and easy to use open-source relational
+          database system.
+        type: string
+      digest:
+        example: 76a25ee9205f22c1c922a54a88a161472c1966a54e9d483f16e960449a134ef3
+        type: string
+      keywords:
+        example:
+        - mysql
+        - database
+        - sql
+        items:
+          type: string
+        type: array
+      maintainers:
+        items:
+          $ref: '#/definitions/v1.Maintainer'
+        type: array
+      name:
+        example: mysql
+        type: string
+      urls:
+        example:
+        - charts/mysql-5.7.28-master-54b0c26.tgz
+        items:
+          type: string
+        type: array
+      version:
+        example: 5.7.28-master-54b0c26
+        type: string
+    required:
+    - created
+    - digest
+    - name
+    - urls
+    - version
+    type: object
   v1.ClusterBriefResp:
     properties:
       created_at:
@@ -390,6 +452,15 @@ definitions:
     required:
     - name
     - password
+    type: object
+  v1.Maintainer:
+    properties:
+      email:
+        example: someone@email.com
+        type: string
+      name:
+        example: someone
+        type: string
     type: object
   v1.NodeAnnotation:
     properties:
@@ -657,6 +728,14 @@ definitions:
     - updated_at
     - version
     type: object
+  v1.UpdateAppGitlabAddressReq:
+    properties:
+      gitlab_project_id:
+        example: 1
+        type: integer
+    required:
+    - gitlab_project_id
+    type: object
   v1.UpdateAppReq:
     properties:
       description:
@@ -678,6 +757,12 @@ definitions:
     properties:
       description:
         example: description for env
+        type: string
+    type: object
+  v1.UpdateProjectEnvReq:
+    properties:
+      description:
+        example: description the project env
         type: string
     type: object
   v1.UpdateProjectReq:
@@ -936,6 +1021,45 @@ paths:
       summary: Update app description by id and body
       tags:
       - APP
+  /v1/apps/{id}/gitlab:
+    put:
+      consumes:
+      - application/json
+      description: api for update app gitlab address
+      parameters:
+      - description: App ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: JSON type for update app gitlab address
+        in: body
+        name: update_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateAppGitlabAddressReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.AppBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Update app gitlab address
+      tags:
+      - APP
   /v1/auth/login:
     post:
       consumes:
@@ -1049,6 +1173,129 @@ paths:
       summary: Create reset email
       tags:
       - AUTH
+  /v1/charts:
+    get:
+      consumes:
+      - application/json
+      description: Api for get all chart list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            items:
+              $ref: '#/definitions/v1.ChartDetail'
+            type: array
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get all chart list
+      tags:
+      - CHART
+  /v1/charts/{name}:
+    get:
+      consumes:
+      - application/json
+      description: Api for get named chart version list
+      parameters:
+      - description: Chart name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            items:
+              $ref: '#/definitions/v1.ChartVersion'
+            type: array
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get named chart version list
+      tags:
+      - CHART
+  /v1/charts/{name}/versions/{version}:
+    delete:
+      consumes:
+      - application/json
+      description: Api for delete named chart specific version
+      parameters:
+      - description: Chart name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Chart version
+        in: path
+        name: version
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusNoContent
+          schema:
+            type: string
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Delete named chart specific version
+      tags:
+      - CHART
+    get:
+      consumes:
+      - application/json
+      description: Api for get named chart specific version info
+      parameters:
+      - description: Chart name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Chart version
+        in: path
+        name: version
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ChartVersion'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get named chart specific version info
+      tags:
+      - CHART
   /v1/clusters:
     get:
       consumes:
@@ -1794,6 +2041,124 @@ paths:
           schema:
             $ref: '#/definitions/utils.HTTPError'
       summary: Create project env by project_id env_id name
+      tags:
+      - PROJECT
+  /v1/projects/{id}/project-envs/{pe_id}:
+    delete:
+      consumes:
+      - application/json
+      description: api for delete specific project env by id
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Project Env ID
+        in: path
+        name: pe_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: StatusNoContent
+          schema:
+            type: string
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Delete specific project env by id
+      tags:
+      - PROJECT
+    get:
+      consumes:
+      - application/json
+      description: api for get project env by id
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Project Env ID
+        in: path
+        name: pe_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ProjectEnvBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get project env by id
+      tags:
+      - PROJECT
+    put:
+      consumes:
+      - application/json
+      description: api for update project env description
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Project Env ID
+        in: path
+        name: pe_id
+        required: true
+        type: integer
+      - description: JSON type for update project env description
+        in: body
+        name: update_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateProjectEnvReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ProjectEnvBriefResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Update project env description by id and body
       tags:
       - PROJECT
   /v1/repos:

@@ -47,6 +47,10 @@ type UpdateAppReq struct {
 	Description string `json:"description" binding:"omitempty,max=100" example:"description for app"`
 }
 
+type UpdateAppGitlabAddressReq struct {
+	GitlabProjectId int64 `json:"gitlab_project_id" binding:"required,min=1" example:"1"`
+}
+
 // @Summary Create app
 // @Description Api to create app
 // @Tags APP
@@ -219,5 +223,58 @@ func (c *Controller) UpdateApp(ctx *gin.Context) {
 		panic(err)
 	}
 	c.Logger.Infof("Update app's description by id:%v", idReq.Id)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Update app gitlab address
+// @Description api for update app gitlab address
+// @Tags APP
+// @Accept json
+// @Produce json
+// @Param id path integer true "App ID"
+// @Param update_body body v1.UpdateAppGitlabAddressReq true "JSON type for update app gitlab address"
+// @Success 200 {object} v1.AppBriefResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/apps/{id}/gitlab [put]
+func (c *Controller) UpdateAppGitlabProject(ctx *gin.Context) {
+	// 应用管理 -> 应用 -> 查看单个应用 -> 关联代码仓库:(此时会自动请求: /v1/repos 拿到所有的gitlab地址,渲染到下拉菜单,并让用户选择需要更改为哪个gitlab地址)
+	// 用户 选择一个gitlab 地址后，则开始更新应用的gitlab地址。即当前api的操作。
+	cfgCtx, err := utils.GetConfCtx(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	var idReq IdReq
+	if err := ctx.ShouldBindUri(&idReq); err != nil {
+		panic(err)
+	}
+
+	var req UpdateAppGitlabAddressReq
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		panic(err)
+	}
+
+	remote, err := drone_api.SyncRemoteRepo(cfgCtx.DroneToken, req.GitlabProjectId)
+	if err != nil {
+		panic(err)
+	}
+	repo, err := drone_api.ActiveRepo(cfgCtx.DroneToken, remote.ID)
+	if err != nil {
+		err := utils.NewRockError(403, 40300002, "Permission deny, because you don't have gitlab project master permission")
+		panic(err)
+	}
+
+	app, err := api.UpdateAppGitlabAddressById(idReq.Id, repo.FullName, repo.Owner, remote.Clone, req.GitlabProjectId, repo.ID)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := AppBriefResp{}
+	if err := utils.MarshalResponse(app, &resp); err != nil {
+		panic(err)
+	}
+	c.Logger.Infof("Update app gitlab address(%v) by id:%v", remote.Clone, idReq.Id)
 	ctx.JSON(http.StatusOK, resp)
 }

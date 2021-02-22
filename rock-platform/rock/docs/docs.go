@@ -294,6 +294,65 @@ var doc = `{
                 }
             }
         },
+        "/v1/apps/{id}/gitlab": {
+            "put": {
+                "description": "api for update app gitlab address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Update app gitlab address",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "JSON type for update app gitlab address",
+                        "name": "update_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdateAppGitlabAddressReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.AppBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/login": {
             "post": {
                 "description": "Api to login rock platform with name and password",
@@ -447,6 +506,191 @@ var doc = `{
                 ],
                 "responses": {
                     "204": {
+                        "description": "StatusNoContent",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/charts": {
+            "get": {
+                "description": "Api for get all chart list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CHART"
+                ],
+                "summary": "Get all chart list",
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.ChartDetail"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/charts/{name}": {
+            "get": {
+                "description": "Api for get named chart version list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CHART"
+                ],
+                "summary": "Get named chart version list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Chart name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.ChartVersion"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/charts/{name}/versions/{version}": {
+            "get": {
+                "description": "Api for get named chart specific version info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CHART"
+                ],
+                "summary": "Get named chart specific version info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Chart name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Chart version",
+                        "name": "version",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ChartVersion"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Api for delete named chart specific version",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CHART"
+                ],
+                "summary": "Delete named chart specific version",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Chart name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Chart version",
+                        "name": "version",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
                         "description": "StatusNoContent",
                         "schema": {
                             "type": "string"
@@ -1587,6 +1831,182 @@ var doc = `{
                 }
             }
         },
+        "/v1/projects/{id}/project-envs/{pe_id}": {
+            "get": {
+                "description": "api for get project env by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PROJECT"
+                ],
+                "summary": "Get project env by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Project Env ID",
+                        "name": "pe_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ProjectEnvBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "api for update project env description",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PROJECT"
+                ],
+                "summary": "Update project env description by id and body",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Project Env ID",
+                        "name": "pe_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "JSON type for update project env description",
+                        "name": "update_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdateProjectEnvReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ProjectEnvBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "api for delete specific project env by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PROJECT"
+                ],
+                "summary": "Delete specific project env by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Project Env ID",
+                        "name": "pe_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "StatusNoContent",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/repos": {
             "get": {
                 "description": "Api to get remote(gitlab) all repos",
@@ -2552,6 +2972,91 @@ var doc = `{
                 }
             }
         },
+        "v1.ChartDetail": {
+            "type": "object",
+            "required": [
+                "name",
+                "version"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "mysql"
+                },
+                "version": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.ChartVersion"
+                    }
+                }
+            }
+        },
+        "v1.ChartVersion": {
+            "type": "object",
+            "required": [
+                "created",
+                "digest",
+                "name",
+                "urls",
+                "version"
+            ],
+            "properties": {
+                "apiVersion": {
+                    "type": "string",
+                    "example": "v1"
+                },
+                "appVersion": {
+                    "type": "string",
+                    "example": "5.7.28"
+                },
+                "created": {
+                    "type": "string",
+                    "example": "2020-10-23T08:27:01.937112605Z"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Fast, reliable, scalable, and easy to use open-source relational database system."
+                },
+                "digest": {
+                    "type": "string",
+                    "example": "76a25ee9205f22c1c922a54a88a161472c1966a54e9d483f16e960449a134ef3"
+                },
+                "keywords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "mysql",
+                        "database",
+                        "sql"
+                    ]
+                },
+                "maintainers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.Maintainer"
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "example": "mysql"
+                },
+                "urls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "charts/mysql-5.7.28-master-54b0c26.tgz"
+                    ]
+                },
+                "version": {
+                    "type": "string",
+                    "example": "5.7.28-master-54b0c26"
+                }
+            }
+        },
         "v1.ClusterBriefResp": {
             "type": "object",
             "properties": {
@@ -2871,6 +3376,19 @@ var doc = `{
                 "password": {
                     "type": "string",
                     "example": "********"
+                }
+            }
+        },
+        "v1.Maintainer": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "someone@email.com"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "someone"
                 }
             }
         },
@@ -3238,6 +3756,18 @@ var doc = `{
                 }
             }
         },
+        "v1.UpdateAppGitlabAddressReq": {
+            "type": "object",
+            "required": [
+                "gitlab_project_id"
+            ],
+            "properties": {
+                "gitlab_project_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "v1.UpdateAppReq": {
             "type": "object",
             "properties": {
@@ -3269,6 +3799,15 @@ var doc = `{
                 "description": {
                     "type": "string",
                     "example": "description for env"
+                }
+            }
+        },
+        "v1.UpdateProjectEnvReq": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "description the project env"
                 }
             }
         },

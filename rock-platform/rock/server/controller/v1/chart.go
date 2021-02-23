@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"go.rock.com/rock-platform/rock/server/client/museum"
+	"go.rock.com/rock-platform/rock/server/database/api"
 	"go.rock.com/rock-platform/rock/server/utils"
 	"net/http"
 )
@@ -25,7 +26,7 @@ type Maintainer struct {
 	Email string `json:"email" example:"someone@email.com"`
 }
 
-//type ChartVersionList []*ChartVersion
+type ChartVersionList []*ChartVersion
 
 type ChartDetail struct {
 	Name     string          `json:"name" binding:"required" example:"mysql"`
@@ -103,7 +104,7 @@ func (c *Controller) GetNamedChartVersions(ctx *gin.Context) {
 		panic(err)
 	}
 
-	resp := []*ChartVersion{}
+	resp := ChartVersionList{}
 	if err := utils.MarshalResponse(chartVersionList, &resp); err != nil {
 		panic(err)
 	}
@@ -165,4 +166,38 @@ func (c *Controller) DeleteNamedChartVersion(ctx *gin.Context) {
 	}
 	c.Logger.Infof("Delete chart:%v version:%v", uriReq.Name, uriReq.Version)
 	ctx.JSON(http.StatusNoContent, "")
+}
+
+// @Summary Get specific app's all charts version list
+// @Description Api to get an app's all charts version list
+// @Tags APP
+// @Accept json
+// @Produce json
+// @Param id path integer true "App ID"
+// @Success 200 {array} v1.ChartVersion "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/apps/{id}/charts [get]
+func (c *Controller) GetAppChartVersions(ctx *gin.Context) {
+	var uriReq IdReq
+	if err := ctx.ShouldBindUri(&uriReq); err != nil {
+		panic(err)
+	}
+
+	app, err := api.GetAppById(uriReq.Id)
+	if err != nil {
+		panic(err)
+	}
+	client := museum.GetMuseumClient()
+	chartVersionList, err := client.Versions(app.Name)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := ChartVersionList{}
+	if err := utils.MarshalResponse(chartVersionList, &resp); err != nil {
+		panic(err)
+	}
+	c.Logger.Infof("Get %v chart's version list by app id:%v", app.Name, uriReq.Id)
+	ctx.JSON(http.StatusOK, resp)
 }

@@ -70,6 +70,21 @@ func (s *Server) InitRouters() {
 			projectApi.PUT("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.UpdateProjectEnv) // 更新指定project(project_id)下指定项目环境(project_env_id)的信息
 		}
 
+		//buildApi := v1Root.Group("/builds")
+		//{
+		//	buildApi.GET("", ctlv1.GetGlobalBuilds)  // 查看构建历史记录
+		//}
+
+		nodeApi := v1Root.Group("/nodes")
+		{
+			nodeApi.GET("", ctlv1.GetGlobalNodes)
+		}
+		//
+		//jobApi := v1Root.Group("/jobs")
+		//{
+		//	jobApi.GET("", ctlv1.GetGlobalJobs)
+		//}
+
 		appApi := v1Root.Group("/apps")
 		{
 			appApi.POST("", ctlv1.CreateApp)
@@ -78,11 +93,11 @@ func (s *Server) InitRouters() {
 			appApi.DELETE("/:id", ctlv1.DeleteApp)
 			appApi.PUT("/:id", ctlv1.UpdateApp)
 			appApi.PUT("/:id/gitlab", ctlv1.UpdateAppGitlabProject) // 修改应用的gitlab地址
-			//appApi.GET("/:id/builds", ctlv1.GetAppBuilds)
+			//appApi.GET("/:id/builds", ctlv1.GetAppBuilds) //查看指定的构建历史记录
 			//appApi.POST("/:id/builds", ctlv1.CreateAppBuild)
 			//appApi.GET("/:id/branches", ctlv1.GetAppBranches)
 			//appApi.GET("/:id/tags", ctlv1.GetAppTags)
-			//appApi.GET("/:id/charts", ctlv1.GetAppChartVersions)
+			appApi.GET("/:id/charts", ctlv1.GetAppChartVersions) // 通过应用id获取该应用的所有chart版本
 			//appApi.GET("/:id/instances", ctlv1.GetAppInstances)
 			//appApi.GET("/:id/builds/:build_number", ctlv1.GetAppBuild)
 			//appApi.GET("/:id/builds/:build_number/logs/:log_number", ctlv1.GetBuildLogs)
@@ -97,6 +112,17 @@ func (s *Server) InitRouters() {
 			chartApi.GET("/:name", ctlv1.GetNamedChartVersions)                        // 获取指定服务的所有版本号
 			chartApi.GET("/:name/versions/:version", ctlv1.GetNamedChartVersion)       // 获取指定服务的指定版本号
 			chartApi.DELETE("/:name/versions/:version", ctlv1.DeleteNamedChartVersion) // 删除指定服务的指定版本号
+		}
+
+		envApi := v1Root.Group("/envs")
+		{
+			envApi.POST("", ctlv1.CreateEnv)
+			envApi.GET("", ctlv1.GetEnvs)
+			envApi.GET("/:id", ctlv1.GetEnv)
+			envApi.DELETE("/:id", ctlv1.DeleteEnv)
+			envApi.PUT("/:id", ctlv1.UpdateEnv)
+			//envApi.POST("/:id/jobs", ctlv1.CreateEnvJob)
+			//envApi.POST("/:id/cronjobs", ctlv1.CreateEnvCronJob)
 		}
 
 		clusterApi := v1Root.Group("/clusters")
@@ -117,17 +143,6 @@ func (s *Server) InitRouters() {
 			//clusterApi.POST("/:id/license-online", middleware.IsSystemAdminOrAdmin, ctlv1.ActiveOnline)
 			//clusterApi.POST("/:id/license-offline", middleware.IsSystemAdminOrAdmin, ctlv1.ActiveOffline)
 			//clusterApi.GET("/:id/license-clics", middleware.IsSystemAdminOrAdmin, ctlv1.GetClientLicenses)
-		}
-
-		envApi := v1Root.Group("/envs")
-		{
-			envApi.POST("", ctlv1.CreateEnv)
-			envApi.GET("", ctlv1.GetEnvs)
-			envApi.GET("/:id", ctlv1.GetEnv)
-			envApi.DELETE("/:id", ctlv1.DeleteEnv)
-			envApi.PUT("/:id", ctlv1.UpdateEnv)
-			//envApi.POST("/:id/jobs", ctlv1.CreateEnvJob)
-			//envApi.POST("/:id/cronjobs", ctlv1.CreateEnvCronJob)
 		}
 
 		authApi := v1Root.Group("/auth")

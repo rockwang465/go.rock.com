@@ -1,4 +1,11 @@
 ## infra-console-service使用介绍
+### 1.服务基础信息
++ 服务启动在`10.151.3.85`机器的`k8s`的`dev`名称空间上
++ 配置文件放在`configmap`中
++ 数据库是`10.151.3.85`的`3306`端口`console55`数据库
++ drone脚本位置:`/root/drone-test/infra/dev/start_drone_dev_agent.sh`和`/root/drone-test/infra/dev/start_drone_dev_server.sh`
+
+### 2.数据库
 + 数据库创建
 ```sql
 CREATE DATABASE `console` /*!40100 COLLATE 'utf8_unicode_ci' */;
@@ -9,6 +16,7 @@ GRANT ALL PRIVILEGES ON console.* to console@'%' IDENTIFIED by 'UVlY88m9suHLsthK
 FLUSH PRIVILEGES;
 ```
 
+### 3.配置文件
 + config配置文件
 ```yaml
 # vim /etc/console/config.yml
@@ -44,6 +52,8 @@ email:
 frontend:
   domain: http://localhost:8989
 ```
+
+### 4.参数
 + 传参用法
 ```text
 # ./console run -h
@@ -83,6 +93,8 @@ Flags:
       --tls-cert-file string           File containing the default x509 Certificate for HTTPS
       --tls-private-key-file string    File containing the default x509 private key matching --tls-cert-file
 ```
+
+### 5.脚本
 + 执行脚本
 ```text
 # cat execute_console.sh  # 支持文件、传参方式

@@ -1,11 +1,15 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.rock.com/rock-platform/rock/server/client/k8s"
 	"go.rock.com/rock-platform/rock/server/database/api"
-	coreV1 "k8s.io/api/core/v1"
+	"go.rock.com/rock-platform/rock/server/utils"
+	"k8s.io/api/core/v1"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -39,6 +43,25 @@ type ClusterNodeResp struct {
 type NodeReq struct {
 	Id   int64  `json:"id" uri:"id" binding:"required,min=1" example:"1"`
 	Name string `json:"name" uri:"name" binding:"required" example:"kubernetes-master1"`
+}
+
+type GlobalNodeResp struct {
+	Name                    string            `json:"name" example:"kubernetes-master1"`
+	ClusterName             string            `json:"cluster_name,omitempty" binding:"required" example:"devops"`
+	ClusterId               int               `json:"cluster_id,omitempty" binding:"required" example:"1"`
+	UID                     string            `json:"uid" example:"3550d3f1-51b4-41e7-ba65-83d029f31e2b"`
+	Labels                  []*NodeLabel      `json:"labels"`
+	Annotations             []*NodeAnnotation `json:"annotations"`
+	PodCIDR                 string            `json:"pod_cidr" example:"10.244.0.0/24"`
+	Unschedulable           bool              `json:"unschedulable" example:"false"`
+	KernelVersion           string            `json:"kernel_version" example:"4.18.0-193.6.3.el8_2.x86_64"`
+	OSImage                 string            `json:"os_image" example:"CentOS Linux 8 (Core)"`
+	OS                      string            `json:"os" example:"linux"`
+	Architecture            string            `json:"architecture" example:"amd64"`
+	ContainerRunTimeVersion string            `json:"container_run_time_version" example:"docker://19.3.4"`
+	InternalIP              string            `json:"internal_ip" example:"10.10.10.10"`
+	Hostname                string            `json:"hostname" example:"kubernetes-master1"`
+	CreatedAt               time.Time         `json:"created_at" example:"2021-02-13T18:12:05+08:00"`
 }
 
 // @Summary Get specific cluster's all nodes
@@ -76,7 +99,7 @@ func (c *Controller) GetClusterNodes(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, nodes)
 }
 
-func formatNodesResp(nodeList []coreV1.Node) (*[]ClusterNodeResp, error) {
+func formatNodesResp(nodeList []v1.Node) (*[]ClusterNodeResp, error) {
 	nodesResp := []ClusterNodeResp{}
 	for _, node := range nodeList {
 		nodeResp, err := formatNodeResp(&node)
@@ -89,7 +112,7 @@ func formatNodesResp(nodeList []coreV1.Node) (*[]ClusterNodeResp, error) {
 	return &nodesResp, nil
 }
 
-func formatNodeResp(node *coreV1.Node) (*ClusterNodeResp, error) {
+func formatNodeResp(node *v1.Node) (*ClusterNodeResp, error) {
 	Node := &ClusterNodeResp{
 		Name: node.Name,
 		UID:  string(node.UID),
@@ -274,6 +297,77 @@ func formatNodeResp(node *coreV1.Node) (*ClusterNodeResp, error) {
 	//}
 }
 
+func formatGlobalNodesResp(nodes []v1.Node) ([]*GlobalNodeResp, error) {
+	clusterNodes := make([]*GlobalNodeResp, 0)
+	for _, node := range nodes {
+		clusterNode, err := formatGlobalNodeResp(&node)
+		if err != nil {
+			return nil, err
+		}
+		clusterNodes = append(clusterNodes, clusterNode)
+	}
+	return clusterNodes, nil
+}
+
+func formatGlobalNodeResp(node *v1.Node) (*GlobalNodeResp, error) {
+	Node := &GlobalNodeResp{
+		Name:                    node.Name,
+		UID:                     string(node.UID),
+		PodCIDR:                 node.Spec.PodCIDR,
+		Unschedulable:           node.Spec.Unschedulable,
+		KernelVersion:           node.Status.NodeInfo.KernelVersion,
+		OSImage:                 node.Status.NodeInfo.OSImage,
+		OS:                      node.Status.NodeInfo.OperatingSystem,
+		Architecture:            node.Status.NodeInfo.Architecture,
+		ContainerRunTimeVersion: node.Status.NodeInfo.ContainerRuntimeVersion,
+		CreatedAt:               node.CreationTimestamp.Time,
+	}
+
+	var clusterId int
+	var err error
+	clusterId, err = strconv.Atoi(node.Annotations["console.cluster.id"])
+	if err != nil {
+		return nil, utils.NewRockError(400, 40000023, fmt.Sprintf("cluster id %s can't be converted int", node.Annotations["console.cluster.id"]))
+	}
+
+	Node.ClusterName = node.Annotations["console.cluster.name"] // 将之前保存的cluster.Name和cluster.Id值赋值到这个结构体中
+	Node.ClusterId = clusterId
+
+	for _, nodeAddress := range node.Status.Addresses {
+		if nodeAddress.Type == "InternalIP" {
+			Node.InternalIP = nodeAddress.Address
+		}
+		if nodeAddress.Type == "Hostname" {
+			Node.Hostname = nodeAddress.Address
+		}
+	}
+
+	labels := []*NodeLabel{} // 指针存储,节省内存,但必须先初始化
+	for key, value := range node.Labels {
+		label := NodeLabel{
+			Key:   key,
+			Value: value,
+		}
+		labels = append(labels, &label)
+	}
+	Node.Labels = labels
+
+	annotations := []*NodeAnnotation{}
+	for key, value := range node.ObjectMeta.Annotations { // 如果是console.cluster开头,为之前记录cluster.Name和cluster.Id的,所以不能保存到数据中,则需要continue忽略掉
+		if strings.HasPrefix(key, "console.cluster") {
+			continue
+		}
+		annotation := NodeAnnotation{
+			Key:   key,
+			Value: value,
+		}
+		annotations = append(annotations, &annotation)
+	}
+	Node.Annotations = annotations
+
+	return Node, nil
+}
+
 // @Summary Get a specific cluster node
 // @Description api for get a specific cluster node
 // @Tags CLUSTER
@@ -307,4 +401,43 @@ func (c *Controller) GetClusterNode(ctx *gin.Context) {
 
 	c.Logger.Infof("Get specific cluster node by cluster id(%v) and node name(%v)", nodeReq.Id, node.Name)
 	ctx.JSON(http.StatusOK, Node)
+}
+
+// @Summary Get cluster's all nodes
+// @Description api for get cluster's all nodes
+// @Tags NODE
+// @Accept json
+// @Produce json
+// @Success 200 {object} v1.GlobalNodeResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/nodes [get]
+func (c *Controller) GetGlobalNodes(ctx *gin.Context) {
+	clusters, err := api.GetClustersWithoutPagination()
+	if err != nil {
+		panic(err)
+	}
+
+	nodes := []v1.Node{}
+	for _, cluster := range clusters {
+		nodeList, err := k8s.GetClusterNodes(cluster.Config) // 通过admin.conf获取单个集群的节点信息
+		if err != nil {
+			c.Logger.Warnf("Get cluster(%v)'s node failed, please check it", cluster.Name)
+			continue
+		}
+
+		for _, node := range nodeList.Items { // 保存cluster.Name 和cluster.Id,方便后面单个node进行保存数据
+			node.Annotations["console.cluster.name"] = cluster.Name                // cluster.Name为集群名称，如 10.151.3.99-devops-env
+			node.Annotations["console.cluster.id"] = strconv.Itoa(int(cluster.Id)) // cluster.Id为集群id
+		}
+		nodes = append(nodes, nodeList.Items...)
+	}
+
+	resp, err := formatGlobalNodesResp(nodes)
+	if err != nil {
+		panic(err)
+	}
+	c.Logger.Infof("Get all nodes, the nodes length is %v", len(resp))
+	ctx.JSON(http.StatusOK, resp)
 }

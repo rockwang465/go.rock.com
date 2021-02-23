@@ -111,3 +111,31 @@ http://10.151.3.87:8888/swagger/index.html
 # cd /e/mygopath/src/rock-platform/rock/cmd
 # CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build .
 ```
+
+## 使用`infra-frontend`chart配合二进制`rock-platform`
++ 创建service关联endpoint
+```yaml
+# vim infra-console-service-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: infra-console-service
+  namespace: dev
+spec:
+  ports:
+  - protocol: TCP
+    port: 8888
+    targetPort: 8888
+  clusterIP: None
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: infra-console-service
+  namespace: dev
+subsets:
+  - addresses:
+      - ip: 10.151.3.86
+    ports:
+      - port: 8888
+```

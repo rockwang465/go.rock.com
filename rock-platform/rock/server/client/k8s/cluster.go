@@ -1,7 +1,9 @@
 package k8s
 
-import metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-import v1 "k8s.io/api/core/v1"
+import (
+	"k8s.io/api/core/v1"
+	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
 
 func GetClusterNodes(k8sConf string) (*v1.NodeList, error) {
 	clientSet, err := GetK8sClient(k8sConf)

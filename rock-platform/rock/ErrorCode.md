@@ -175,6 +175,12 @@ const(
 - 中文名称: 该project_id env_id name已存在
 
 ---
+
+- HttpCode: 400
+- ErrorCode: 40000023
+- 中文名称: Annotation console.cluster.id不能转为int类型
+
+---
 - HttpCode: 401
 - ErrorCode: 40100001
 - 中文名称: 权限不足

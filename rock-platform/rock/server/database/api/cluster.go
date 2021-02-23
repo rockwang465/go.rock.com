@@ -131,6 +131,16 @@ func GetClusterEnvsById(clusterId, pageNum, pageSize int64) (*models.EnvPaginati
 	return envPagination, nil
 }
 
+func GetClustersWithoutPagination() ([]*models.Cluster, error) {
+	db := database.GetDBEngine()
+	Clusters := make([]*models.Cluster, 0)
+
+	if err := db.Order("updated_at desc").Find(&Clusters).Error; err != nil {
+		return nil, err
+	}
+	return Clusters, nil
+}
+
 func hasNotClusterWithSameName(name string) error {
 	db := database.GetDBEngine()
 	cluster := new(models.Cluster)

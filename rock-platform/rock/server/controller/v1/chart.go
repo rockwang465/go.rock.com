@@ -2,7 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"go.rock.com/rock-platform/rock/server/client/museum"
+	"go.rock.com/rock-platform/rock/server/clients/museum"
 	"go.rock.com/rock-platform/rock/server/database/api"
 	"go.rock.com/rock-platform/rock/server/utils"
 	"net/http"

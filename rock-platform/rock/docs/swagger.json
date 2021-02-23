@@ -274,6 +274,53 @@
                 }
             }
         },
+        "/v1/apps/{id}/charts": {
+            "get": {
+                "description": "Api to get an app's all charts version list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Get specific app's all charts version list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.ChartVersion"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/apps/{id}/gitlab": {
             "put": {
                 "description": "api for update app gitlab address",
@@ -1378,6 +1425,47 @@
                 }
             }
         },
+        "/v1/nodes": {
+            "get": {
+                "description": "api for get cluster's all nodes",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "NODE"
+                ],
+                "summary": "Get cluster's all nodes",
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.GlobalNodeResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/projects": {
             "get": {
                 "description": "Api to get all projects",
@@ -1955,6 +2043,243 @@
                         "type": "integer",
                         "description": "Project Env ID",
                         "name": "pe_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "StatusNoContent",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/registries": {
+            "get": {
+                "description": "Api to get all registries",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "REGISTRY"
+                ],
+                "summary": "Get all registries",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.RegistryBriefResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Api to create registry",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "REGISTRY"
+                ],
+                "summary": "Create registry",
+                "parameters": [
+                    {
+                        "description": "JSON type input body",
+                        "name": "input_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CreateRegistryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v1.RegistryBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/registries/{address}": {
+            "get": {
+                "description": "Api to get an registry",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "REGISTRY"
+                ],
+                "summary": "Get an registry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Registry Address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.RegistryBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Api to delete an registry by address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "REGISTRY"
+                ],
+                "summary": "Delete an registry by address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Registry Address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "JSON type input body",
+                        "name": "input_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdateRegistryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.RegistryBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Api to delete an registry by address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "REGISTRY"
+                ],
+                "summary": "Delete an registry by address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Registry Address",
+                        "name": "address",
                         "in": "path",
                         "required": true
                     }
@@ -3236,6 +3561,28 @@
                 }
             }
         },
+        "v1.CreateRegistryReq": {
+            "type": "object",
+            "required": [
+                "address",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "example": "10.151.3.75"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "*********"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "admin"
+                }
+            }
+        },
         "v1.CreateRoleReq": {
             "type": "object",
             "required": [
@@ -3339,6 +3686,83 @@
                 "version": {
                     "type": "integer",
                     "example": 1
+                }
+            }
+        },
+        "v1.GlobalNodeResp": {
+            "type": "object",
+            "required": [
+                "cluster_id",
+                "cluster_name"
+            ],
+            "properties": {
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.NodeAnnotation"
+                    }
+                },
+                "architecture": {
+                    "type": "string",
+                    "example": "amd64"
+                },
+                "cluster_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "cluster_name": {
+                    "type": "string",
+                    "example": "devops"
+                },
+                "container_run_time_version": {
+                    "type": "string",
+                    "example": "docker://19.3.4"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2021-02-13T18:12:05+08:00"
+                },
+                "hostname": {
+                    "type": "string",
+                    "example": "kubernetes-master1"
+                },
+                "internal_ip": {
+                    "type": "string",
+                    "example": "10.10.10.10"
+                },
+                "kernel_version": {
+                    "type": "string",
+                    "example": "4.18.0-193.6.3.el8_2.x86_64"
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.NodeLabel"
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "example": "kubernetes-master1"
+                },
+                "os": {
+                    "type": "string",
+                    "example": "linux"
+                },
+                "os_image": {
+                    "type": "string",
+                    "example": "CentOS Linux 8 (Core)"
+                },
+                "pod_cidr": {
+                    "type": "string",
+                    "example": "10.244.0.0/24"
+                },
+                "uid": {
+                    "type": "string",
+                    "example": "3550d3f1-51b4-41e7-ba65-83d029f31e2b"
+                },
+                "unschedulable": {
+                    "type": "boolean",
+                    "example": false
                 }
             }
         },
@@ -3660,6 +4084,23 @@
                 }
             }
         },
+        "v1.RegistryBriefResp": {
+            "type": "object",
+            "required": [
+                "address",
+                "username"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "example": "10.151.3.75"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "admin"
+                }
+            }
+        },
         "v1.ResetPwdReq": {
             "type": "object",
             "required": [
@@ -3797,6 +4238,23 @@
                 "description": {
                     "type": "string",
                     "example": "description the project"
+                }
+            }
+        },
+        "v1.UpdateRegistryReq": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "admin"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "admin"
                 }
             }
         },

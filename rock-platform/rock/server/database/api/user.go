@@ -3,7 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/go-sql-driver/mysql"
-	drone_api "go.rock.com/rock-platform/rock/server/client/drone-api"
+	"go.rock.com/rock-platform/rock/server/clients/drone-api"
 	"go.rock.com/rock-platform/rock/server/database"
 	"go.rock.com/rock-platform/rock/server/database/models"
 	"go.rock.com/rock-platform/rock/server/utils"

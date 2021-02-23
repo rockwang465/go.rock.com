@@ -3,7 +3,7 @@ package v1
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go.rock.com/rock-platform/rock/server/client/k8s"
+	"go.rock.com/rock-platform/rock/server/clients/k8s"
 	"go.rock.com/rock-platform/rock/server/database/api"
 	"go.rock.com/rock-platform/rock/server/utils"
 	"k8s.io/api/core/v1"

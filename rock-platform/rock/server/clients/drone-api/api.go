@@ -38,3 +38,49 @@ func ActiveRepo(jwt string, repoId int64) (*drone.Repo, error) {
 	}
 	return client.RepoPost(repoId)
 }
+
+// create a custom docker registry
+func CreateRegistry(jwt, addr, user, pwd string) (*drone.Registry, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.RegistryCustomCreate(addr, user, pwd)
+}
+
+// get all docker registry list
+func GetRegistries(jwt string) ([]*drone.Registry, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.RegistryCustomList()
+}
+
+// get an registry by IP address
+func GetRegistry(jwt, addr string) (*drone.Registry, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.CustomRegistry(addr)
+}
+
+// delete an registry by IP address
+func DeleteRegistry(jwt, addr string) error {
+	client, err := getClient(jwt)
+	if err != nil {
+		return err
+	}
+	return client.CustomRegistryDelete(addr)
+}
+
+// update an registry info(username,password) by IP address
+func UpdateRegistry(jwt, addr, user, pwd string) (*drone.Registry, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.CustomRegistryUpdate(addr, user, pwd)
+}

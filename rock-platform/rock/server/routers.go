@@ -145,14 +145,22 @@ func (s *Server) InitRouters() {
 			//clusterApi.GET("/:id/license-clics", middleware.IsSystemAdminOrAdmin, ctlv1.GetClientLicenses)
 		}
 
-		// 疑问: 这些创建的registry，都保存在drone的缓存里吗？如果重启drone会不会丢失呢？
-		registryApi := v1Root.Group("/registries") // 对镜像仓库进行操作
+		registryApi := v1Root.Group("/registries") // 镜像仓库信息管理
 		{
 			registryApi.POST("", middleware.IsAdmin, ctlv1.CreateRegistry)
 			registryApi.GET("", middleware.IsAdmin, ctlv1.GetRegistries)
 			registryApi.GET("/:address", middleware.IsAdmin, ctlv1.GetRegistry)
 			registryApi.DELETE("/:address", middleware.IsAdmin, ctlv1.DeleteRegistry)
 			registryApi.PUT("/:address", middleware.IsAdmin, ctlv1.UpdateRegistry)
+		}
+
+		secretApi := v1Root.Group("/secrets") // 密钥管理
+		{
+			secretApi.POST("", middleware.IsAdmin, ctlv1.CreateSecret)
+			secretApi.GET("", middleware.IsAdmin, ctlv1.GetSecrets)
+			secretApi.GET("/:name", middleware.IsAdmin, ctlv1.GetSecret)
+			secretApi.DELETE("/:name", middleware.IsAdmin, ctlv1.DeleteSecret)
+			secretApi.PUT("/:name", middleware.IsAdmin, ctlv1.UpdateSecret)
 		}
 
 		authApi := v1Root.Group("/auth")

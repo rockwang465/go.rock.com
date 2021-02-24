@@ -158,13 +158,13 @@ func (c *Controller) DeleteRegistry(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, "")
 }
 
-// @Summary Delete an registry by address
-// @Description Api to delete an registry by address
+// @Summary Update registry info with id and body
+// @Description Api for update registry info
 // @Tags REGISTRY
 // @Accept json
 // @Produce json
 // @Param address path string true "Registry Address"
-// @Param input_body body v1.UpdateRegistryReq true "JSON type input body"
+// @Param update_body body v1.UpdateRegistryReq true "JSON type update registry info
 // @Success 204 {object} v1.RegistryBriefResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 404 {object} utils.HTTPError "StatusNotFound"
@@ -196,6 +196,6 @@ func (c *Controller) UpdateRegistry(ctx *gin.Context) {
 		panic(err)
 	}
 
-	c.Infof("Update registry's info by name %v", req.Username)
+	c.Infof("Update registry's info by address %v", uriReq.Address)
 	ctx.JSON(http.StatusOK, resp)
 }

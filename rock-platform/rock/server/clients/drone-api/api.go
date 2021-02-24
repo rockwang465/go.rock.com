@@ -5,6 +5,9 @@ import (
 	"github.com/rockwang465/drone/drone-go/drone" // 所以不用被改动的源码，而是直接拿改好的源码放在自己的项目下
 )
 
+// 所有使用drone client(当前api.go)对drone server(放在linux上的二进制服务)请求，保存的数据都放在了mysql数据库中。
+// 也就是说drone server是基于mysql保存数据的。
+
 // use accessToken(gitlab access token) and username, generate drone token
 func GetJwt(username, accessToken string) (*drone.Token, error) {
 	client := getRawClient()
@@ -83,4 +86,49 @@ func UpdateRegistry(jwt, addr, user, pwd string) (*drone.Registry, error) {
 		return nil, err
 	}
 	return client.CustomRegistryUpdate(addr, user, pwd)
+}
+
+// create a secret
+func CreateSecret(jwt, name, value string) (*drone.Secret, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.SecretCustomCreate(name, value)
+}
+
+// get all secrets
+func GetSecrets(jwt string) ([]*drone.Secret, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.SecretCustomList()
+}
+
+// get a secret by name
+func GetSecret(jwt, name string) (*drone.Secret, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.CustomSecret(name)
+}
+
+// delete a secret by name
+func DeleteSecret(jwt, name string) error {
+	client, err := getClient(jwt)
+	if err != nil {
+		return err
+	}
+	return client.CustomSecretDelete(name)
+}
+
+// update a secret info(value) by name
+func UpdateSecret(jwt, name, value string) (*drone.Secret, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.CustomSecretUpdate(name, value)
 }

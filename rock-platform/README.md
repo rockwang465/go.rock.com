@@ -69,6 +69,22 @@ mysql> SET @@global.sql_mode ='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,
 mysql> SET sql_mode ='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
 ```
 
+### 3.5 drone server配置
++ 数据库准备
+```text
+mysql端口: 3306
+mysql用户: drone
+drone用户密码: drone_123456
+database: drone55
+root密码: 123456
+```
+
++ 服务启动
+```text
+# cd /rock/drone/drone/dev
+# nohup sh start_drone_dev_server.sh | tee server.log &
+```
+
 ## 4.使用介绍
 ### 1)启动命令
 + `server` 启动服务

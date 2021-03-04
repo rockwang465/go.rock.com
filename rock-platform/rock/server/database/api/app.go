@@ -29,8 +29,8 @@ func CreateApp(name, fullName, owner, desc, gitlabAddr string, projectId, gitlab
 	return app, nil
 }
 
-// get all apps
-func GetApps(pageNum, pageSize int64, queryField string, projectId int64) (*models.AppPagination, error) {
+// get all apps by project id
+func GetPaginationApps(pageNum, pageSize int64, queryField string, projectId int64) (*models.AppPagination, error) {
 	db := database.GetDBEngine()
 	_, err := GetProjectById(projectId)
 	if err != nil {

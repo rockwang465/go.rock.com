@@ -164,8 +164,8 @@ func (c *Controller) DeleteRegistry(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param address path string true "Registry Address"
-// @Param update_body body v1.UpdateRegistryReq true "JSON type update registry info
-// @Success 204 {object} v1.RegistryBriefResp "StatusOK"
+// @Param update_body body v1.UpdateRegistryReq true "JSON body for update registry info"
+// @Success 200 {object} v1.RegistryBriefResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 404 {object} utils.HTTPError "StatusNotFound"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"

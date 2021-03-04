@@ -247,6 +247,12 @@ const(
 
 ---
 
+- HttpCode: 404
+- ErrorCode: 40400010
+- 中文名称: 此app应用gitlab_project_id不存在
+
+---
+
 - HttpCode: 412
 - ErrorCode: 41200001
 - 中文名称: 缺少gitlab access token

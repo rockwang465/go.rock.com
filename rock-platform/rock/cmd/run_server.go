@@ -114,7 +114,7 @@ func runServer(cmd *cobra.Command, args []string) {
 	// a timeout of 5 seconds.
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
-	<-quit
+	<-quit // 正常此处会阻塞,当收到中断程序的信号时，就会拿到内容，执行下面的代码
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

@@ -132,3 +132,66 @@ func UpdateSecret(jwt, name, value string) (*drone.Secret, error) {
 	}
 	return client.CustomSecretUpdate(name, value)
 }
+
+// get app branches by app gitlab project id
+func RepoBranches(jwt string, repoId int64) ([]*drone.Branch, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.RepoBranches(repoId)
+}
+
+// get app tags by app gitlab project id
+func RepoTags(jwt string, repoId int64) ([]*drone.Tag, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.RepoTags(repoId)
+}
+
+// create a build task by triggerType(app branch/tag), triggerName(branch/tag name), repoId(drone_repo_id), rockProjectId(project_id), env(app_id, project_env_id)
+func CreateBuild(jwt, triggerType, triggerName string, repoId, rockProjectId int64, envs map[string]string) (*drone.Build, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.CreateBuild(repoId, rockProjectId, triggerType, triggerName, envs)
+}
+
+// get global build list info by page(page_num), perPage(page_size), console_project_id
+func GetCustomGlobalBuilds(jwt string, page, perPage, cId int64) (*drone.PaginateBuild, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.GetCustomGlobalBuildList(page, perPage, cId)
+}
+
+// get all builds info by repoId, page(page_num), perPage(page_size)
+func GetCustomBuilds(jwt string, repoId, page, perPage int64) (*drone.PaginateBuild, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.GetCustomBuildList(repoId, page, perPage)
+}
+
+// get specific build info by repo_id and build_number
+func GetCustomBuild(jwt string, repoId int64, buildNumber int) (*drone.Build, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.CustomBuild(repoId, buildNumber)
+}
+
+// get specific app build logs by repo_id and buildNumber and logNumber
+func GetCustomLogs(jwt string, repoId int64, buildNumber, logNumber int) ([]*drone.Log, error) {
+	client, err := getClient(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return client.BuildCustomLogs(repoId, buildNumber, logNumber)
+}

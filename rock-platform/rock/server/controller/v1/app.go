@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.rock.com/rock-platform/rock/server/clients/drone-api"
 	"go.rock.com/rock-platform/rock/server/database/api"
@@ -49,6 +50,29 @@ type UpdateAppReq struct {
 
 type UpdateAppGitlabAddressReq struct {
 	GitlabProjectId int64 `json:"gitlab_project_id" binding:"required,min=1" example:"1"`
+}
+
+type AppBranchResp struct {
+	Name   string `json:"name" example:"G-v2.2.0-RTM"`
+	Commit Commit
+}
+
+type AppTagResp struct {
+	Name        string `json:"name" example:"G-v2.2.0-RTM"`
+	Message     string `json:"message" example:"debug set to false"`
+	Description string `json:"description" example:"description here"`
+	Commit      Commit
+}
+
+type Commit struct {
+	Id             string `json:"id" example:"9a44bd6973d12f2d280e9548c1ee430bf119d168"`
+	Message        string `json:"message" example:"debug set to false"`
+	AuthorName     string `json:"author_name" example:"someone"`
+	AuthorEmail    string `json:"author_email" example:"someone@sensetime.com"`
+	AuthoredDate   string `json:"authored_date" example:"2021-02-24T15:45:23.000+08:00"`
+	CommitterName  string `json:"committer_name" example:"someone"`
+	CommitterEmail string `json:"committer_email" example:"someone@sensetime.com"`
+	CommitterDate  string `json:"committer_date" example:"2021-02-24T15:45:23.000+08:00"`
 }
 
 // @Summary Create app
@@ -124,7 +148,7 @@ func (c *Controller) GetApps(ctx *gin.Context) {
 		panic(err)
 	}
 
-	appPg, err := api.GetApps(paginationReq.PageNum, paginationReq.PageSize, paginationReq.QueryField, paginationReq.Id)
+	appPg, err := api.GetPaginationApps(paginationReq.PageNum, paginationReq.PageSize, paginationReq.QueryField, paginationReq.Id)
 	if err != nil {
 		panic(err)
 	}
@@ -276,5 +300,99 @@ func (c *Controller) UpdateAppGitlabProject(ctx *gin.Context) {
 		panic(err)
 	}
 	c.Logger.Infof("Update app gitlab address(%v) by id:%v", remote.Clone, idReq.Id)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Get app branches info with app id
+// @Description Api for get app branches info with app id
+// @Tags APP
+// @Accept json
+// @Produce json
+// @Param id path integer true "App ID"
+// @Success 200 {array} v1.AppBranchResp
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/apps/{id}/branches [get]
+func (c *Controller) GetAppBranches(ctx *gin.Context) {
+	cfgCtx, err := utils.GetConfCtx(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	var uriReq IdReq
+	if err := ctx.ShouldBindUri(&uriReq); err != nil {
+		panic(err)
+	}
+
+	app, err := api.GetAppById(uriReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	if app.GitlabProjectId == 0 {
+		err := utils.NewRockError(404, 40400010, fmt.Sprintf(
+			"App(%v) can't get gitlab project branch info because app haven't associated gitlab project correctly", uriReq.Id))
+		panic(err)
+	}
+
+	branches, err := drone_api.RepoBranches(cfgCtx.DroneToken, app.GitlabProjectId)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := []*AppBranchResp{}
+	if err := utils.MarshalResponse(branches, &resp); err != nil {
+		panic(err)
+	}
+
+	c.Infof("Get app(id: %v, name: %s)'s all branches", uriReq.Id, app.Name)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Get app tags info with app id
+// @Description Api for get app tags info with app id
+// @Tags APP
+// @Accept json
+// @Produce json
+// @Param id path integer true "App ID"
+// @Success 200 {array} v1.AppTagResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/apps/{id}/tags [get]
+func (c *Controller) GetAppTags(ctx *gin.Context) {
+	cfgCtx, err := utils.GetConfCtx(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	var uriReq IdReq
+	if err := ctx.ShouldBindUri(&uriReq); err != nil {
+		panic(err)
+	}
+
+	app, err := api.GetAppById(uriReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	if app.GitlabProjectId == 0 {
+		err := utils.NewRockError(404, 40400010, fmt.Sprintf(
+			"App(%v) can't get gitlab project tag info because app haven't associated gitlab project correctly", uriReq.Id))
+		panic(err)
+	}
+
+	tags, err := drone_api.RepoTags(cfgCtx.DroneToken, app.GitlabProjectId)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := []*AppTagResp{}
+	if err := utils.MarshalResponse(tags, &resp); err != nil {
+		panic(err)
+	}
+
+	c.Infof("Get app(id: %v, name: %s)'s all tags", uriReq.Id, app.Name)
 	ctx.JSON(http.StatusOK, resp)
 }

@@ -17,7 +17,7 @@ func CreateProjectEnvByProjectId(projectId, envId int64, projectEnvName, desc st
 	// ensure has env_id
 	_, err = GetEnvById(envId)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	db := database.GetDBEngine()

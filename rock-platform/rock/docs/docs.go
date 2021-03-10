@@ -294,6 +294,306 @@ var doc = `{
                 }
             }
         },
+        "/v1/apps/{id}/branches": {
+            "get": {
+                "description": "Api for get app branches info with app id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Get app branches info with app id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.AppBranchResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/apps/{id}/builds": {
+            "get": {
+                "description": "Api to get all builds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Get specific app's all builds info",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Request page number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "App number per page ",
+                        "name": "per_page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.BuildBriefResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Api to trigger specific app's branch or tag build process",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Trigger specific app's branch or tag build process",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "JSON type input body",
+                        "name": "input_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CreateBuildReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.BuildBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/apps/{id}/builds/{build_number}": {
+            "get": {
+                "description": "Api for get build by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Get build by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Build number",
+                        "name": "build_number",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.BuildDetailResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/apps/{id}/builds/{build_number}/logs/{log_number}": {
+            "get": {
+                "description": "Api for get specific app build log by log number",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Get specific app build log by log number",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Build number",
+                        "name": "build_number",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Log number",
+                        "name": "log_number",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.BuildDetailResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/apps/{id}/charts": {
             "get": {
                 "description": "Api to get an app's all charts version list",
@@ -328,6 +628,175 @@ var doc = `{
                     },
                     "400": {
                         "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/apps/{id}/config": {
+            "get": {
+                "description": "api for get specific app config by app_id and project_env_id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "get specific app config",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Project env ID",
+                        "name": "pe_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.AppConfDetailResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "api for update or create specific app conf by app_id and project_env_id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Update or create specific app conf",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "JSON type for update or create app info",
+                        "name": "update_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdateAppConfReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.AppConfDetailResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "api for delete specific app config by app_id and project_env_id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "delete specific app config",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Project env ID",
+                        "name": "pe_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "StatusNoContent",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
                         "schema": {
                             "$ref": "#/definitions/utils.HTTPError"
                         }
@@ -377,6 +846,59 @@ var doc = `{
                         "description": "StatusOK",
                         "schema": {
                             "$ref": "#/definitions/v1.AppBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/apps/{id}/tags": {
+            "get": {
+                "description": "Api for get app tags info with app id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Get app tags info with app id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.AppTagResp"
+                            }
                         }
                     },
                     "400": {
@@ -560,6 +1082,74 @@ var doc = `{
                     },
                     "400": {
                         "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/builds": {
+            "get": {
+                "description": "Api to get global builds info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BUILD"
+                ],
+                "summary": "Get global builds info",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Request page number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "App number per page ",
+                        "name": "per_page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Console project id",
+                        "name": "console_project_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.BuildBriefResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
                         "schema": {
                             "$ref": "#/definitions/utils.HTTPError"
                         }
@@ -1164,6 +1754,58 @@ var doc = `{
                         "description": "StatusOK",
                         "schema": {
                             "$ref": "#/definitions/v1.ClusterNodeResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/deployments": {
+            "post": {
+                "description": "Api to create deployment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DEPLOYMENT"
+                ],
+                "summary": "Create deployment",
+                "parameters": [
+                    {
+                        "description": "JSON type input body",
+                        "name": "input_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CreateDeploymentReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "StatusCreated",
+                        "schema": {
+                            "$ref": "#/definitions/v1.DeploymentDetailResp"
                         }
                     },
                     "400": {
@@ -2227,7 +2869,7 @@ var doc = `{
                 }
             },
             "put": {
-                "description": "Api to delete an registry by address",
+                "description": "Api for update registry info",
                 "consumes": [
                     "application/json"
                 ],
@@ -2237,7 +2879,7 @@ var doc = `{
                 "tags": [
                     "REGISTRY"
                 ],
-                "summary": "Delete an registry by address",
+                "summary": "Update registry info with id and body",
                 "parameters": [
                     {
                         "type": "string",
@@ -2247,8 +2889,8 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "description": "JSON type input body",
-                        "name": "input_body",
+                        "description": "JSON body for update registry info",
+                        "name": "update_body",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -2257,7 +2899,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
+                    "200": {
                         "description": "StatusOK",
                         "schema": {
                             "$ref": "#/definitions/v1.RegistryBriefResp"
@@ -2684,6 +3326,243 @@ var doc = `{
                     },
                     "404": {
                         "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/secret/{name}": {
+            "get": {
+                "description": "Api to get an secret",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SECRET"
+                ],
+                "summary": "Get an secret",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Secret Name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.SecretBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Api to delete an secret by name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SECRET"
+                ],
+                "summary": "Delete an secret by name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Secret Name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "JSON type update secret info",
+                        "name": "update_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdateSecretReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.SecretBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Api to delete an secret by name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SECRET"
+                ],
+                "summary": "Delete an secret by name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Secret Name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "StatusNoContent",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/secrets": {
+            "get": {
+                "description": "Api to get all secrets",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SECRET"
+                ],
+                "summary": "Get all secrets",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.SecretBriefResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Api to create secret",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SECRET"
+                ],
+                "summary": "Create secret",
+                "parameters": [
+                    {
+                        "description": "JSON type input body",
+                        "name": "input_body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CreateSecretReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v1.SecretBriefResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
                         "schema": {
                             "$ref": "#/definitions/utils.HTTPError"
                         }
@@ -3248,6 +4127,18 @@ var doc = `{
                 }
             }
         },
+        "v1.AppBranchResp": {
+            "type": "object",
+            "properties": {
+                "commit": {
+                    "$ref": "#/definitions/v1.Commit"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "G-v2.2.0-RTM"
+                }
+            }
+        },
         "v1.AppBriefResp": {
             "type": "object",
             "properties": {
@@ -3294,6 +4185,204 @@ var doc = `{
                 "version": {
                     "type": "integer",
                     "example": 1
+                }
+            }
+        },
+        "v1.AppConfDetailResp": {
+            "type": "object",
+            "required": [
+                "config",
+                "created_at",
+                "id",
+                "updated_at",
+                "version"
+            ],
+            "properties": {
+                "app_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "config": {
+                    "type": "string",
+                    "example": "app config content"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2018-10-09T14:57:23+08:00"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "project_env_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2018-10-09T14:57:23+08:00"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "v1.AppTagResp": {
+            "type": "object",
+            "properties": {
+                "commit": {
+                    "$ref": "#/definitions/v1.Commit"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "description here"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "debug set to false"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "G-v2.2.0-RTM"
+                }
+            }
+        },
+        "v1.BuildBriefResp": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "description": "extendBuildField func add this field",
+                    "type": "integer",
+                    "example": 1
+                },
+                "author": {
+                    "type": "string",
+                    "example": "someone"
+                },
+                "author_email": {
+                    "type": "string",
+                    "example": "someone@sensetime.com"
+                },
+                "branch": {
+                    "type": "string",
+                    "example": "master"
+                },
+                "commit": {
+                    "type": "string",
+                    "example": "26b4808f0d35ac8f4621490166d683e255d9fed4"
+                },
+                "console_project_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "created_at": {
+                    "type": "integer",
+                    "example": 1614655426
+                },
+                "enqueued_at": {
+                    "type": "integer",
+                    "example": 1614655426
+                },
+                "finished_at": {
+                    "type": "integer",
+                    "example": 1614655426
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "message": {
+                    "type": "string",
+                    "example": "fix template issue\n"
+                },
+                "number": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "repo_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "started_at": {
+                    "type": "integer",
+                    "example": 1614655426
+                },
+                "status": {
+                    "type": "string",
+                    "example": "pending/success/failure"
+                }
+            }
+        },
+        "v1.BuildDetailResp": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "description": "extendBuildField func add this field",
+                    "type": "integer",
+                    "example": 1
+                },
+                "author": {
+                    "type": "string",
+                    "example": "someone"
+                },
+                "author_email": {
+                    "type": "string",
+                    "example": "someone@sensetime.com"
+                },
+                "branch": {
+                    "type": "string",
+                    "example": "master"
+                },
+                "commit": {
+                    "type": "string",
+                    "example": "26b4808f0d35ac8f4621490166d683e255d9fed4"
+                },
+                "console_project_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "created_at": {
+                    "type": "integer",
+                    "example": 1614655426
+                },
+                "enqueued_at": {
+                    "type": "integer",
+                    "example": 1614655426
+                },
+                "finished_at": {
+                    "type": "integer",
+                    "example": 1614655426
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "message": {
+                    "type": "string",
+                    "example": "fix template issue\n"
+                },
+                "number": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "procs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.RootProc"
+                    }
+                },
+                "repo_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "started_at": {
+                    "type": "integer",
+                    "example": 1614655426
+                },
+                "status": {
+                    "type": "string",
+                    "example": "pending/success/failure"
                 }
             }
         },
@@ -3472,6 +4561,43 @@ var doc = `{
                 }
             }
         },
+        "v1.Commit": {
+            "type": "object",
+            "properties": {
+                "author_email": {
+                    "type": "string",
+                    "example": "someone@sensetime.com"
+                },
+                "author_name": {
+                    "type": "string",
+                    "example": "someone"
+                },
+                "authored_date": {
+                    "type": "string",
+                    "example": "2021-02-24T15:45:23.000+08:00"
+                },
+                "committer_date": {
+                    "type": "string",
+                    "example": "2021-02-24T15:45:23.000+08:00"
+                },
+                "committer_email": {
+                    "type": "string",
+                    "example": "someone@sensetime.com"
+                },
+                "committer_name": {
+                    "type": "string",
+                    "example": "someone"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "9a44bd6973d12f2d280e9548c1ee430bf119d168"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "debug set to false"
+                }
+            }
+        },
         "v1.CreateAppReq": {
             "type": "object",
             "required": [
@@ -3501,6 +4627,29 @@ var doc = `{
                 }
             }
         },
+        "v1.CreateBuildReq": {
+            "type": "object",
+            "required": [
+                "name",
+                "type"
+            ],
+            "properties": {
+                "envs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.Env"
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "example": "master/v1.0.0"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "branch/tag"
+                }
+            }
+        },
         "v1.CreateClusterReq": {
             "type": "object",
             "required": [
@@ -3519,6 +4668,38 @@ var doc = `{
                 "name": {
                     "type": "string",
                     "example": "test-cluster"
+                }
+            }
+        },
+        "v1.CreateDeploymentReq": {
+            "type": "object",
+            "required": [
+                "app_id",
+                "chart_name",
+                "chart_version",
+                "project_env_id"
+            ],
+            "properties": {
+                "app_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "chart_name": {
+                    "type": "string",
+                    "example": "infra-console"
+                },
+                "chart_version": {
+                    "type": "string",
+                    "example": "1.0.0-dev-fe380d"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "description for deployment"
+                },
+                "project_env_id": {
+                    "description": "project id \u0026 namespace id",
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },
@@ -3619,6 +4800,23 @@ var doc = `{
                 }
             }
         },
+        "v1.CreateSecretReq": {
+            "type": "object",
+            "required": [
+                "name",
+                "value"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "docker_user"
+                },
+                "value": {
+                    "type": "string",
+                    "example": "admin"
+                }
+            }
+        },
         "v1.CreateUserReq": {
             "type": "object",
             "required": [
@@ -3642,6 +4840,51 @@ var doc = `{
                 },
                 "role_id": {
                     "description": "RoleId   *RoleIdReq ` + "`" + `json:\"role_id\" binding:\"required\"` + "`" + `  // 用顺义的这种定义，ctx.ShouldBind报错",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "v1.DeploymentDetailResp": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "chart_name": {
+                    "type": "string",
+                    "example": "senseguard-oauth2"
+                },
+                "chart_version": {
+                    "type": "string",
+                    "example": "1.0.0-dev-000c37"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2021-03-09 15:18:13"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "description for deployment"
+                },
+                "env_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "senseguard-oauth2-default"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2021-03-09 15:18:13"
+                },
+                "version": {
                     "type": "integer",
                     "example": 1
                 }
@@ -3673,6 +4916,23 @@ var doc = `{
                 "project_id": {
                     "type": "integer",
                     "example": 1
+                }
+            }
+        },
+        "v1.Env": {
+            "type": "object",
+            "required": [
+                "key",
+                "value"
+            ],
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "example": "key"
+                },
+                "value": {
+                    "type": "string",
+                    "example": "value"
                 }
             }
         },
@@ -4046,6 +5306,63 @@ var doc = `{
                 }
             }
         },
+        "v1.ProcCommon": {
+            "type": "object",
+            "required": [
+                "end_time",
+                "exit_code",
+                "id",
+                "machine",
+                "name",
+                "pgid",
+                "pid",
+                "ppid",
+                "start_time",
+                "state"
+            ],
+            "properties": {
+                "end_time": {
+                    "type": "integer",
+                    "example": 1542277389
+                },
+                "exit_code": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "machine": {
+                    "type": "string",
+                    "example": "2b545f3330cf"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "clone"
+                },
+                "pgid": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "pid": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "ppid": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "start_time": {
+                    "type": "integer",
+                    "example": 1542277389
+                },
+                "state": {
+                    "type": "string",
+                    "example": "success/failure"
+                }
+            }
+        },
         "v1.ProjectBriefResp": {
             "type": "object",
             "properties": {
@@ -4197,6 +5514,96 @@ var doc = `{
                 }
             }
         },
+        "v1.RootProc": {
+            "type": "object",
+            "required": [
+                "children",
+                "end_time",
+                "exit_code",
+                "id",
+                "machine",
+                "name",
+                "pgid",
+                "pid",
+                "ppid",
+                "start_time",
+                "state"
+            ],
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.ProcCommon"
+                    }
+                },
+                "end_time": {
+                    "type": "integer",
+                    "example": 1542277389
+                },
+                "exit_code": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "machine": {
+                    "type": "string",
+                    "example": "2b545f3330cf"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "clone"
+                },
+                "pgid": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "pid": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "ppid": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "start_time": {
+                    "type": "integer",
+                    "example": 1542277389
+                },
+                "state": {
+                    "type": "string",
+                    "example": "success/failure"
+                }
+            }
+        },
+        "v1.SecretBriefResp": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "docker_user"
+                }
+            }
+        },
+        "v1.UpdateAppConfReq": {
+            "type": "object",
+            "required": [
+                "config",
+                "project_env_id"
+            ],
+            "properties": {
+                "config": {
+                    "type": "string",
+                    "example": "the app helm chart values.yaml config content"
+                },
+                "project_env_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "v1.UpdateAppGitlabAddressReq": {
             "type": "object",
             "required": [
@@ -4284,6 +5691,18 @@ var doc = `{
                 "description": {
                     "type": "string",
                     "example": "description for role"
+                }
+            }
+        },
+        "v1.UpdateSecretReq": {
+            "type": "object",
+            "required": [
+                "value"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string",
+                    "example": "admin"
                 }
             }
         },

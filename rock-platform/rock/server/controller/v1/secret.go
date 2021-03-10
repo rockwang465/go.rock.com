@@ -34,6 +34,10 @@ type UpdateSecretReq struct {
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/secrets [post]
 func (c *Controller) CreateSecret(ctx *gin.Context) {
+	// secret 是给 .drone.yaml 中需要的基础变量，最终给 drone-agent 进行镜像拉取 和 运维平台api(CreateDeployment应用发版到指定环境)请求
+	// docker_username = admin  // harbor用户
+	// docker_password = Se*****5  // harbor密码
+	// galaxias_api_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZHJvbmVfdG9rZW4iOiIiLCJwYXNzd29yZCI6IjMyMDdlYWQ0ZTA5MmRlNzdlMDIyMzk0YjMyMDRkNzU1Iiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjE0MDc3NjAzLCJpYXQiOjE2MTQwNzE1NDMsImlzcyI6IlJvY2sgV2FuZyIsInN1YiI6IkxvZ2luIHRva2VuIn0.nAMR3xjGZ-4etgyVT2qfiUx2oEZhKM_iRs8lui1vTJ4  // 运维平台admin用户jwt token
 	cfgCtx, err := utils.GetConfCtx(ctx)
 	if err != nil {
 		panic(err)

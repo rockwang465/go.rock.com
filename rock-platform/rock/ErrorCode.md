@@ -181,6 +181,19 @@ const(
 - 中文名称: Annotation console.cluster.id不能转为int类型
 
 ---
+
+- HttpCode: 400
+- ErrorCode: 40000024
+- 中文名称: app config不是正确的yaml格式
+
+---
+
+- HttpCode: 400
+- ErrorCode: 40000025
+- 中文名称: k8s config不是正确的yaml格式
+
+---
+
 - HttpCode: 401
 - ErrorCode: 40100001
 - 中文名称: 权限不足
@@ -278,6 +291,17 @@ const(
 - HttpCode: 500
 - ErrorCode: 50000004
 - 中文名称: 未知Drone错误
+
+---
+- HttpCode: 500
+- ErrorCode: 50000005
+- 中文名称: tiller端口ping不通
+
+---
+- HttpCode: 500
+- ErrorCode: 50000006
+- 中文名称: helm安装chart失败
+
 
 ```
 - HttpCode: 400

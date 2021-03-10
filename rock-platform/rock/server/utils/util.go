@@ -7,6 +7,7 @@ import (
 	"github.com/go-gomail/gomail"
 	"go.rock.com/rock-platform/rock/server/conf"
 	"golang.org/x/crypto/pbkdf2"
+	"gopkg.in/yaml.v2"
 	"math/rand"
 	"time"
 )
@@ -99,6 +100,16 @@ func SendResetPwdEmail(userName, destEmail, secret string, secretExpire time.Dur
 		errMsg := fmt.Sprintf("go mail DialAndSend failed , %v\n", err)
 		newErr := NewRockError(500, 50000003, errMsg)
 		panic(newErr)
+	}
+	return nil
+}
+
+// verify the YAML format
+func YamlValidator(content string) error {
+	var validator interface{}
+	if err := yaml.Unmarshal([]byte(content), &validator); err != nil {
+		err := NewRockError(400, 40000024, "Config content isn't a valid yaml string")
+		return err
 	}
 	return nil
 }

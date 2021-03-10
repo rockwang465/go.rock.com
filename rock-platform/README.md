@@ -85,6 +85,18 @@ root密码: 123456
 # nohup sh start_drone_dev_server.sh | tee server.log &
 ```
 
+### 3.6 helm2环境准备
+```text
+运维平台机器:
+# helm init --client-only --stable-repo-url=http://10.151.3.75:8080 
+
+k8s集群环境机器:
+# export TILLER_NAMESPACE=helm
+# kubectl create serviceaccount --namespace helm tiller
+# kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=helm:tiller
+# helm init -i 10.151.3.75/kubernetes/tiller:v2.13.1 --service-account=tiller --service-account=tiller --replicas=2 --stable-repo-url=http://10.151.3.75:8080 --override spec.selector.matchLabels.'name'='tiller',spec.selector.matchLabels.'app'='helm' --output yaml | sed 's@apiVersion: extensions/v1beta1@apiVersion: apps/v1@' | kubectl apply -f -
+```
+
 ## 4.使用介绍
 ### 1)启动命令
 + `server` 启动服务

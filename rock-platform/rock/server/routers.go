@@ -77,13 +77,13 @@ func (s *Server) InitRouters() {
 		appApi.GET("/:id", ctlv1.GetApp)
 		appApi.DELETE("/:id", ctlv1.DeleteApp)
 		appApi.PUT("/:id", ctlv1.UpdateApp)
-		appApi.PUT("/:id/gitlab", ctlv1.UpdateAppGitlabProject) // 修改应用的gitlab地址
-		appApi.GET("/:id/builds", ctlv1.GetAppBuilds)           // 通过app_id获取该应用的所有构建记录
-		appApi.POST("/:id/builds", ctlv1.CreateAppBuild)        // 构建一个新任务(单个服务发版)
-		appApi.GET("/:id/branches", ctlv1.GetAppBranches)       // 获取应用所有分支
-		appApi.GET("/:id/tags", ctlv1.GetAppTags)               // 获取应用所有tag
-		appApi.GET("/:id/charts", ctlv1.GetAppChartVersions)    // 通过app_id获取该应用的所有chart版本
-		//appApi.GET("/:id/instances", ctlv1.GetAppInstances)
+		appApi.PUT("/:id/gitlab", ctlv1.UpdateAppGitlabProject)                      // 修改应用的gitlab地址
+		appApi.GET("/:id/builds", ctlv1.GetAppBuilds)                                // 通过app_id获取该应用的所有构建记录
+		appApi.POST("/:id/builds", ctlv1.CreateAppBuild)                             // 构建一个新任务(单个服务发版)
+		appApi.GET("/:id/branches", ctlv1.GetAppBranches)                            // 获取应用所有分支
+		appApi.GET("/:id/tags", ctlv1.GetAppTags)                                    // 获取应用所有tag
+		appApi.GET("/:id/charts", ctlv1.GetAppChartVersions)                         // 通过app_id获取该应用的所有chart版本
+		appApi.GET("/:id/instances", ctlv1.GetAppInstances)                          // 通过app_id获取该应用的部署实例(应用管理-应用-查看)，查看该应用部署到哪些集群上去了
 		appApi.GET("/:id/builds/:build_number", ctlv1.GetAppBuild)                   // 通过app_id和build_number查看指定任务的详细构建记录
 		appApi.GET("/:id/builds/:build_number/logs/:log_number", ctlv1.GetBuildLogs) // 通过app_id和build_number和log_number查看指定任务的详细构建日志
 		appApi.DELETE("/:id/config", ctlv1.DeleteAppConf)

@@ -3,6 +3,7 @@ package api
 import (
 	"go.rock.com/rock-platform/rock/server/database"
 	"go.rock.com/rock-platform/rock/server/database/models"
+	"go.rock.com/rock-platform/rock/server/utils"
 )
 
 // create or update deployment chart instance info
@@ -39,4 +40,35 @@ func CreateOrUpdateInstance(chartName, chartVersion, clusterName, namespace, pro
 	}
 
 	return instance, nil
+}
+
+func GetAppInstances(appId, pageNum, pageSize int64) (*models.InstancePagination, error) {
+	db := database.GetDBEngine()
+	Instances := make([]*models.Instance, 0)
+
+	var count int64
+	if err := db.Order("updated_at desc").
+		Offset((pageNum-1)*pageSize).
+		Where("app_id = ?", appId).
+		Find(&Instances).
+		Count(&count).Error; err != nil {
+		return nil, err
+	}
+
+	if err := db.Order("updated_at desc").
+		Offset((pageNum-1)*pageSize).
+		Where("app_id = ?", appId).
+		Limit(pageSize).
+		Find(&Instances).Error; err != nil {
+		return nil, err
+	}
+
+	projectPagination := &models.InstancePagination{
+		PageNum:  pageNum,
+		PageSize: pageSize,
+		Total:    count,
+		Pages:    utils.CalcPages(count, pageSize),
+		Items:    Instances,
+	}
+	return projectPagination, nil
 }

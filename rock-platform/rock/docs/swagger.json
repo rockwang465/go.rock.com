@@ -849,6 +849,69 @@
                 }
             }
         },
+        "/v1/apps/{id}/instances": {
+            "get": {
+                "description": "Api for get app app instance's list by app id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "APP"
+                ],
+                "summary": "Get app instance's list by app id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "App ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Request page number",
+                        "name": "page_num",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "App number page size ",
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.PaginationInstanceResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/apps/{id}/tags": {
             "get": {
                 "description": "Api for get app tags info with app id",
@@ -4666,7 +4729,7 @@
                 },
                 "chart_name": {
                     "type": "string",
-                    "example": "infra-console"
+                    "example": "senseguard-oauth2-default"
                 },
                 "chart_version": {
                     "type": "string",
@@ -5026,6 +5089,52 @@
                 }
             }
         },
+        "v1.InstanceBriefResp": {
+            "type": "object",
+            "properties": {
+                "chart_name": {
+                    "description": "helm deploy in cluster name, example: senseguard-oauth2",
+                    "type": "string",
+                    "example": "senseguard-oauth2"
+                },
+                "chart_version": {
+                    "type": "string",
+                    "example": "1.0.0-dev-fe380d"
+                },
+                "cluster_name": {
+                    "type": "string",
+                    "example": "test-cluster"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2021-03-11 16:47:37"
+                },
+                "env_namespace": {
+                    "type": "string",
+                    "example": "default"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "senseguard-oauth2-default"
+                },
+                "project_name": {
+                    "type": "string",
+                    "example": "test-project"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2021-03-11 16:47:37"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "v1.LoginUserInfo": {
             "type": "object",
             "required": [
@@ -5232,6 +5341,40 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/v1.EnvBriefResp"
+                    }
+                },
+                "page_num": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "page_size": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "pages": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 100
+                }
+            }
+        },
+        "v1.PaginationInstanceResp": {
+            "type": "object",
+            "required": [
+                "items",
+                "page_num",
+                "page_size",
+                "pages",
+                "total"
+            ],
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.InstanceBriefResp"
                     }
                 },
                 "page_num": {

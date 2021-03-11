@@ -11,7 +11,7 @@ import (
 
 type CreateDeploymentReq struct {
 	Description  string `json:"description" binding:"omitempty,max=250" example:"description for deployment"`
-	ChartName    string `json:"chart_name" binding:"required" example:"infra-console"`
+	ChartName    string `json:"chart_name" binding:"required" example:"senseguard-oauth2-default"`
 	ChartVersion string `json:"chart_version" binding:"required" example:"1.0.0-dev-fe380d"`
 	ProjectEnvId int64  `json:"project_env_id" binding:"required,min=1" example:"1"` // project id & namespace id
 	AppId        int64  `json:"app_id" binding:"required,min=1" example:"1"`

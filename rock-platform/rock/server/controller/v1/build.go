@@ -120,6 +120,19 @@ type GetAppBuildLogReq struct {
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/apps/{id}/builds [post]
 func (c *Controller) CreateAppBuild(ctx *gin.Context) {
+	// 拉取最新代码编译发版逻辑(CreateAppBuild 当前函数):
+	//      前端进行单个服务发版，将相关参数传给CreateApp Api，
+	//      CreateApp Api 通过drone-go模块将相关参数发给 drone-server，
+	//      drone-server将任务下发给drone-agent，
+	//      drone-agent 拉取该应用的源码，根据 .drone.yaml(pipeline)定义进行任务执行。
+	//      当执行 .drone.yaml 最后一步(deploy_to_env)部署应用到指定环境时，会运行infra-drone-plugins中的python脚本，
+	//      通过admin jwt token(galaxias_api_token)调用运维平台的 CreateDeployment Api 进行应用部署到指定环境。
+
+	// 准备工作: 配置.drone.yaml中需要的secret
+	//          docker_username = admin  // harbor用户
+	//          docker_password = Se*****5  // harbor密码
+	//          galaxias_api_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZHJvbmVfdG9rZW4iOiIiLCJwYXNzd29yZCI6IjMyMDdlYWQ0ZTA5MmRlNzdlMDIyMzk0YjMyMDRkNzU1Iiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjE0MDc3NjAzLCJpYXQiOjE2MTQwNzE1NDMsImlzcyI6IlJvY2sgV2FuZyIsInN1YiI6IkxvZ2luIHRva2VuIn0.nAMR3xjGZ-4etgyVT2qfiUx2oEZhKM_iRs8lui1vTJ4  // 运维平台admin用户jwt token
+
 	// 发布中心 -> 提交构建 -> 出现以下5个选项:
 	//          (点击提交构建,请求http://10.151.3.xx:8888/v1/projects?page=1&per_page=1000&fq= 拿到所有的project，用于下面 [选择项目] 的下拉展示)
 	// 选择项目: idea-aurora (下拉菜单,选择project名称)

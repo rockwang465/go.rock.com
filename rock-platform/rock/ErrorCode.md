@@ -266,6 +266,12 @@ const(
 
 ---
 
+- HttpCode: 404
+- ErrorCode: 40400011
+- 中文名称: deployment_id不存在
+
+---
+
 - HttpCode: 412
 - ErrorCode: 41200001
 - 中文名称: 缺少gitlab access token

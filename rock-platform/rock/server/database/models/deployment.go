@@ -15,9 +15,9 @@ type Deployment struct {
 }
 
 type DeploymentPagination struct {
-	Page    int64         `json:"page"`     // page_num
-	PerPage int64         `json:"per_page"` // page_size
-	Total   int64         `json:"total"`
-	Pages   int64         `json:"pages"`
-	Items   []*Deployment `json:"items"`
+	PageNum  int64         `json:"page_num"`
+	PageSize int64         `json:"page_size"`
+	Total    int64         `json:"total"`
+	Pages    int64         `json:"pages"`
+	Items    []*Deployment `json:"items"`
 }

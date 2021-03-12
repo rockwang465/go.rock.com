@@ -139,10 +139,10 @@ func (s *Server) InitRouters() {
 
 		deployApi := v1Root.Group("/deployments")
 		deployApi.POST("", ctlv1.CreateDeployment) // 基于固定版本号进行单个应用发版
-		//deployApi.GET("", ctlv1.GetDeployments)
-		//deployApi.GET("/:id", ctlv1.GetDeployment)
-		//deployApi.DELETE("/:id", ctlv1.DeleteDeployment)
-		//deployApi.PUT("/:id", ctlv1.UpdateDeployment)
+		deployApi.GET("", ctlv1.GetDeployments)
+		deployApi.GET("/:id", ctlv1.GetDeployment)
+		deployApi.DELETE("/:id", ctlv1.DeleteDeployment)
+		deployApi.PUT("/:id", ctlv1.UpdateDeployment) // 暂无使用场景
 
 		//instanceApi := v1Root.Group("/instances")
 		//instanceApi.GET("", ctlv1.GetInstances)

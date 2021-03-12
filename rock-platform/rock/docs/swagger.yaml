@@ -966,6 +966,31 @@ definitions:
     - pages
     - total
     type: object
+  v1.PaginationDeploymentResp:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/v1.DeploymentDetailResp'
+        type: array
+      page_num:
+        example: 1
+        type: integer
+      page_size:
+        example: 10
+        type: integer
+      pages:
+        example: 1
+        type: integer
+      total:
+        example: 100
+        type: integer
+    required:
+    - items
+    - page_num
+    - page_size
+    - pages
+    - total
+    type: object
   v1.PaginationEnvResp:
     properties:
       items:
@@ -1286,6 +1311,27 @@ definitions:
         type: string
     required:
     - config
+    type: object
+  v1.UpdateDeploymentReq:
+    properties:
+      app_id:
+        type: integer
+      chart_name:
+        example: senseguard-oauth2
+        type: string
+      chart_version:
+        example: 1.0.0-dev-000c37
+        type: string
+      description:
+        example: description for deployment
+        type: string
+      project_env_id:
+        type: integer
+    required:
+    - app_id
+    - chart_name
+    - chart_version
+    - project_env_id
     type: object
   v1.UpdateEnvReq:
     properties:
@@ -1977,7 +2023,7 @@ paths:
         required: true
         type: integer
       - default: 10
-        description: 'App number page size '
+        description: 'Instance number page size '
         in: query
         name: page_size
         required: true
@@ -1988,9 +2034,7 @@ paths:
         "200":
           description: StatusOK
           schema:
-            items:
-              $ref: '#/definitions/v1.PaginationInstanceResp'
-            type: array
+            $ref: '#/definitions/v1.PaginationInstanceResp'
         "400":
           description: StatusBadRequest
           schema:
@@ -2605,6 +2649,145 @@ paths:
       summary: Get a specific cluster node
       tags:
       - CLUSTER
+  /v1/deployment:
+    get:
+      consumes:
+      - application/json
+      description: Api for get all deployments
+      parameters:
+      - default: 1
+        description: Request page number
+        in: query
+        name: page_num
+        required: true
+        type: integer
+      - default: 10
+        description: 'Deployment number page size '
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.PaginationDeploymentResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get all deployments
+      tags:
+      - DEPLOYMENT
+  /v1/deployment/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Api for delete deployment by id
+      parameters:
+      - description: Deployment Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusNoContent
+          schema:
+            type: string
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Delete deployment by id
+      tags:
+      - DEPLOYMENT
+    get:
+      consumes:
+      - application/json
+      description: Api for get deployment by id
+      parameters:
+      - description: Deployment Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.DeploymentDetailResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get deployment by id
+      tags:
+      - DEPLOYMENT
+    put:
+      consumes:
+      - application/json
+      description: Api for update deployment info
+      parameters:
+      - description: Deployment Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: JSON type for update deployment info
+        in: body
+        name: update_body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateDeploymentReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusNoContent
+          schema:
+            $ref: '#/definitions/v1.DeploymentDetailResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Update deployment info and body
+      tags:
+      - DEPLOYMENT
   /v1/deployments:
     post:
       consumes:

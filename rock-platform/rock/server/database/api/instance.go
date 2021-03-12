@@ -63,12 +63,12 @@ func GetAppInstances(appId, pageNum, pageSize int64) (*models.InstancePagination
 		return nil, err
 	}
 
-	projectPagination := &models.InstancePagination{
+	instancePagination := &models.InstancePagination{
 		PageNum:  pageNum,
 		PageSize: pageSize,
 		Total:    count,
 		Pages:    utils.CalcPages(count, pageSize),
 		Items:    Instances,
 	}
-	return projectPagination, nil
+	return instancePagination, nil
 }

@@ -34,6 +34,22 @@ type DeploymentDetailResp struct {
 	EnvId        int64  `json:"env_id" example:"1"`
 }
 
+type PaginationDeploymentResp struct {
+	PageNum  int64                   `json:"page_num" binding:"required" example:"1"`
+	PageSize int64                   `json:"page_size" binding:"required" example:"10"`
+	Total    int64                   `json:"total" binding:"required" example:"100"`
+	Pages    int64                   `json:"pages" binding:"required" example:"1"`
+	Items    []*DeploymentDetailResp `json:"items" binding:"required"`
+}
+
+type UpdateDeploymentReq struct {
+	Description  string `json:"description" binding:"omitempty,max=250" example:"description for deployment"`
+	ChartName    string `json:"chart_name" binding:"required" example:"senseguard-oauth2"`
+	ChartVersion string `json:"chart_version" binding:"required" example:"1.0.0-dev-000c37"`
+	ProjectEnvId int64  `json:"project_env_id" binding:"required"`
+	AppId        int64  `json:"app_id" binding:"required"`
+}
+
 // @Summary Create deployment
 // @Description Api to create deployment
 // @Tags DEPLOYMENT
@@ -156,4 +172,135 @@ func (c *Controller) CreateDeployment(ctx *gin.Context) {
 	}
 	c.Logger.Infof("Create deployment by id(%v) name(%v)", resp.Id, resp.Name)
 	ctx.JSON(http.StatusCreated, resp)
+}
+
+// @Summary Get all deployments
+// @Description Api for get all deployments
+// @Tags DEPLOYMENT
+// @Accept json
+// @Produce json
+// @Param page_num query integer true "Request page number" default(1)
+// @Param page_size query integer true "Deployment number page size " default(10)
+// @Success 200 {object} v1.PaginationDeploymentResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/deployment [get]
+func (c *Controller) GetDeployments(ctx *gin.Context) {
+	var paginationReq GetPaginationReq
+	if err := ctx.ShouldBind(&paginationReq); err != nil {
+		panic(err)
+	}
+
+	deploymentPg, err := api.GetDeployments(paginationReq.PageNum, paginationReq.PageSize)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := PaginationDeploymentResp{}
+	if err := utils.MarshalResponse(deploymentPg, &resp); err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Get all deployment, this pagination deployment number is: %v", len(resp.Items))
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Get deployment by id
+// @Description Api for get deployment by id
+// @Tags DEPLOYMENT
+// @Accept json
+// @Produce json
+// @Param id path integer true "Deployment Id"
+// @Success 200 {object} v1.DeploymentDetailResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/deployment/{id} [get]
+func (c *Controller) GetDeployment(ctx *gin.Context) {
+	var uriReq IdReq
+	if err := ctx.ShouldBindUri(&uriReq); err != nil {
+		panic(err)
+	}
+
+	deployment, err := api.GetDeploymentById(uriReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := DeploymentDetailResp{}
+	if err := utils.MarshalResponse(deployment, &resp); err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Get deployment by id %v", uriReq.Id)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Delete deployment by id
+// @Description Api for delete deployment by id
+// @Tags DEPLOYMENT
+// @Accept json
+// @Produce json
+// @Param id path integer true "Deployment Id"
+// @Success 200 {object} string "StatusNoContent"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/deployment/{id} [delete]
+func (c *Controller) DeleteDeployment(ctx *gin.Context) {
+	var uriReq IdReq
+	if err := ctx.ShouldBindUri(&uriReq); err != nil {
+		panic(err)
+	}
+
+	err := api.DeleteDeploymentById(uriReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Delete deployment by id %v", uriReq.Id)
+	ctx.JSON(http.StatusNoContent, "")
+}
+
+// @Summary Update deployment info and body
+// @Description Api for update deployment info
+// @Tags DEPLOYMENT
+// @Accept json
+// @Produce json
+// @Param id path integer true "Deployment Id"
+// @Param update_body body v1.UpdateDeploymentReq true "JSON type for update deployment info"
+// @Success 200 {object} v1.DeploymentDetailResp "StatusNoContent"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/deployment/{id} [put]
+func (c *Controller) UpdateDeployment(ctx *gin.Context) {
+	var uriReq IdReq
+	if err := ctx.ShouldBindUri(&uriReq); err != nil {
+		panic(err)
+	}
+
+	var req UpdateDeploymentReq
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		panic(err)
+	}
+
+	projectEnv, err := api.GetProjectEnvById(req.ProjectEnvId)
+	if err != nil {
+		panic(err)
+	}
+	envId := projectEnv.EnvId // get env id
+
+	deployment, err := api.UpdateDeploymentById(uriReq.Id, req.AppId, envId, req.ChartName, req.ChartVersion, req.Description)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := DeploymentDetailResp{}
+	if err := utils.MarshalResponse(deployment, &resp); err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Update deployment's info by id %v", uriReq.Id)
+	ctx.JSON(http.StatusOK, resp)
 }

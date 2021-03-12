@@ -43,8 +43,8 @@ type InstanceDetailResp struct {
 // @Produce json
 // @Param id path integer true "App ID"
 // @Param page_num query integer true "Request page number" default(1)
-// @Param page_size query integer true "App number page size " default(10)
-// @Success 200 {array} v1.PaginationInstanceResp "StatusOK"
+// @Param page_size query integer true "Instance number page size " default(10)
+// @Success 200 {object} v1.PaginationInstanceResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/apps/{id}/instances [get]

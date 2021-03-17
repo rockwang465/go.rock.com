@@ -107,3 +107,35 @@ func UpdateDeploymentById(id, appId, envId int64, chartName, chartVersion, descr
 
 	return deployment, nil
 }
+
+// get all deployment by instance_name(equal deployment_name)
+func GetDeploymentsByName(name string, pageNum, pageSize int64) (*models.DeploymentPagination, error) {
+	db := database.GetDBEngine()
+	Deployments := make([]*models.Deployment, 0)
+
+	var count int64
+	if err := db.Order("updated_at desc").
+		Offset((pageNum-1)*pageSize).
+		Where("name = ?", name).
+		Find(&Deployments).
+		Count(&count).Error; err != nil {
+		return nil, err
+	}
+
+	if err := db.Order("updated_at desc").
+		Offset((pageNum-1)*pageSize).
+		Where("name = ?", name).
+		Limit(pageSize).
+		Find(&Deployments).Error; err != nil {
+		return nil, err
+	}
+
+	deploymentPagination := &models.DeploymentPagination{
+		PageNum:  pageNum,
+		PageSize: pageSize,
+		Total:    count,
+		Pages:    utils.CalcPages(count, pageSize),
+		Items:    Deployments,
+	}
+	return deploymentPagination, nil
+}

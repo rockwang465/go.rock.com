@@ -383,9 +383,11 @@ func (c *Controller) GetAppBuilds(ctx *gin.Context) {
 func (c *Controller) GetAppBuild(ctx *gin.Context) {
 	// 发布中心 -> 构建历史 -> 点击"查看",会出现下面描述的 "三步", 来查选择的某个构建历史信息(这里触发 GetBuildLogs 获取详细日志信息)
 	// 第一步: GET 请求 /v1/apps/{app_id} 确认此构建历史的app的app_id存在 -> 此为api GetApp 做的事情
-	//        示例: http://10.151.3.xx:88888/v1/apps/203
+	//        示例: http://10.151.3.xx:88888/v1/apps/203  (GetApp api)
 	// 第二步: GET 请求 /v1/apps/{app_id}/builds/{build_number} -> 此为当前api GetAppBuild 做的事情
 	//        示例: http://10.151.3.xx:88888/v1/apps/203/builds/27
+	//        另外: build_number 来自 GetAppBuilds api, 因为先查询所有构建(即 构建历史 按钮), 而每个build中都有number(build_number).
+	//              然后需要查看某一个构建的时候, 传入build_number来查看单个构建信息.
 	// {
 	//    "id": 34209,
 	//    "repo_id": 188,

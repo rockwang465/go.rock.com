@@ -58,9 +58,9 @@ func (s *Server) InitRouters() {
 		projectApi.GET("/:id/apps", ctlv1.GetProjectApps)
 		projectApi.POST("/:id/project-envs", middleware.IsAdmin, ctlv1.CreateProjectEnv) // 对指定project_id增加项目环境(project_env表)
 		projectApi.GET("/:id/project-envs", ctlv1.GetProjectEnvs)
-		//projectApi.DELETE("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.DeleteProjectEnv) // 暂时无法继续写，缺少app_conf表 // 删除指定project(project_id)下指定项目环境(project_env_id)
-		projectApi.GET("/:id/project-envs/:pe_id", ctlv1.GetProjectEnv)                        // 查看指定project(project_id)下指定项目环境(project_env_id)的信息
-		projectApi.PUT("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.UpdateProjectEnv) // 更新指定project(project_id)下指定项目环境(project_env_id)的信息
+		projectApi.DELETE("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.DeleteProjectEnv) // 删除指定project(project_id)下指定项目环境(project_env_id)
+		projectApi.GET("/:id/project-envs/:pe_id", ctlv1.GetProjectEnv)                           // 查看指定project(project_id)下指定项目环境(project_env_id)的信息
+		projectApi.PUT("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.UpdateProjectEnv)    // 更新指定project(project_id)下指定项目环境(project_env_id)的信息
 
 		buildApi := v1Root.Group("/builds")
 		buildApi.GET("", ctlv1.GetGlobalBuilds) // console_project_id未发现使用场景? 获取所有的构建任务的简单记录(用于页面批量展示)
@@ -144,14 +144,14 @@ func (s *Server) InitRouters() {
 		deployApi.DELETE("/:id", ctlv1.DeleteDeployment)
 		deployApi.PUT("/:id", ctlv1.UpdateDeployment) // 暂无使用场景
 
-		//instanceApi := v1Root.Group("/instances")
-		//instanceApi.GET("", ctlv1.GetInstances)
-		//instanceApi.GET("/:id", ctlv1.GetInstance)
-		//instanceApi.GET("/:id/configs", ctlv1.GetInstanceConfig)
-		//instanceApi.GET("/:id/deployments", ctlv1.GetInstanceDeployment)
-		//instanceApi.GET("/:id/logs", ctlv1.GetInstanceLog)
+		instanceApi := v1Root.Group("/instances") // 暂无使用场景
+		instanceApi.GET("", ctlv1.GetInstances)
+		instanceApi.GET("/:id", ctlv1.GetInstance)
+		instanceApi.GET("/:id/configs", ctlv1.GetInstanceConfig)         // 获取指定实例的configMap中的config配置文件信息
+		instanceApi.GET("/:id/deployments", ctlv1.GetInstanceDeployment) // 获取指定实例对应的所有的deployment部署信息
+		instanceApi.GET("/:id/logs", ctlv1.GetInstanceLog)               // 通过instance_id和pod_name container_name获取pod日志
 		//instanceApi.GET("/:id/logfile", ctlv1.GetInstanceLogFile)
-		//instanceApi.GET("/:id/pods", ctlv1.GetInstancePods)
+		instanceApi.GET("/:id/pods", ctlv1.GetInstancePods) // 获取指定示例的pod名称
 		//instanceApi.GET("/:id/scale", ctlv1.GetInstanceScale)
 		//instanceApi.PUT("/:id/scale", ctlv1.UpdateInstanceScale)
 		//instanceApi.DELETE("/:id", ctlv1.DeleteInstance)

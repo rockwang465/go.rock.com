@@ -272,10 +272,21 @@ const(
 
 ---
 
+- HttpCode: 404
+- ErrorCode: 40400012
+- 中文名称: instance_id不存在
+
+---
+
 - HttpCode: 412
 - ErrorCode: 41200001
 - 中文名称: 缺少gitlab access token
 
+---
+
+- HttpCode: 412
+- ErrorCode: 41200002
+- 中文名称: 该project_env_id存在app_conf config,请删该config后再删除该project_env
 
 ### 500错误类型
 ---

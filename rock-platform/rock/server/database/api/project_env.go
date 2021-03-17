@@ -93,22 +93,22 @@ func GetProjectEnvById(id int64) (*models.ProjectEnv, error) {
 }
 
 func DeleteProjectEnvById(projectEnvId int64) error {
-	//// ensure has project_env_id
-	//projectEnv, err := GetProjectEnvById(projectEnvId)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//db := database.GetDBEngine()
-	//// ensure not has project_env_id in models.AppConf table
-	//err = hasProjectEnvRelevantResource(db, projectEnvId)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//if err := db.Delete(projectEnv).Error; err != nil {
-	//	return err
-	//}
+	// ensure has project_env_id
+	projectEnv, err := GetProjectEnvById(projectEnvId)
+	if err != nil {
+		return err
+	}
+
+	db := database.GetDBEngine()
+	// ensure not has project_env_id in models.AppConf table
+	err = hasProjectEnvRelevantResource(db, projectEnvId)
+	if err != nil {
+		return err
+	}
+
+	if err := db.Delete(projectEnv).Error; err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -135,5 +135,20 @@ func hasNotSameProjectEnv(projectEnv *models.ProjectEnv) error {
 		return err
 	}
 	err := utils.NewRockError(400, 40000022, fmt.Sprintf("ProjectEnv with name(%v) project_id(%v) env_id(%v) already exists", projectEnv.Name, projectEnv.ProjectId, projectEnv.EnvId))
+	return err
+}
+
+// ensure not has project_env_id in models.AppConf table
+// 确认app_conf表中没有该 project_env_id(项目环境)
+func hasProjectEnvRelevantResource(db *database.DBEngine, projectEnvId int64) error {
+	appConf := new(models.AppConf)
+	if err := db.Where("project_env_id = ?", projectEnvId).First(appConf).Error; err != nil {
+		if err.Error() == "record not found" {
+			return nil
+		}
+		return err
+	}
+	err := utils.NewRockError(412, 41200008, fmt.Sprintf("Project Env with id %v has APP CONFIG dependence, "+
+		"please clear first", projectEnvId))
 	return err
 }

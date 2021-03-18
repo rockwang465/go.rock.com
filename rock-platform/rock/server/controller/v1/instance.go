@@ -6,7 +6,7 @@ import (
 	"go.rock.com/rock-platform/rock/server/database/api"
 	"go.rock.com/rock-platform/rock/server/database/models"
 	"go.rock.com/rock-platform/rock/server/utils"
-	v1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	"net/http"
 	"time"
 )
@@ -236,7 +236,7 @@ func (c *Controller) GetInstanceConfig(ctx *gin.Context) {
 }
 
 // format the configmap to config
-func formatInstanceConfigs(configMapList *v1.ConfigMapList) []*InstanceConfResp {
+func formatInstanceConfigs(configMapList *corev1.ConfigMapList) []*InstanceConfResp {
 	iConfResps := []*InstanceConfResp{}
 	for _, configMap := range configMapList.Items {
 		for name, content := range configMap.Data {
@@ -424,7 +424,7 @@ func (c *Controller) GetInstancePods(ctx *gin.Context) {
 }
 
 // format the podList to InstancePodResp
-func formatInstancePods(podList *v1.PodList) []*InstancePodResp {
+func formatInstancePods(podList *corev1.PodList) []*InstancePodResp {
 	nsMapper := make(map[string][]*InstancePod)
 	for _, pod := range podList.Items {
 		ns := pod.Namespace
@@ -455,7 +455,7 @@ func formatInstancePods(podList *v1.PodList) []*InstancePodResp {
 }
 
 // get containers info
-func getPodsContainers(containers []v1.Container) []*ContainerResp {
+func getPodsContainers(containers []corev1.Container) []*ContainerResp {
 	containerResp := []*ContainerResp{}
 	for _, c := range containers {
 		container := &ContainerResp{
@@ -468,7 +468,7 @@ func getPodsContainers(containers []v1.Container) []*ContainerResp {
 }
 
 // get pod status
-func getPodsContainersStatus(status v1.PodStatus) string {
+func getPodsContainersStatus(status corev1.PodStatus) string {
 	for _, c := range status.ContainerStatuses {
 		if c.Ready == false {
 			if c.State.Waiting != nil {

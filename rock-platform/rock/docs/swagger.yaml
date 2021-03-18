@@ -468,6 +468,18 @@ definitions:
         example: debug set to false
         type: string
     type: object
+  v1.ContainerResp:
+    properties:
+      image:
+        example: 10.151.3.75/sensenebula-guard-std/senseguard-oauth2:1.0.0-dev-fe380d
+        type: string
+      name:
+        example: senseguard-oauth2
+        type: string
+    required:
+    - image
+    - name
+    type: object
   v1.CreateAppReq:
     properties:
       description:
@@ -826,6 +838,135 @@ definitions:
       version:
         example: 1
         type: integer
+    type: object
+  v1.InstanceConfResp:
+    properties:
+      content:
+        example: |-
+          server:
+            port: 8080
+            servlet:
+              context-path: /sys
+          spring:
+            application:
+              name: aurora-system-service
+            ...
+        type: string
+      name:
+        example: bootstrap.yaml
+        type: string
+    type: object
+  v1.InstanceDetailResp:
+    properties:
+      app_id:
+        example: 1
+        type: integer
+      chart_name:
+        description: 'helm deploy in cluster name, example: senseguard-oauth2'
+        example: senseguard-oauth2
+        type: string
+      chart_version:
+        example: 1.0.0-dev-fe380d
+        type: string
+      cluster_name:
+        example: test-cluster
+        type: string
+      created_at:
+        example: "2021-03-11 16:47:37"
+        type: string
+      env_id:
+        example: 1
+        type: integer
+      env_namespace:
+        example: default
+        type: string
+      id:
+        example: 1
+        type: integer
+      last_deployment:
+        description: deployment_id
+        example: 1
+        type: integer
+      name:
+        example: senseguard-oauth2-default
+        type: string
+      project_name:
+        example: test-project
+        type: string
+      updated_at:
+        example: "2021-03-11 16:47:37"
+        type: string
+      version:
+        example: 1
+        type: integer
+    type: object
+  v1.InstanceLogResp:
+    properties:
+      container_name:
+        example: senseguard-oauth2
+        type: string
+      content:
+        example: log content here
+        type: string
+      pod_name:
+        example: senseguard-oauth2-7b78686878-vcx79
+        type: string
+    required:
+    - content
+    type: object
+  v1.InstancePod:
+    properties:
+      containers:
+        items:
+          $ref: '#/definitions/v1.ContainerResp'
+        type: array
+      dns_policy:
+        example: ClusterFirst
+        type: string
+      host_network:
+        example: false
+        type: boolean
+      name:
+        example: senseguard-oauth2-7b78686878-vcx79
+        type: string
+      node_name:
+        example: k8s-master1
+        type: string
+      pod_ip:
+        example: 10.244.0.70
+        type: string
+      restart_policy:
+        example: Always
+        type: string
+      start_time:
+        example: "2021-03-11T14:49:55+08:00"
+        type: string
+      status:
+        example: Running
+        type: string
+    required:
+    - containers
+    - dns_policy
+    - host_network
+    - name
+    - node_name
+    - pod_ip
+    - restart_policy
+    - start_time
+    - status
+    type: object
+  v1.InstancePodResp:
+    properties:
+      namespace:
+        example: default
+        type: string
+      pods:
+        items:
+          $ref: '#/definitions/v1.InstancePod'
+        type: array
+    required:
+    - namespace
+    - pods
     type: object
   v1.LoginUserInfo:
     properties:
@@ -2994,6 +3135,254 @@ paths:
       summary: Update env description by id and body
       tags:
       - ENV
+  /v1/instances:
+    get:
+      consumes:
+      - application/json
+      description: Api for get all instances
+      parameters:
+      - default: 1
+        description: Request page number
+        in: query
+        name: page_num
+        required: true
+        type: integer
+      - default: 10
+        description: 'Instance number page size '
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      - description: 'Fuzzy Query(field: name)'
+        in: query
+        name: query_field
+        type: string
+      - description: 'Cluster name '
+        in: query
+        name: cluster
+        type: string
+      - description: 'Project name '
+        in: query
+        name: project
+        type: string
+      - description: App Id
+        in: query
+        name: app_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.PaginationInstanceResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get all instances
+      tags:
+      - INSTANCE
+  /v1/instances/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Api for get instances by id
+      parameters:
+      - description: Instance ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.InstanceDetailResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get instances by id
+      tags:
+      - INSTANCE
+  /v1/instances/{id}/configs:
+    get:
+      consumes:
+      - application/json
+      description: Api for get instance's config by instance id
+      parameters:
+      - description: Instance ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            items:
+              $ref: '#/definitions/v1.InstanceConfResp'
+            type: array
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get instance's config by instance id
+      tags:
+      - INSTANCE
+  /v1/instances/{id}/deployments:
+    get:
+      consumes:
+      - application/json
+      description: Api to get instance's relevant deployments by instance id
+      parameters:
+      - description: Instance ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: 1
+        description: Request page number
+        in: query
+        name: page_num
+        required: true
+        type: integer
+      - default: 10
+        description: 'Deployment number page size '
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            items:
+              $ref: '#/definitions/v1.PaginationDeploymentResp'
+            type: array
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get instance's relevant deployments by instance id
+      tags:
+      - INSTANCE
+  /v1/instances/{id}/logs:
+    get:
+      consumes:
+      - application/json
+      description: Api to get instance's log by instance id
+      parameters:
+      - description: Instance ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Instance's pod name
+        in: query
+        name: pod
+        required: true
+        type: string
+      - description: Pod's container name
+        in: query
+        name: container
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            items:
+              $ref: '#/definitions/v1.InstanceLogResp'
+            type: array
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get instance's log by instance id
+      tags:
+      - INSTANCE
+  /v1/instances/{id}/pods:
+    get:
+      consumes:
+      - application/json
+      description: Api to get instance's pods name and containers name by instance
+        id
+      parameters:
+      - description: Instance ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            items:
+              $ref: '#/definitions/v1.InstancePodResp'
+            type: array
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get instance's pods name by instance id
+      tags:
+      - INSTANCE
   /v1/nodes:
     get:
       consumes:

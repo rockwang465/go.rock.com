@@ -71,12 +71,14 @@ func InstallOrUpgradeChart(repoUrl, chartTgzName, k8sConfig, ns, releaseName, ap
 
 	binLocation := getBinFileLocation()
 
+	// open temporary file
 	tmpFile, err := ioutil.TempFile("", releaseName)
 	if err != nil {
 		return err
 	}
 	defer os.Remove(tmpFile.Name())
 
+	// save app config to temporary file
 	_, err = tmpFile.Write([]byte(appConfig))
 	if err != nil {
 		return err
@@ -100,7 +102,7 @@ func InstallOrUpgradeChart(repoUrl, chartTgzName, k8sConfig, ns, releaseName, ap
 	return nil
 }
 
-// generate chart name
+// generate deploy in helm service name
 func GenerateChartName(chartName, namespace string) string {
 	return fmt.Sprintf("%s-%s", chartName, namespace) // example: kafka-component
 }

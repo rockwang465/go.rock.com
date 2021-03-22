@@ -136,3 +136,26 @@ func IsUserSelfOrAdmin(ctx *gin.Context) {
 		panic(err)
 	}
 }
+
+// check context, is system admin or admin role
+func IsSystemAdminOrAdmin(ctx *gin.Context) {
+	config, err := utils.GetConfCtx(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	// check is user self
+	user, err := api.GetUserBriefResp(config.UserId)
+	if err != nil {
+		panic(err)
+	}
+
+	// else must be admin role
+	if user.RoleName == AdminRole {
+		return
+	} else {
+		newWarn := fmt.Sprintf("Permission denied, only user self or admin role can do this operation")
+		err := utils.NewRockError(http.StatusUnauthorized, 40100001, newWarn)
+		panic(err)
+	}
+}

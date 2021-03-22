@@ -130,3 +130,17 @@ func GetInstanceById(id int64) (*models.Instance, error) {
 	}
 	return instance, nil
 }
+
+// delete instance by instance id
+func DeleteInstanceById(id int64) error {
+	instance, err := GetInstanceById(id)
+	if err != nil {
+		return err
+	}
+
+	db := database.GetDBEngine()
+	if err := db.Delete(instance).Error; err != nil {
+		return err
+	}
+	return nil
+}

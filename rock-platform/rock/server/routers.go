@@ -102,8 +102,8 @@ func (s *Server) InitRouters() {
 		envApi.GET("/:id", ctlv1.GetEnv)
 		envApi.DELETE("/:id", ctlv1.DeleteEnv)
 		envApi.PUT("/:id", ctlv1.UpdateEnv)
-		//envApi.POST("/:id/jobs", ctlv1.CreateEnvJob)
-		//envApi.POST("/:id/cronjobs", ctlv1.CreateEnvCronJob)
+		//envApi.POST("/:id/jobs", ctlv1.CreateEnvJob)         // 传入镜像等信息创建一个k8s job
+		//envApi.POST("/:id/cronjobs", ctlv1.CreateEnvCronJob) // 传入镜像等信息创建一个k8s cronJob
 
 		clusterApi := v1Root.Group("/clusters")
 		clusterApi.POST("", middleware.IsAdmin, ctlv1.CreateCluster)
@@ -114,8 +114,8 @@ func (s *Server) InitRouters() {
 		clusterApi.GET("/:id/envs", ctlv1.GetClusterEnvs)        // 获取指定cluster_id的env信息
 		clusterApi.GET("/:id/nodes", ctlv1.GetClusterNodes)      // 获取指定cluster_id的节点信息
 		clusterApi.GET("/:id/nodes/:name", ctlv1.GetClusterNode) // 获取指定节点名称的节点信息
-		//clusterApi.GET("/:id/jobs", ctlv1.GetClusterJobs)
-		//clusterApi.GET("/:id/namespaces/:namespace/jobs/:name", ctlv1.GetClusterJob)
+		//clusterApi.GET("/:id/jobs", ctlv1.GetClusterJobs)                            // 获取k8s集群所有job
+		//clusterApi.GET("/:id/namespaces/:namespace/jobs/:name", ctlv1.GetClusterJob) // 获取k8s集群指定job
 		//clusterApi.GET("/:id/license-status", middleware.IsSystemAdminOrAdmin, ctlv1.GetLicenseStatus)
 		//clusterApi.GET("/:id/license-c2v", middleware.IsSystemAdminOrAdmin, ctlv1.GetC2vFile)
 		//clusterApi.GET("/:id/license-fingerprint", middleware.IsSystemAdminOrAdmin, ctlv1.GetFingerprintFile)
@@ -150,11 +150,11 @@ func (s *Server) InitRouters() {
 		instanceApi.GET("/:id/configs", ctlv1.GetInstanceConfig)         // 获取指定实例的configMap中的config配置文件信息
 		instanceApi.GET("/:id/deployments", ctlv1.GetInstanceDeployment) // 获取指定实例对应的所有的deployment部署信息
 		instanceApi.GET("/:id/logs", ctlv1.GetInstanceLog)               // 通过instance_id和pod_name container_name获取pod日志
-		//instanceApi.GET("/:id/logfile", ctlv1.GetInstanceLogFile)
+		instanceApi.GET("/:id/logfile", ctlv1.GetInstanceLogFile)
 		instanceApi.GET("/:id/pods", ctlv1.GetInstancePods) // 获取指定示例的pod名称
-		//instanceApi.GET("/:id/scale", ctlv1.GetInstanceScale)
-		//instanceApi.PUT("/:id/scale", ctlv1.UpdateInstanceScale)
-		//instanceApi.DELETE("/:id", ctlv1.DeleteInstance)
+		instanceApi.GET("/:id/scale", ctlv1.GetInstanceScale)
+		instanceApi.PUT("/:id/scale", ctlv1.UpdateInstanceScale)
+		instanceApi.DELETE("/:id", ctlv1.DeleteInstance)
 
 		authApi := v1Root.Group("/auth")
 		authApi.POST("/login", ctlv1.Login)

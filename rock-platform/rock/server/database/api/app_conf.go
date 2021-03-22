@@ -1,8 +1,10 @@
 package api
 
 import (
+	"fmt"
 	"go.rock.com/rock-platform/rock/server/database"
 	"go.rock.com/rock-platform/rock/server/database/models"
+	"go.rock.com/rock-platform/rock/server/utils"
 )
 
 // update or create app_conf by app_id and project_env_id and app config
@@ -51,7 +53,12 @@ func GetAppConfByAppAndProjectEnvId(appId, projectEnvId int64) (*models.AppConf,
 
 	db := database.GetDBEngine()
 	appConf := new(models.AppConf)
-	if err := db.Where("app_id = ? AND project_env_id = ?", appId, projectEnvId).First(appConf).Error; err != nil {
+	err = db.Where("app_id = ? AND project_env_id = ?", appId, projectEnvId).First(appConf).Error
+	if err != nil {
+		if err.Error() == "record not found" {
+			e := utils.NewRockError(404, 40400014, fmt.Sprintf("App(ID: %v)'s config under project(ID: %v) was not found", appId, projectEnvId))
+			return nil, e
+		}
 		return nil, err
 	}
 	return appConf, nil

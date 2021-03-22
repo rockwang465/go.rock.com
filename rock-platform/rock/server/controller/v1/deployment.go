@@ -98,9 +98,21 @@ func (c *Controller) CreateDeployment(ctx *gin.Context) {
 	}
 
 	// Get app config by app_id and project_env_id
+	configContent := "" // set the default config to empty
 	appConf, err := api.GetAppConfByAppAndProjectEnvId(req.AppId, req.ProjectEnvId)
 	if err != nil {
-		panic(err)
+		switch Error := err.(type) {
+		case *utils.RockError:
+			if Error.ErrCode == 40400014 { // if get the app config is null, then set value is null
+				configContent = ""
+				break // break the current switch
+			}
+			panic(err)
+		default:
+			panic(err)
+		}
+	} else {
+		configContent = appConf.Config
 	}
 
 	// get env id
@@ -123,7 +135,7 @@ func (c *Controller) CreateDeployment(ctx *gin.Context) {
 	}
 
 	// check service is not failed on remote host, if so, remove it
-	releaseName := utils.GenerateChartName(req.ChartVersion, env.Namespace) // kafka-component
+	releaseName := utils.GenerateChartName(req.ChartName, env.Namespace) // kafka-component
 	err = helm.DeleteReleaseIfFailedOrDeleted(clusterId, releaseName)
 	if err != nil {
 		panic(err)
@@ -131,6 +143,9 @@ func (c *Controller) CreateDeployment(ctx *gin.Context) {
 
 	// Check manual helm release is already installed, if so, remove it
 	err = helm.DeleteManualInstallReleaseIfExist(clusterId, releaseName)
+	if err != nil {
+		panic(err)
+	}
 
 	// insert the current deployment info into the database
 	deployment, err := api.CreateDeployment(req.AppId, envId, req.ChartName, req.ChartVersion, req.Description, env.Namespace)
@@ -153,7 +168,7 @@ func (c *Controller) CreateDeployment(ctx *gin.Context) {
 	chartTgzName := utils.GenChartTgzName(req.ChartName, req.ChartVersion) // get chart tgz package name
 	k8sConfig := cluster.Config                                            // get k8s cluster admin.conf
 	ns := env.Namespace
-	appConfig := appConf.Config
+	appConfig := configContent
 
 	// deploy the helm chart service by helm client
 	if err := utils.InstallOrUpgradeChart(repoUrl, chartTgzName, k8sConfig, ns, deployment.Name, appConfig); err != nil {

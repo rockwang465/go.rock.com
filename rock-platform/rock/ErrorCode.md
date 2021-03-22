@@ -278,6 +278,18 @@ const(
 
 ---
 
+- HttpCode: 404
+- ErrorCode: 40400013
+- 中文名称: 当前程序不支持这个版本的K8S
+
+---
+
+- HttpCode: 404
+- ErrorCode: 40400014
+- 中文名称: 不存在该app的appConf配置文件
+
+---
+
 - HttpCode: 412
 - ErrorCode: 41200001
 - 中文名称: 缺少gitlab access token

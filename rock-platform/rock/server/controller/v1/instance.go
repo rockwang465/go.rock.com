@@ -1,13 +1,17 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"go.rock.com/rock-platform/rock/server/clients/helm"
 	"go.rock.com/rock-platform/rock/server/clients/k8s"
 	"go.rock.com/rock-platform/rock/server/database/api"
 	"go.rock.com/rock-platform/rock/server/database/models"
 	"go.rock.com/rock-platform/rock/server/utils"
+	"io/ioutil"
 	corev1 "k8s.io/api/core/v1"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -82,6 +86,14 @@ type InstanceLogResp struct {
 	PodName       string `json:"pod_name" example:"senseguard-oauth2-7b78686878-vcx79"`
 	ContainerName string `json:"container_name" example:"senseguard-oauth2"`
 	Content       string `json:"content" binding:"required" example:"log content here"`
+}
+
+type InstanceScaleResp struct {
+	Number int32 `json:"number" example:"1"` // replicas number
+}
+
+type UpdateInstanceScaleReq struct {
+	Number int32 `json:"number" form:"number" binding:"required,min=0" example:"1"` // replicas number
 }
 
 // @Summary Get app instance's list by app id
@@ -356,6 +368,73 @@ func (c *Controller) GetInstanceLog(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, resp)
 }
 
+// @Summary Get instance's log file by instance id
+// @Description Api to get instance's log file by instance id
+// @Tags INSTANCE
+// @Accept json
+// @Produce json
+// @Param id path integer true "Instance ID"
+// @Param pod query string true "Instance's pod name"
+// @Param container query string true "Pod's container name"
+// @Success 200 {object} string "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/instances/{id}/logfile [get]
+func (c *Controller) GetInstanceLogFile(ctx *gin.Context) {
+	var uriReq IdReq // instance_id
+	if err := ctx.ShouldBindUri(&uriReq); err != nil {
+		panic(err)
+	}
+
+	var logReq InstanceLogReq
+	if err := ctx.ShouldBind(&logReq); err != nil {
+		panic(err)
+	}
+
+	instance, err := api.GetInstanceById(uriReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	env, err := api.GetEnvById(instance.EnvId)
+	if err != nil {
+		panic(err)
+	}
+	cluster, err := api.GetClusterById(env.ClusterId)
+	if err != nil {
+		panic(err)
+	}
+
+	// get the instance's pod log
+	podLog, err := k8s.GetInstanceLog(cluster.Config, instance.EnvNamespace, logReq.Pod, logReq.Container, false)
+	if err != nil {
+		panic(err)
+	}
+
+	// open temporary file
+	tmpFile, err := ioutil.TempFile("", "pod-log-file*")
+	if err != nil {
+		panic(err)
+	}
+	defer os.Remove(tmpFile.Name())
+
+	// save pod log to temporary file
+	_, err = tmpFile.WriteString(podLog)
+	if err != nil {
+		panic(err)
+	}
+	defer tmpFile.Close() // close file object at last
+
+	fileName := fmt.Sprintf("%v.log", tmpFile.Name())
+	c.Logger.Infof("Get instance's log by instance id %v", uriReq.Id)
+
+	// 为了前端通过调用当前接口就能直接下载文件，这里必须配置如下格式(filename + application/octet-stream):
+	ctx.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
+	ctx.Header("Content-Type", "application/octet-stream")
+	ctx.File(tmpFile.Name()) // 读取文件内容并返回
+}
+
 // @Summary Get instance's pods name by instance id
 // @Description Api to get instance's pods name and containers name by instance id
 // @Tags INSTANCE
@@ -477,4 +556,146 @@ func getPodsContainersStatus(status corev1.PodStatus) string {
 		}
 	}
 	return "Running"
+}
+
+// @Summary Get instance's scale number by instance id
+// @Description Api to get instance's scale number by instance id
+// @Tags INSTANCE
+// @Accept json
+// @Produce json
+// @Param id path integer true "Instance ID"
+// @Success 200 {object} v1.InstanceScaleResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/instances/{id}/scale [get]
+func (c *Controller) GetInstanceScale(ctx *gin.Context) {
+	var uriReq IdReq // instance_id
+	if err := ctx.ShouldBindUri(&uriReq); err != nil {
+		panic(err)
+	}
+
+	instance, err := api.GetInstanceById(uriReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	env, err := api.GetEnvById(instance.EnvId)
+	if err != nil {
+		panic(err)
+	}
+	cluster, err := api.GetClusterById(env.ClusterId)
+	if err != nil {
+		panic(err)
+	}
+
+	replicas, err := k8s.GetInstanceScale(cluster.Config, env.Namespace, instance.ChartName)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := InstanceScaleResp{
+		Number: *replicas,
+	}
+
+	c.Logger.Infof("Get instance's current scale number by instance id %v, and result is %v", uriReq.Id, resp.Number)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Update instance's scale number by instance id
+// @Description Api to update instance's scale number by instance id
+// @Tags INSTANCE
+// @Accept json
+// @Produce json
+// @Param id path integer true "Instance ID"
+// @Success 200 {object} v1.InstanceScaleResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/instances/{id}/scale [put]
+func (c *Controller) UpdateInstanceScale(ctx *gin.Context) {
+	var uriReq IdReq // instance_id
+	if err := ctx.ShouldBindUri(&uriReq); err != nil {
+		panic(err)
+	}
+
+	var req UpdateInstanceScaleReq
+	if err := ctx.ShouldBind(&req); err != nil {
+		panic(err)
+	}
+
+	instance, err := api.GetInstanceById(uriReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	env, err := api.GetEnvById(instance.EnvId)
+	if err != nil {
+		panic(err)
+	}
+	cluster, err := api.GetClusterById(env.ClusterId)
+	if err != nil {
+		panic(err)
+	}
+
+	originScale, err := k8s.GetInstanceScale(cluster.Config, env.Namespace, instance.ChartName)
+	if err != nil {
+		panic(err)
+	}
+
+	replicas, err := k8s.UpdateInstanceScale(cluster.Config, env.Namespace, instance.ChartName, req.Number)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := InstanceScaleResp{
+		Number: *replicas,
+	}
+	c.Logger.Infof("Update  instance's current scale number from %v to %v, by instance id %v", originScale, req.Number, uriReq.Id)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// @Summary Delete instance by instance id
+// @Description Api to delete instance by instance id
+// @Tags INSTANCE
+// @Accept json
+// @Produce json
+// @Param id path integer true "Instance ID"
+// @Success 200 {object} v1.InstanceScaleResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/instances/{id} [delete]
+func (c *Controller) DeleteInstance(ctx *gin.Context) {
+	var uriReq IdReq // instance_id
+	if err := ctx.ShouldBindUri(&uriReq); err != nil {
+		panic(err)
+	}
+
+	instance, err := api.GetInstanceById(uriReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	env, err := api.GetEnvById(instance.EnvId)
+	if err != nil {
+		panic(err)
+	}
+	cluster, err := api.GetClusterById(env.ClusterId)
+	if err != nil {
+		panic(err)
+	}
+
+	releaseName := utils.GenerateChartName(instance.ChartName, env.Namespace)
+	_, err = helm.DeleteRelease(cluster.Id, releaseName)
+	if err != nil {
+		panic(err)
+	}
+
+	err = api.DeleteInstanceById(uriReq.Id)
+	if err != nil {
+		panic(err)
+	}
+	c.Infof("Delete instance by id %v", uriReq.Id)
+	ctx.JSON(http.StatusNoContent, "")
 }

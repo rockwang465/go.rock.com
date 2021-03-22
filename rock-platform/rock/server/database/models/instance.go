@@ -9,8 +9,8 @@ type Instance struct {
 	ClusterName    string `json:"cluster_name"`
 	EnvNamespace   string `json:"env_namespace"`
 	ProjectName    string `json:"project_name" gorm:"not null"`
-	Name           string `json:"name"`       // helm chart name, example: senseguard-td-result-consume
-	ChartName      string `json:"chart_name"` // helm deploy in cluster name, example: senseguard-td-result-consume-default
+	Name           string `json:"name"`       // helm deploy in cluster name, example: senseguard-td-result-consume-default
+	ChartName      string `json:"chart_name"` // helm chart name, example: senseguard-td-result-consume
 	ChartVersion   string `json:"chart_version"`
 	LastDeployment int64  `json:"last_deployment" gorm:"not null"` // deployment_id
 	AppId          int64  `json:"app_id" gorm:"not null"`

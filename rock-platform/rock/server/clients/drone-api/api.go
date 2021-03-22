@@ -1,6 +1,6 @@
 package drone_api
 
-//import "github.com/drone/drone-go/drone" // 顺义用的是这个项目的v0.8.4的tag，并修改了源码
+//import "github.com/drone/drone-go/drone" // 之前用的是这个项目的v0.8.4的tag，并修改了源码
 import (
 	"github.com/rockwang465/drone/drone-go/drone" // 所以不用被改动的源码，而是直接拿改好的源码放在自己的项目下
 )

@@ -2480,6 +2480,54 @@ var doc = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "Api to delete instance by instance id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "INSTANCE"
+                ],
+                "summary": "Delete instance by instance id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Instance ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.InstanceScaleResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
             }
         },
         "/v1/instances/{id}/configs": {
@@ -2604,6 +2652,70 @@ var doc = `{
                 }
             }
         },
+        "/v1/instances/{id}/logfile": {
+            "get": {
+                "description": "Api to get instance's log file by instance id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "INSTANCE"
+                ],
+                "summary": "Get instance's log file by instance id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Instance ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Instance's pod name",
+                        "name": "pod",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Pod's container name",
+                        "name": "container",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/instances/{id}/logs": {
             "get": {
                 "description": "Api to get instance's log by instance id",
@@ -2701,6 +2813,104 @@ var doc = `{
                             "items": {
                                 "$ref": "#/definitions/v1.InstancePodResp"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/instances/{id}/scale": {
+            "get": {
+                "description": "Api to get instance's scale number by instance id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "INSTANCE"
+                ],
+                "summary": "Get instance's scale number by instance id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Instance ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.InstanceScaleResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Api to update instance's scale number by instance id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "INSTANCE"
+                ],
+                "summary": "Update instance's scale number by instance id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Instance ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.InstanceScaleResp"
                         }
                     },
                     "400": {
@@ -5493,7 +5703,7 @@ var doc = `{
                     "example": "********"
                 },
                 "role_id": {
-                    "description": "RoleId   *RoleIdReq ` + "`" + `json:\"role_id\" binding:\"required\"` + "`" + `  // 用顺义的这种定义，ctx.ShouldBind报错",
+                    "description": "RoleId   *RoleIdReq ` + "`" + `json:\"role_id\" binding:\"required\"` + "`" + `  // xorm可以用这种方式定义，但gorm则会ctx.ShouldBind报错",
                     "type": "integer",
                     "example": 1
                 }
@@ -5908,6 +6118,16 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/v1.InstancePod"
                     }
+                }
+            }
+        },
+        "v1.InstanceScaleResp": {
+            "type": "object",
+            "properties": {
+                "number": {
+                    "description": "replicas number",
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },

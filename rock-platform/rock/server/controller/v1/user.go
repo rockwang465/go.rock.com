@@ -15,7 +15,7 @@ type CreateUserReq struct {
 	Name     string `json:"name" binding:"required" example:"admin_user"`
 	Password string `json:"password" binding:"required" example:"********"`
 	Email    string `json:"email" binding:"required,email" example:"admin_user@sensetime.com"`
-	//RoleId   *RoleIdReq `json:"role_id" binding:"required"`  // 用顺义的这种定义，ctx.ShouldBind报错
+	//RoleId   *RoleIdReq `json:"role_id" binding:"required"`  // xorm可以用这种方式定义，但gorm则会ctx.ShouldBind报错
 	RoleId int64 `json:"role_id" binding:"required" example:"1"` // role表id=1
 }
 

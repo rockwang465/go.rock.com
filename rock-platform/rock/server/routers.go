@@ -144,7 +144,7 @@ func (s *Server) InitRouters() {
 		deployApi.DELETE("/:id", ctlv1.DeleteDeployment)
 		deployApi.PUT("/:id", ctlv1.UpdateDeployment) // 暂无使用场景
 
-		instanceApi := v1Root.Group("/instances") // 暂无使用场景
+		instanceApi := v1Root.Group("/instances")
 		instanceApi.GET("", ctlv1.GetInstances)
 		instanceApi.GET("/:id", ctlv1.GetInstance)
 		instanceApi.GET("/:id/configs", ctlv1.GetInstanceConfig)         // 获取指定实例的configMap中的config配置文件信息

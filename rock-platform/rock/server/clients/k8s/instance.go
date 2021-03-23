@@ -39,6 +39,10 @@ func GetInstancePods(k8sConf, namespace, instanceName string) (*corev1.PodList, 
 		return nil, err
 	}
 
+	// instanceName 为 helm部署后的名称，示例: aurora-system-service-default 、 kafka-component
+	// 而helm部署的服务的 metadata.label 中会有一个label为: app.kubernetes.io/instance: 服务名-namespace
+	// 示例: app.kubernetes.io/instance: aurora-system-service-default
+	//      app.kubernetes.io/instance: kafka-component
 	labelSelector := generateInstanceLabel(instanceName)
 	podList, err := client.CoreV1().Pods(namespace).List(metav1.ListOptions{
 		LabelSelector: labelSelector,

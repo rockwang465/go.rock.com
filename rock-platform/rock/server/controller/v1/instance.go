@@ -1,5 +1,30 @@
 package v1
 
+// 应用管理 -> 项目 -> 查看(查看项目) -> 应用列表 -> 查看(查看应用) -> 实例 -> 查看(查看实例，会调用3个API展示实例信息)
+//   3个API分别是:
+//      http://10.151.3.85:32001/v1/instances/3538  get请求,为展示POD列表 (GetInstance API)
+//      http://10.151.3.85:32001/v1/instances/3538/configs  get请求,为展示configmap中的配置文件(如nginx.conf/application.yaml等) (GetInstanceConfig API)
+//      http://10.151.3.85:32001/v1/instances/3538/pods get请求,为展示日志中pod及container名称 (GetInstancePods API)
+// 以下为3个API展示的信息:
+// 1.POD列表
+//   名称(pod名称)、状态(Running)、主机(k8s节点名称)、ip(pod ip)、开始时间(时间)、操作(日志->可以点击触发)
+// [日志]点击跳转到[日志]界面，自动触发如下3个请求:
+// GetInstancePods(http://10.151.x.xx:8888/v1/instances/3538/pods)
+// GetInstanceLog(http://10.151.x.xx:8888/v1/instances/3538/logs?pod=senseguard-records-management-5fff4cffd9-5k978)
+// GetInstanceLog(http://10.151.x.xx:8888/v1/instances/3538/logs?pod=senseguard-records-management-5fff4cffd9-5k978&container=senseguard-records-management)
+
+// 2.日志
+//   A.下拉选择该实例的pod名称 + 容器名称，搜索返回日志信息到方框内 (GetInstanceLog API)
+//   B.下载日志 按钮，调用 GetInstanceLogFile API，点击后自动下载日志到本地
+
+// 3.配置
+//   展示 application.yaml/nginx.yaml 等 实例的configmap中的配置文件
+
+// 4.启动 停止 扩缩容 右上角3个按钮，用于实例deployment的副本数控制
+//   [启动]按钮，更新当前实例的deployment副本数为1 (http://10.151.x.xx:8888/v1/instances/3538/scale put UpdateInstanceScale)
+//   [停止]按钮，更新当前实例的deployment副本数为0 (http://10.151.x.xx:8888/v1/instances/3538/scale put UpdateInstanceScale)
+//   [扩缩容]按钮，自定义输入当前实例的deployment副本数 (http://10.151.x.xx:8888/v1/instances/3538/scale put UpdateInstanceScale)
+
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -382,6 +407,7 @@ func (c *Controller) GetInstanceLog(ctx *gin.Context) {
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/instances/{id}/logfile [get]
 func (c *Controller) GetInstanceLogFile(ctx *gin.Context) {
+	//
 	var uriReq IdReq // instance_id
 	if err := ctx.ShouldBindUri(&uriReq); err != nil {
 		panic(err)
@@ -614,6 +640,9 @@ func (c *Controller) GetInstanceScale(ctx *gin.Context) {
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/instances/{id}/scale [put]
 func (c *Controller) UpdateInstanceScale(ctx *gin.Context) {
+	// 启动: replicas = 1
+	// 停止: replicas = 0
+	// 扩缩容: replicas 自己定义输入副本数
 	var uriReq IdReq // instance_id
 	if err := ctx.ShouldBindUri(&uriReq); err != nil {
 		panic(err)

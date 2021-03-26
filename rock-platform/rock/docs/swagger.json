@@ -1650,7 +1650,7 @@
         },
         "/v1/clusters/{id}/envs": {
             "get": {
-                "description": "api for get cluster envs by id",
+                "description": "api for get license status by cluster id and license mode",
                 "consumes": [
                     "application/json"
                 ],
@@ -1660,7 +1660,7 @@
                 "tags": [
                     "CLUSTER"
                 ],
-                "summary": "Get cluster envs by id",
+                "summary": "Get license status by cluster id and license mode",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1670,27 +1670,20 @@
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "Request page number",
-                        "name": "page_num",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "Env number size",
-                        "name": "page_size",
-                        "in": "query",
-                        "required": true
+                        "type": "string",
+                        "description": "license mode",
+                        "name": "license_mode",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "StatusOK",
                         "schema": {
-                            "$ref": "#/definitions/v1.PaginationEnvResp"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.CAStatusResp"
+                            }
                         }
                     },
                     "400": {
@@ -5213,6 +5206,105 @@
                 }
             }
         },
+        "v1.CAStatusResp": {
+            "type": "object",
+            "properties": {
+                "active_limit": {
+                    "description": "cluster total active limit",
+                    "type": "integer",
+                    "example": 100
+                },
+                "alone_time": {
+                    "description": "ca alone time, uint seconds, 0 means forever",
+                    "type": "integer",
+                    "example": 0
+                },
+                "auth_id": {
+                    "description": "cluster license sn",
+                    "type": "string",
+                    "example": "495788f9-9797-4bf8-a3e1-d65d09b107cd"
+                },
+                "company": {
+                    "description": "company name",
+                    "type": "string",
+                    "example": "sensetime_SC"
+                },
+                "consts": {
+                    "description": "cluster consts, value type will be int32 or string",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "devices": {
+                    "description": "the quotas that devices have taken",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.caDeviceInfo"
+                    }
+                },
+                "disable": {
+                    "description": "is ca disabled, by soft start/stop ca, if disabled, ca can't supply nomal service",
+                    "type": "boolean",
+                    "example": false
+                },
+                "dongle_id": {
+                    "description": "dongle id",
+                    "type": "string",
+                    "example": "494330853"
+                },
+                "dongle_time": {
+                    "description": "dongle timestamp",
+                    "type": "integer",
+                    "example": 1616762924
+                },
+                "expired_at": {
+                    "description": "expire time",
+                    "type": "string",
+                    "example": "99991231"
+                },
+                "feature_ids": {
+                    "description": "feature ids",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "example": [
+                        22000
+                    ]
+                },
+                "is_active": {
+                    "description": "master or standby ca",
+                    "type": "boolean",
+                    "example": true
+                },
+                "mode": {
+                    "description": "license-ca authorization mode, default is voucher mode",
+                    "type": "string",
+                    "example": "voucher"
+                },
+                "product": {
+                    "description": "product name",
+                    "type": "string",
+                    "example": "IVA-VIPER"
+                },
+                "quotas": {
+                    "description": "cluster quotas, used and total",
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/v1.quotaLimit"
+                    }
+                },
+                "server": {
+                    "description": "0 is master, 1 is slave",
+                    "type": "integer",
+                    "example": 0
+                },
+                "status": {
+                    "description": "ca status, \"alone\" or \"alive\" or \"dead\", means whether ca is in alive",
+                    "type": "string",
+                    "example": "alone"
+                }
+            }
+        },
         "v1.ChartDetail": {
             "type": "object",
             "required": [
@@ -6947,6 +7039,36 @@
                     "example": "2018-10-09T14:57:23+08:00"
                 },
                 "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "v1.caDeviceInfo": {
+            "type": "object",
+            "properties": {
+                "quota_usage": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "udid": {
+                    "type": "string",
+                    "example": "engine-face-extract-service-kd4k9-a954a1f74cd23d97248249d04de10221-fba9aae9f524e083"
+                }
+            }
+        },
+        "v1.quotaLimit": {
+            "type": "object",
+            "properties": {
+                "total": {
+                    "description": "total quotas",
+                    "type": "integer",
+                    "example": 2
+                },
+                "used": {
+                    "description": "used quotas",
                     "type": "integer",
                     "example": 1
                 }

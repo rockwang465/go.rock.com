@@ -314,6 +314,84 @@ definitions:
         example: pending/success/failure
         type: string
     type: object
+  v1.CAStatusResp:
+    properties:
+      active_limit:
+        description: cluster total active limit
+        example: 100
+        type: integer
+      alone_time:
+        description: ca alone time, uint seconds, 0 means forever
+        example: 0
+        type: integer
+      auth_id:
+        description: cluster license sn
+        example: 495788f9-9797-4bf8-a3e1-d65d09b107cd
+        type: string
+      company:
+        description: company name
+        example: sensetime_SC
+        type: string
+      consts:
+        additionalProperties: true
+        description: cluster consts, value type will be int32 or string
+        type: object
+      devices:
+        description: the quotas that devices have taken
+        items:
+          $ref: '#/definitions/v1.caDeviceInfo'
+        type: array
+      disable:
+        description: is ca disabled, by soft start/stop ca, if disabled, ca can't
+          supply nomal service
+        example: false
+        type: boolean
+      dongle_id:
+        description: dongle id
+        example: "494330853"
+        type: string
+      dongle_time:
+        description: dongle timestamp
+        example: 1616762924
+        type: integer
+      expired_at:
+        description: expire time
+        example: "99991231"
+        type: string
+      feature_ids:
+        description: feature ids
+        example:
+        - 22000
+        items:
+          type: integer
+        type: array
+      is_active:
+        description: master or standby ca
+        example: true
+        type: boolean
+      mode:
+        description: license-ca authorization mode, default is voucher mode
+        example: voucher
+        type: string
+      product:
+        description: product name
+        example: IVA-VIPER
+        type: string
+      quotas:
+        additionalProperties:
+          $ref: '#/definitions/v1.quotaLimit'
+        description: cluster quotas, used and total
+        type: object
+      server:
+        description: 0 is master, 1 is slave
+        example: 0
+        type: integer
+      status:
+        description: ca status, "alone" or "alive" or "dead", means whether ca is
+          in alive
+        example: alone
+        type: string
+    type: object
   v1.ChartDetail:
     properties:
       name:
@@ -1586,6 +1664,27 @@ definitions:
     - updated_at
     - version
     type: object
+  v1.caDeviceInfo:
+    properties:
+      quota_usage:
+        additionalProperties:
+          type: integer
+        type: object
+      udid:
+        example: engine-face-extract-service-kd4k9-a954a1f74cd23d97248249d04de10221-fba9aae9f524e083
+        type: string
+    type: object
+  v1.quotaLimit:
+    properties:
+      total:
+        description: total quotas
+        example: 2
+        type: integer
+      used:
+        description: used quotas
+        example: 1
+        type: integer
+    type: object
 info:
   contact: {}
 paths:
@@ -2688,32 +2787,26 @@ paths:
     get:
       consumes:
       - application/json
-      description: api for get cluster envs by id
+      description: api for get license status by cluster id and license mode
       parameters:
       - description: Cluster ID
         in: path
         name: id
         required: true
         type: integer
-      - default: 1
-        description: Request page number
+      - description: license mode
         in: query
-        name: page_num
-        required: true
-        type: integer
-      - default: 10
-        description: Env number size
-        in: query
-        name: page_size
-        required: true
-        type: integer
+        name: license_mode
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: StatusOK
           schema:
-            $ref: '#/definitions/v1.PaginationEnvResp'
+            items:
+              $ref: '#/definitions/v1.CAStatusResp'
+            type: array
         "400":
           description: StatusBadRequest
           schema:
@@ -2726,7 +2819,7 @@ paths:
           description: StatusInternalServerError
           schema:
             $ref: '#/definitions/utils.HTTPError'
-      summary: Get cluster envs by id
+      summary: Get license status by cluster id and license mode
       tags:
       - CLUSTER
   /v1/clusters/{id}/nodes:

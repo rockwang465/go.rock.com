@@ -10,7 +10,7 @@ server:
   adminAuth:
     username: admin
     password: Zs/Pftkh+esjvR5SVjOYqPxaPXiDk91APmuEtuDgE9Y=
-  tokenExpire: 5m  # default 10 minutes(Warning: 300 is wrong. You have to write 300s or 5m)
+  tokenExpire: 30m  # default 10 minutes(Warning: 300 is wrong. You have to write 300s or 5m)
   kubeConfig: /etc/kubernetes/admin.conf
   login-retry-count: 5  # default 3
   login-block-duration: 5m  # default 5m
@@ -41,3 +41,5 @@ frontend:
   domain: http://10.151.3.86:8888
 drone:  # drone-server
   addr: http://10.151.3.86:8100
+license-ca:
+  port: 8443

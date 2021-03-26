@@ -98,13 +98,13 @@ func Auth(skipPath ...string) gin.HandlerFunc {
 
 // check context, must be admin role
 func IsAdmin(ctx *gin.Context) {
-	config, err := utils.GetConfCtx(ctx)
+	cfgCtx, err := utils.GetConfCtx(ctx)
 	if err != nil {
 		panic(err)
 	}
 
 	// verify claim by id
-	if config.Role != AdminRole && config.Role != SystemToolsAdminRole {
+	if cfgCtx.Role != AdminRole && cfgCtx.Role != SystemToolsAdminRole {
 		newWarn := fmt.Sprintf("Permission denied, only system_tools_admin or admin role can do this operation")
 		err := utils.NewRockError(http.StatusUnauthorized, 40100001, newWarn)
 		panic(err)
@@ -113,22 +113,22 @@ func IsAdmin(ctx *gin.Context) {
 
 // check context, is user self or admin role
 func IsUserSelfOrAdmin(ctx *gin.Context) {
-	config, err := utils.GetConfCtx(ctx)
+	cfgCtx, err := utils.GetConfCtx(ctx)
 	if err != nil {
 		panic(err)
 	}
 
 	// check is user self
-	user, err := api.GetUserBriefResp(config.UserId)
+	user, err := api.GetUserBriefResp(cfgCtx.UserId)
 	if err != nil {
 		panic(err)
 	}
-	if user.Id == config.UserId {
+	if user.Id == cfgCtx.UserId {
 		return
 	}
 
 	// else must be admin role
-	if user.RoleName == AdminRole {
+	if cfgCtx.Role == AdminRole {
 		return
 	} else {
 		newWarn := fmt.Sprintf("Permission denied, only user self or admin role can do this operation")
@@ -139,22 +139,14 @@ func IsUserSelfOrAdmin(ctx *gin.Context) {
 
 // check context, is system admin or admin role
 func IsSystemAdminOrAdmin(ctx *gin.Context) {
-	config, err := utils.GetConfCtx(ctx)
+	cfgCtx, err := utils.GetConfCtx(ctx)
 	if err != nil {
 		panic(err)
 	}
 
-	// check is user self
-	user, err := api.GetUserBriefResp(config.UserId)
-	if err != nil {
-		panic(err)
-	}
-
-	// else must be admin role
-	if user.RoleName == AdminRole {
-		return
-	} else {
-		newWarn := fmt.Sprintf("Permission denied, only user self or admin role can do this operation")
+	// else must be admin or system admin role
+	if cfgCtx.Role != AdminRole && cfgCtx.Role != SystemToolsAdminRole {
+		newWarn := fmt.Sprintf("Permission denied, only admin or system admin role can do this operation")
 		err := utils.NewRockError(http.StatusUnauthorized, 40100001, newWarn)
 		panic(err)
 	}

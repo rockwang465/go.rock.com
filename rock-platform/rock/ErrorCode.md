@@ -290,6 +290,12 @@ const(
 
 ---
 
+- HttpCode: 404
+- ErrorCode: 40400015
+- 中文名称: k8s集群节点不存在
+
+---
+
 - HttpCode: 412
 - ErrorCode: 41200001
 - 中文名称: 缺少gitlab access token

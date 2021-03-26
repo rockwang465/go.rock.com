@@ -130,3 +130,12 @@ func getBinFileLocation() string {
 	}
 	return BinName
 }
+
+//  generate license-ca url
+func GetLicenseCaUrl(host string) string {
+	c := conf.GetConfig()
+	caPort := c.Viper.GetInt64("license-ca.port")
+	uri := fmt.Sprintf("https://%v:%v", host, caPort) // https://10.151.3.99:8443
+	return uri
+
+}

@@ -116,7 +116,7 @@ func (s *Server) InitRouters() {
 		clusterApi.GET("/:id/nodes/:name", ctlv1.GetClusterNode) // 获取指定节点名称的节点信息
 		//clusterApi.GET("/:id/jobs", ctlv1.GetClusterJobs)                            // 获取k8s集群所有job
 		//clusterApi.GET("/:id/namespaces/:namespace/jobs/:name", ctlv1.GetClusterJob) // 获取k8s集群指定job
-		//clusterApi.GET("/:id/license-status", middleware.IsSystemAdminOrAdmin, ctlv1.GetLicenseStatus)
+		clusterApi.GET("/:id/license-status", middleware.IsSystemAdminOrAdmin, ctlv1.GetLicenseStatus)
 		//clusterApi.GET("/:id/license-c2v", middleware.IsSystemAdminOrAdmin, ctlv1.GetC2vFile)
 		//clusterApi.GET("/:id/license-fingerprint", middleware.IsSystemAdminOrAdmin, ctlv1.GetFingerprintFile)
 		//clusterApi.POST("/:id/license-online", middleware.IsSystemAdminOrAdmin, ctlv1.ActiveOnline)

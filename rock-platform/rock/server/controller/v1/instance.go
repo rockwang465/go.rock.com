@@ -118,7 +118,7 @@ type InstanceScaleResp struct {
 }
 
 type UpdateInstanceScaleReq struct {
-	Number int32 `json:"number" form:"number" binding:"required,min=0" example:"1"` // replicas number
+	Number int32 `json:"number" form:"number" binding:"min=0" example:"1"` // replicas number
 }
 
 // @Summary Get app instance's list by app id
@@ -452,7 +452,7 @@ func (c *Controller) GetInstanceLogFile(ctx *gin.Context) {
 	}
 	defer tmpFile.Close() // close file object at last
 
-	fileName := fmt.Sprintf("%v.log", tmpFile.Name())
+	fileName := fmt.Sprintf("%v.log", logReq.Pod)
 	c.Logger.Infof("Get instance's log by instance id %v", uriReq.Id)
 
 	// 为了前端通过调用当前接口就能直接下载文件，这里必须配置如下格式(filename + application/octet-stream):

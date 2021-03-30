@@ -118,9 +118,9 @@ func (s *Server) InitRouters() {
 		//clusterApi.GET("/:id/namespaces/:namespace/jobs/:name", ctlv1.GetClusterJob) // 获取k8s集群指定job
 		clusterApi.GET("/:id/license-status", middleware.IsSystemAdminOrAdmin, ctlv1.GetLicenseStatus)
 		clusterApi.GET("/:id/license-c2v", middleware.IsSystemAdminOrAdmin, ctlv1.GetC2vFile)
-		//clusterApi.GET("/:id/license-fingerprint", middleware.IsSystemAdminOrAdmin, ctlv1.GetFingerprintFile)
-		//clusterApi.POST("/:id/license-online", middleware.IsSystemAdminOrAdmin, ctlv1.ActiveOnline)
-		//clusterApi.POST("/:id/license-offline", middleware.IsSystemAdminOrAdmin, ctlv1.ActiveOffline)
+		clusterApi.GET("/:id/license-fingerprint", middleware.IsSystemAdminOrAdmin, ctlv1.GetFingerprintFile)
+		clusterApi.POST("/:id/license-online", middleware.IsSystemAdminOrAdmin, ctlv1.ActiveOnline)
+		clusterApi.POST("/:id/license-offline", middleware.IsSystemAdminOrAdmin, ctlv1.ActiveOffline)
 		//clusterApi.GET("/:id/license-clics", middleware.IsSystemAdminOrAdmin, ctlv1.GetClientLicenses)
 
 		registryApi := v1Root.Group("/registries") // 镜像仓库信息管理

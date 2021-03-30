@@ -1650,6 +1650,324 @@
         },
         "/v1/clusters/{id}/envs": {
             "get": {
+                "description": "api for get cluster envs by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CLUSTER"
+                ],
+                "summary": "Get cluster envs by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cluster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Request page number",
+                        "name": "page_num",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Env number size",
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.PaginationEnvResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/clusters/{id}/license-c2v": {
+            "get": {
+                "description": "api for download license hardware c2v file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CLUSTER"
+                ],
+                "summary": "Download license hardware c2v file",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cluster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "license master or slave type",
+                        "name": "server_type",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "license mode",
+                        "name": "license_mode",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/clusters/{id}/license-fingerprint": {
+            "get": {
+                "description": "api for download license hardware fingerprint file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CLUSTER"
+                ],
+                "summary": "Download license hardware fingerprint file",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cluster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "license master or slave type",
+                        "name": "server_type",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "license mode",
+                        "name": "license_mode",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/clusters/{id}/license-offline": {
+            "post": {
+                "description": "api for offline active the license-ca",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CLUSTER"
+                ],
+                "summary": "Offline active the license-ca",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cluster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "license master or slave type",
+                        "name": "server_type",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "license mode",
+                        "name": "license_mode",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ActiveResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/clusters/{id}/license-online": {
+            "post": {
+                "description": "api for online active the license-ca",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CLUSTER"
+                ],
+                "summary": "Online active the license-ca",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cluster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "license master or slave type",
+                        "name": "server_type",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "license mode",
+                        "name": "license_mode",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "StatusOK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ActiveResp"
+                        }
+                    },
+                    "400": {
+                        "description": "StatusBadRequest",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "StatusNotFound",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "StatusInternalServerError",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/clusters/{id}/license-status": {
+            "get": {
                 "description": "api for get license status by cluster id and license mode",
                 "consumes": [
                     "application/json"
@@ -4944,6 +5262,19 @@
                 "error_code": {
                     "type": "integer",
                     "example": 50000001
+                }
+            }
+        },
+        "v1.ActiveResp": {
+            "type": "object",
+            "properties": {
+                "status_code": {
+                    "type": "string",
+                    "example": "000000"
+                },
+                "status_message": {
+                    "type": "string",
+                    "example": "SUCCESS"
                 }
             }
         },

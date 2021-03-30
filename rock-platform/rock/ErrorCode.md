@@ -337,6 +337,27 @@ const(
 - ErrorCode: 50000006
 - 中文名称: helm安装chart失败
 
+---
+- HttpCode: 500
+- ErrorCode: 50000007
+- 中文名称: license在线激活失败
+
+---
+
+- HttpCode: 500
+- ErrorCode: 50000008
+- 中文名称: 在线激活license操作执行后，证书依然处于未激活状态
+
+---
+- HttpCode: 500
+- ErrorCode: 50000009
+- 中文名称: license离线激活失败
+
+---
+
+- HttpCode: 500
+- ErrorCode: 50000010
+- 中文名称: 离线激活license操作执行后，证书依然处于未激活状态
 
 ```
 - HttpCode: 400

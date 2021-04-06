@@ -463,6 +463,13 @@ definitions:
     - urls
     - version
     type: object
+  v1.ClientLicResp:
+    properties:
+      licenses:
+        items:
+          type: string
+        type: array
+    type: object
   v1.ClusterBriefResp:
     properties:
       created_at:
@@ -2877,6 +2884,39 @@ paths:
           schema:
             $ref: '#/definitions/utils.HTTPError'
       summary: Download license hardware c2v file
+      tags:
+      - CLUSTER
+  /v1/clusters/{id}/license-clics:
+    get:
+      consumes:
+      - application/json
+      description: api for get client licenses
+      parameters:
+      - description: Cluster ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: StatusOK
+          schema:
+            $ref: '#/definitions/v1.ClientLicResp'
+        "400":
+          description: StatusBadRequest
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: StatusNotFound
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: StatusInternalServerError
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Get client licenses
       tags:
       - CLUSTER
   /v1/clusters/{id}/license-fingerprint:

@@ -121,7 +121,7 @@ func (s *Server) InitRouters() {
 		clusterApi.GET("/:id/license-fingerprint", middleware.IsSystemAdminOrAdmin, ctlv1.GetFingerprintFile)
 		clusterApi.POST("/:id/license-online", middleware.IsSystemAdminOrAdmin, ctlv1.ActiveOnline)
 		clusterApi.POST("/:id/license-offline", middleware.IsSystemAdminOrAdmin, ctlv1.ActiveOffline)
-		//clusterApi.GET("/:id/license-clics", middleware.IsSystemAdminOrAdmin, ctlv1.GetClientLicenses)
+		clusterApi.GET("/:id/license-clics", middleware.IsSystemAdminOrAdmin, ctlv1.GetClientLicenses)
 
 		registryApi := v1Root.Group("/registries") // 镜像仓库信息管理
 		registryApi.POST("", middleware.IsAdmin, ctlv1.CreateRegistry)

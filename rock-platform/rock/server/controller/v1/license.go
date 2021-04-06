@@ -69,6 +69,11 @@ type ActiveResp struct {
 	StatusMessage string `json:"status_message,omitempty" example:"SUCCESS"`
 }
 
+// Client Licenses Response
+type ClientLicResp struct {
+	Licenses []string `json:"licenses,omitempty"`
+}
+
 // @Summary Get license status by cluster id and license mode
 // @Description api for get license status by cluster id and license mode
 // @Tags CLUSTER
@@ -628,5 +633,72 @@ func (c *Controller) ActiveOffline(ctx *gin.Context) {
 
 	c.Logger.Infof("Offline active license success, active by cluster_id %d, authorization mode is %v", idReq.Id, mode)
 	ctx.JSON(http.StatusOK, resp)
+}
 
+// @Summary Get client licenses
+// @Description api for get client licenses
+// @Tags CLUSTER
+// @Accept json
+// @Produce json
+// @Param id path integer true "Cluster ID"
+// @Success 200 {object} v1.ClientLicResp "StatusOK"
+// @Failure 400 {object} utils.HTTPError "StatusBadRequest"
+// @Failure 404 {object} utils.HTTPError "StatusNotFound"
+// @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
+// @Router /v1/clusters/{id}/license-clics [get]
+func (c *Controller) GetClientLicenses(ctx *gin.Context) {
+	// 获取 client_license.lic 证书内容
+	// 命令获取方式: license_client license | sed '1,6d'
+	// 集群中，不管serverType是0还是1，licence-ca的license.lic证书肯定是一样的，因为lic证书是放在(license-config)configmap中的，所以一样。
+	var idReq IdReq // cluster id
+	if err := ctx.ShouldBindUri(&idReq); err != nil {
+		panic(err)
+	}
+
+	// 集群中，不管serverType是0还是1，licence-ca的license.lic证书肯定是一样的，因为lic证书是放在(license-config)configmap中的，所以一样。
+	// 所以不需要单独获取 license serverType 了
+	//var serverTypeReq LicenseServerTypeReq
+	//if err := ctx.ShouldBind(&serverTypeReq); err != nil {
+	//	panic(err)
+	//}
+
+	cluster, err := api.GetClusterById(idReq.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	// get the k8s master nodes info
+	k8sClusterInfo, err := getClusterIp(cluster.Config)
+	if err != nil {
+		panic(err)
+	}
+
+	var caCtl *license.CACtl
+	if k8sClusterInfo.MasterTotal >= 3 { // when cluster mode
+		masterCAUrl := utils.GetLicenseCaUrl(k8sClusterInfo.Master1IP)
+		slaveCAUrl := utils.GetLicenseCaUrl(k8sClusterInfo.Master2IP)
+		caCtl, err = license.NewServiceCtl(masterCAUrl, slaveCAUrl) // get license-ca client
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		masterCAUrl := utils.GetLicenseCaUrl(k8sClusterInfo.Master1IP)
+		caCtl, err = license.NewServiceCtl(masterCAUrl, masterCAUrl) // get license-ca client
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	clientLicResp, err := caCtl.GetClientLics(0)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := ClientLicResp{}
+	if err := utils.MarshalResponse(clientLicResp, &resp); err != nil {
+		panic(err)
+	}
+
+	c.Logger.Infof("Get client licenses by cluster_id %v", idReq.Id)
+	ctx.JSON(http.StatusOK, resp)
 }

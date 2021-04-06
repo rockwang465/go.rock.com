@@ -131,7 +131,7 @@ func getBinFileLocation() string {
 	return BinName
 }
 
-//  generate license-ca url
+//  generate license-ca url for Rock
 func GetLicenseCaUrl(host string) string {
 	c := conf.GetConfig()
 	caPort := c.Viper.GetInt64("license-ca.port")
@@ -139,3 +139,16 @@ func GetLicenseCaUrl(host string) string {
 	return uri
 
 }
+
+////  get license-ca url for ShunYi
+//func GetLicenseCaUrl(config string) (string, error) {
+//	host, err := GetClusterHostFromConfig(config)
+//	if err != nil {
+//		return "", err
+//	}
+//	c := conf.GetConfig()
+//	caPort := c.Viper.GetInt64("license-ca.port")
+//	url := fmt.Sprintf("https://%v:%v", host, caPort)
+//	return url, nil
+//
+//}

@@ -63,7 +63,7 @@ func (s *Server) InitRouters() {
 		projectApi.PUT("/:id/project-envs/:pe_id", middleware.IsAdmin, ctlv1.UpdateProjectEnv)    // 更新指定project(project_id)下指定项目环境(project_env_id)的信息
 
 		buildApi := v1Root.Group("/builds")
-		buildApi.GET("", ctlv1.GetGlobalBuilds) // console_project_id未发现使用场景? 获取所有的构建任务的简单记录(用于页面批量展示)
+		buildApi.GET("", ctlv1.GetGlobalBuilds) // 获取所有的构建任务的简单记录(用于页面批量展示)
 
 		nodeApi := v1Root.Group("/nodes")
 		nodeApi.GET("", ctlv1.GetGlobalNodes)
@@ -79,7 +79,7 @@ func (s *Server) InitRouters() {
 		appApi.PUT("/:id", ctlv1.UpdateApp)
 		appApi.PUT("/:id/gitlab", ctlv1.UpdateAppGitlabProject)                      // 修改应用的gitlab地址
 		appApi.GET("/:id/builds", ctlv1.GetAppBuilds)                                // 通过app_id获取该应用的所有构建记录
-		appApi.POST("/:id/builds", ctlv1.CreateAppBuild)                             // 构建一个新任务(单个服务发版)
+		appApi.POST("/:id/builds", ctlv1.CreateAppBuild)                             // *****构建一个新任务(单个服务发版)
 		appApi.GET("/:id/branches", ctlv1.GetAppBranches)                            // 获取应用所有分支
 		appApi.GET("/:id/tags", ctlv1.GetAppTags)                                    // 获取应用所有tag
 		appApi.GET("/:id/charts", ctlv1.GetAppChartVersions)                         // 通过app_id获取该应用的所有chart版本
@@ -138,7 +138,7 @@ func (s *Server) InitRouters() {
 		secretApi.PUT("/:name", middleware.IsAdmin, ctlv1.UpdateSecret)
 
 		deployApi := v1Root.Group("/deployments")
-		deployApi.POST("", ctlv1.CreateDeployment) // 基于固定版本号进行单个应用发版
+		deployApi.POST("", ctlv1.CreateDeployment) // ****基于固定版本号进行单个应用发版
 		deployApi.GET("", ctlv1.GetDeployments)
 		deployApi.GET("/:id", ctlv1.GetDeployment)
 		deployApi.DELETE("/:id", ctlv1.DeleteDeployment)

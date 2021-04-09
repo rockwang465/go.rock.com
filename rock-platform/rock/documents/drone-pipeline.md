@@ -20,7 +20,7 @@ workspace:
 environment:
   REGISTRY: 10.151.3.75
   CHARTMUSEUM: http://10.151.3.75:8080
-  API_SERVICE: http://10.151.3.85:32000
+  API_SERVICE: http://10.151.3.86:8888  #  CI/CD后端服务地址
   REPO_NAME: idea-aurora/aurora-push-service  # 10.151.3.75 harbor镜像仓库中的前缀
   APP_VERSION: 1.0.0
   CHART_PLUGIN: 10.151.3.75/cicd/infra-cd  # chart打包的镜像(自己制作)
@@ -32,7 +32,7 @@ pipeline:
   build-and-push-image:  # 编译代码生成镜像并推到harbor仓库
     image: ${DOCKER_PLUGIN}
     registry: ${REGISTRY}
-    secrets: [ docker_username, docker_password ]
+    secrets: [ docker_username, docker_password ]  # secret, 来自保存在drone数据库中保存的数据，可以直接作为变量进行引用
     repo: ${REGISTRY}/${REPO_NAME}
     insecure: true
     tags:

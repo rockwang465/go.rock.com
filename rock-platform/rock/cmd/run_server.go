@@ -27,7 +27,7 @@ func runServer(cmd *cobra.Command, args []string) {
 	// 自动读取环境变量参数。BindEnv和AutomaticEnv函数会使用SetEnvPrefix中定义的前缀。
 	config.Viper.AutomaticEnv()
 	// 通过设置环境变量前缀SetEnvPrefix,在从环境变量读取时会添加设置的前缀。来确保 Env 变量是唯一的(小写会自动转为大写)
-	config.Viper.SetEnvPrefix("ROCK")
+	config.Viper.SetEnvPrefix("CONSOLE")
 	// 批量替换: 将 -. 都转为 _
 	replacer := strings.NewReplacer("-", "_", ".", "_")
 	// 设置环境变量的分隔符
@@ -44,10 +44,10 @@ func runServer(cmd *cobra.Command, args []string) {
 	config.Viper.AddConfigPath(".")     // 可以多次调用添加路径，比如添加当前目录
 	err := config.Viper.ReadInConfig()  // Find and read the config file
 
-	sv := server.GetServer() // 实例化: logrus、gin路由、xorm数据库
+	sv := server.GetServer() // 实例化: logrus、gin路由、gorm数据库
 
 	if err != nil {
-		sv.Logger.Fatalf("[Rock Platform] Fatal error on reading config faile: %s \n", err)
+		sv.Logger.Fatalf("[Rock Platform] Fatal error on reading config file: %s \n", err)
 	} else {
 		sv.Logger.Infoln("[Rock Platform] Got config file path set to:", configFile)
 	}

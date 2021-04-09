@@ -220,7 +220,7 @@ func (c *Controller) CreateAppBuild(ctx *gin.Context) {
 // @Failure 500 {object} utils.HTTPError "StatusInternalServerError"
 // @Router /v1/builds [get]
 func (c *Controller) GetGlobalBuilds(ctx *gin.Context) {
-	// console_project_id 为 project_id, 但暂未发现使用场景,有待确认 ?????
+	// console_project_id 为 app表中project_id， 在drone数据库中builds表中 console_project_id 字段保存
 	var paginationReq GetBuildPaginationReq
 	if err := ctx.ShouldBind(&paginationReq); err != nil {
 		panic(err)
@@ -604,6 +604,7 @@ func (c *Controller) GetAppBuild(ctx *gin.Context) {
 // @Router /v1/apps/{id}/builds/{build_number}/logs/{log_number} [get]
 func (c *Controller) GetBuildLogs(ctx *gin.Context) {
 	// 详细逻辑见: GetAppBuild 函数中的注释
+	// 正常从 2 开始打印日志，从2-5一般为4步
 	var uriReq GetAppBuildLogReq
 	if err := ctx.ShouldBindUri(&uriReq); err != nil {
 		panic(err)

@@ -24,7 +24,7 @@ func GetUsersInitData() []InitRecord {
 				Password: "3207ead4e092de77e022394b3204d755",
 				Email:    "1031653788@qq.com",
 				Salt:     "r8slTCTTHD8qVaYr",
-				Token:    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIzMjA3ZWFkNGUwOTJkZTc3ZTAyMjM5NGIzMjA0ZDc1NSIsImV4cCI6MTYwODg4NjI2MiwiaWF0IjoxNjA4ODg1OTAyLCJpc3MiOiJSb2NrIFdhbmciLCJzdWIiOiJMb2dpbiB0b2tlbiJ9.ex4jRen8b5Te2ihWigzxeboGG17HsNgQPNWVBLwV5bY", // expire time: 2120-12-01
+				Token:    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3LCJ1c2VybmFtZSI6ImdhbGF4aWFzX2FwaV90b2tlbiIsImRyb25lX3Rva2VuIjoiIiwicGFzc3dvcmQiOiJmMGE1NzI1NWYxNTEzMGQ3NzYwNjM5YzU4ZGU4MDc2MyIsInJvbGUiOiJhZG1pbiIsImV4cCI6NDc3MTc5NjY3MiwiaWF0IjoxNjE4MTk2NjcyLCJpc3MiOiJSb2NrIFdhbmciLCJzdWIiOiJMb2dpbiB0b2tlbiJ9.3Y00pHFvpD90yv5QmixuurNbIlJa-Dz1a1bRhO1Rp3Q", // expire time: 2121-03-19 11:04:32
 				RoleId:   1,
 			},
 		},

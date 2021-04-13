@@ -34,15 +34,17 @@ func GenerateToken(userId int64, username, droneToken, password, role string) (s
 		userDefineExpire = time.Minute * 10 // Set the default token expire time to 10 minutes
 	}
 
-	// generate admin token is 100 years
-	//var expireTime time.Time
-	//if username == "admin" {
-	//	fmt.Println("admin account")
-	//	expireTime = nowTime.Add(time.Hour * 24 * 365 * 100)  // 2120-12-01
-	//	fmt.Printf("expireTime: %v\n", expireTime)
-	//}
+	// generate admin(galaxias_api_token) token is 100 years
+	var expireTime time.Time
+	if username == "galaxias_api_token" {
+		expireTime = nowTime.Add(time.Hour * 24 * 365 * 100) // 2121-03-19 11:04:32
+		logger.Debugf("username: %v, expire_time: %v", username, expireTime)
+	} else {
+		expireTime = nowTime.Add(time.Minute + userDefineExpire)
+		logger.Debugf("username: %v, expire_time: %v", username, expireTime)
+	}
 
-	expireTime := nowTime.Add(time.Minute + userDefineExpire)
+	//expireTime = nowTime.Add(time.Minute + userDefineExpire)
 	claim := &Claim{
 		UserId:     userId,
 		Username:   username,
@@ -59,6 +61,9 @@ func GenerateToken(userId int64, username, droneToken, password, role string) (s
 
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	token, err := tokenClaims.SignedString(jwtKey)
+	if username == "galaxias_api_token" {
+		logger.Debugf("username: %v, token: %v", username, token)
+	}
 	return token, err
 }
 

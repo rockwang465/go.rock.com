@@ -7,11 +7,10 @@
 # 方法二(测试好用):
 # 开始菜单 -> 更改代理设置 -> 自动检测设置 -> 关掉(之前开启的)
 
-echo -e "go build:"
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build .
-
-echo -e "mv cmd rock"
-mv cmd rock
+echo -e "go build to ./rock :"
+#CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./rock .
+#CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./rock -mod vendor .
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./rock -mod vendor go.rock.com/rock-platform/rock/cmd .
 
 echo -e "scp rock to 10.151.3.86:/rock"
 scp rock root@10.151.3.86:/rock

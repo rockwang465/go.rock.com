@@ -53,6 +53,7 @@ E.drone-agent和drone-server的使用方法(README.md)、脚本(传参、启动�
 ERRO[2021-01-06 23:10:15] Mysql Error: with num 1452 and message is: Cannot add or update a child row: a foreign key constraint fails (`rock`.`user`, CONSTRAINT `user_role_id_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`))
 8.cluster admin.conf 用postman上传的时候是一行内容，保存到数据库应该是多行才对，需要检测下。 -- ok 正常的
 9.models里面的version字段 作用是什么，为啥一直是0呢？
+10.修复分支名命名规则提示，如果是 _ 提示不可用，前后端都加最好。
 ```
 
 ## 未知知识

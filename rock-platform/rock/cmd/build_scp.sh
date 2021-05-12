@@ -8,6 +8,12 @@
 # 开始菜单 -> 更改代理设置 -> 自动检测设置 -> 关掉(之前开启的)
 
 echo -e "go build to ./rock :"
+# cmd执行方式:
+# 编译为linux版: 在src目录下依次执行
+#set CGO_ENABLED=0
+#set GOOS=linux
+#set GOARCH=amd64
+
 #CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./rock .
 #CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./rock -mod vendor .
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./rock -mod vendor go.rock.com/rock-platform/rock/cmd .

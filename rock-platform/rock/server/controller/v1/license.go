@@ -60,7 +60,7 @@ type LicenseModeReq struct {
 type LicenseServerTypeReq struct {
 	// 由于 serverType 只有0 和1 两个值。但定义required，则0位uint的零值，gin validate以为你没有输入。
 	// 所以要定义最大为1，最小为0，不要加required字段。这里可以用 min=0,max=1 或者 oneof=0 1两种写法。
-	ServerType uint `json:"server_type" form:"server_type" binding:"oneof=0 1" example:"0"` // 0 is master, 1 is slave
+	ServerType uint `json:"server_type" form:"server_type" binding:"required,oneof=0 1" example:"0"` // 0 is master, 1 is slave
 	LicenseModeReq
 }
 

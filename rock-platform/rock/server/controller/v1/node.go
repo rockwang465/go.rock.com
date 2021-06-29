@@ -374,6 +374,7 @@ func formatGlobalNodeResp(node *v1.Node) (*GlobalNodeResp, error) {
 // @Accept json
 // @Produce json
 // @Param id path integer true "Cluster ID"
+// @Param name path string true "Node name"
 // @Success 200 {object} v1.ClusterNodeResp "StatusOK"
 // @Failure 400 {object} utils.HTTPError "StatusBadRequest"
 // @Failure 404 {object} utils.HTTPError "StatusNotFound"

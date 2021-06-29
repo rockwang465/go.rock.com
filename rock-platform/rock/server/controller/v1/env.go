@@ -13,7 +13,7 @@ import (
 type CreateEnvReq struct {
 	Namespace   string `json:"namespace" binding:"required" example:"namespace of k8s cluster"`
 	Description string `json:"description" binding:"omitempty,max=100" example:"description for env"`
-	ClusterId   int64  `json:"cluster_id" binding:"required,min=1"`
+	ClusterId   int64  `json:"cluster_id" binding:"required,min=1" example:"1"`
 }
 
 type EnvBriefResp struct {

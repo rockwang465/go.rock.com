@@ -7,7 +7,6 @@ require (
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/cyphar/filepath-securejoin v0.2.2 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	// github.com/drone/drone-go v0.8.4
 	github.com/fastly/go-utils v0.0.0-20180712184237-d95a45783239 // indirect
@@ -17,7 +16,7 @@ require (
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/gobwas/glob v0.2.3 // indirect
-	github.com/golang/protobuf v1.4.3 // indirect
+	github.com/google/go-cmp v0.5.2 // indirect
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/googleapis/gnostic v0.5.4 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
@@ -34,6 +33,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rockwang465/drone v0.0.0-20210203033026-bd81022843b6
 	github.com/sirupsen/logrus v1.7.0
+	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
 	github.com/swaggo/gin-swagger v1.3.0
@@ -55,5 +55,5 @@ require (
 	k8s.io/client-go v0.0.0-20181121071415-8abb21031259
 	k8s.io/helm v2.11.0+incompatible
 	k8s.io/klog v1.0.0 // indirect
-	k8s.io/utils v0.0.0-20210111153108-fddb29f9d009 // indirect
+	sigs.k8s.io/yaml v1.2.0 // indirect
 )

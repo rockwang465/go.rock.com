@@ -23,7 +23,7 @@ func CreateProjectEnvByProjectId(projectId, envId int64, projectEnvName, desc st
 	db := database.GetDBEngine()
 	projectEnv := &models.ProjectEnv{
 		Name:        projectEnvName,
-		Description: desc,
+		//Description: desc,
 		EnvId:       envId,
 		ProjectId:   projectId,
 	}
@@ -32,6 +32,8 @@ func CreateProjectEnvByProjectId(projectId, envId int64, projectEnvName, desc st
 	if err := hasNotSameProjectEnv(projectEnv); err != nil {
 		return nil, err
 	}
+
+	projectEnv.Description = desc
 
 	// create project_env
 	if err := db.Create(projectEnv).Error; err != nil {

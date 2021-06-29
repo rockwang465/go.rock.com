@@ -19,11 +19,12 @@ github.com/PuerkitoBio/urlesc
 ## explicit
 github.com/alecthomas/template
 github.com/alecthomas/template/parse
-# github.com/cyphar/filepath-securejoin v0.2.2
-## explicit
 # github.com/dgrijalva/jwt-go v3.2.0+incompatible
 ## explicit
 github.com/dgrijalva/jwt-go
+# github.com/ewoutp/go-gitlab-client v0.0.0-20150214183219-6e4464cd3221
+## explicit
+github.com/ewoutp/go-gitlab-client
 # github.com/fastly/go-utils v0.0.0-20180712184237-d95a45783239
 ## explicit
 # github.com/fsnotify/fsnotify v1.4.7
@@ -78,7 +79,6 @@ github.com/gogo/protobuf/sortkeys
 # github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 github.com/golang/glog
 # github.com/golang/protobuf v1.4.3
-## explicit
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
@@ -86,6 +86,9 @@ github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/google/btree v1.0.0
 github.com/google/btree
+# github.com/google/go-querystring v1.1.0
+## explicit
+github.com/google/go-querystring/query
 # github.com/google/gofuzz v1.0.0
 github.com/google/gofuzz
 # github.com/google/uuid v1.2.0
@@ -170,6 +173,9 @@ github.com/peterbourgon/diskv
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
+# github.com/plouc/go-gitlab-client v2.0.0-beta.5+incompatible
+## explicit
+github.com/plouc/go-gitlab-client/gitlab
 # github.com/rockwang465/drone v0.0.0-20210203033026-bd81022843b6
 ## explicit
 github.com/rockwang465/drone/drone-go/drone
@@ -177,6 +183,7 @@ github.com/rockwang465/drone/drone-go/drone
 ## explicit
 github.com/sirupsen/logrus
 # github.com/spf13/afero v1.2.2
+## explicit
 github.com/spf13/afero
 github.com/spf13/afero/mem
 # github.com/spf13/cast v1.3.0
@@ -492,5 +499,5 @@ k8s.io/helm/pkg/version
 # k8s.io/klog v1.0.0
 ## explicit
 k8s.io/klog
-# k8s.io/utils v0.0.0-20210111153108-fddb29f9d009
+# sigs.k8s.io/yaml v1.2.0
 ## explicit

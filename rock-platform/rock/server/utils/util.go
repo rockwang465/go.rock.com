@@ -54,7 +54,7 @@ func GetExpireDuration() int {
 	return int(duration / time.Second)
 }
 
-// Send New Password Eamil
+// Send New Password Email
 func SendNewPwdEmail(userName, destEmail, userPwd string) error {
 	config := conf.GetConfig()
 	user := config.Viper.GetString("email.user")

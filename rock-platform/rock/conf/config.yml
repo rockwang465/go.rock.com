@@ -32,7 +32,7 @@ chartsRepo:
   addr: http://10.151.3.75:8080
 email:
   user: wangyecheng465@163.com
-  password: OXQBIWAMOOAYOHNV  # 163 authorization code
+  password: GEEKLHSMSHPOGYSS  # 163 authorization code
   smtp:
     addr: smtp.163.com
     port: 465

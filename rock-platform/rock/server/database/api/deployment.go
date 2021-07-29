@@ -84,6 +84,7 @@ func DeleteDeploymentById(id int64) error {
 	return nil
 }
 
+// UpdateDeploymentById
 // update the deployment by id app_id env_id chart_name chart_version
 func UpdateDeploymentById(id, appId, envId int64, chartName, chartVersion, description string) (*models.Deployment, error) {
 	deployment, err := GetDeploymentById(id)

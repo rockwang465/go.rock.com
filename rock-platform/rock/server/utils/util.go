@@ -21,7 +21,7 @@ const (
 	NEW_USER_EMAIL_SUBJECT   = "用户创建提示"
 	NEW_USER_EMAIL_CONTENT   = "系统邮件，请勿回复！\n%s，您好：\n    管理员为您创建了Rock平台的账户：\n        用户名：%s\n        密码：%s \n    请您尽快登录Rock平台并修改初始密码。"
 	RESET_USER_EMAIL_SUBJECT = "用户密码重置提示"
-	RESET_USER_EMAIL_CONTENT = "系统邮件，请勿回复！\n%s，您好：\n    您重置了Rock平台的账户密码：\n        用户名：%s\n        密钥：%s\n        密钥有效时间：%s\n        密钥有效期至: %s\n        重置密码链接：%s\n    请您尽快登录Rock平台使用密码进行密码重置。"
+	RESET_USER_EMAIL_CONTENT = "系统邮件，请勿回复！\n%s，您好：\n    您重置了Rock平台的账户密码：\n        用户名：%s\n        密钥：%s\n        密钥有效时间：%s\n        密钥有效期至: %s\n        重置密码链接：%s\n    请您尽快登录Rock平台使用密钥进行密码重置。"
 	//RESET_USER_EMAIL_CONTENT = "系统邮件，请勿回复！\n%s，您好：\n    请您点击以下链接进行密码重置：\n    %s \n    请您尽快登录rock平台并修改密码。"
 )
 
